@@ -354,6 +354,47 @@
       .stat { border-right: none; border-bottom: 1px solid rgba(56, 189, 248, .1); }
       .stat:last-child { border-bottom: none; }
     }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.92);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-img {
+      max-height: 85vh;
+      max-width: 90vw;
+      border-radius: 16px;
+      object-fit: contain;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 20px; right: 28px;
+      font-size: 32px;
+      cursor: pointer;
+      color: #fff;
+      background: none;
+      border: none;
+    }
+    .lightbox-prev, .lightbox-next {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      font-size: 36px;
+      cursor: pointer;
+      color: #fff;
+      background: rgba(37,99,235,.3);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 50%;
+    }
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+    .feature-card img { cursor: pointer; }
+
   </style>
 </head>
 <body>
@@ -398,7 +439,7 @@
 
     <div class="apk-note">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      APK is a pre-release build. Enable "Install from unknown sources" on your Android device to install.
+      Pre-release APK — this app is not yet on the Play Store, so Android will show a security warning when you try to install it. This is expected. To proceed, go to your phone's Settings → Security → enable "Install from unknown sources", then open the APK file again.
     </div>
 
     <div class="stats fade-in">
@@ -618,7 +659,7 @@
 
         <div class="phone-frame fade-in">
           <div class="screen">
-            <img src="assets/App-saveaddresses_.jpg" alt="Saved Addresses — manage delivery locations" loading="lazy" />
+            <img src="assets/App-saveaddresses.jpg" alt="Saved Addresses — manage delivery locations" loading="lazy" />
           </div>
           <p class="phone-label">Saved Addresses</p>
         </div>
@@ -818,7 +859,7 @@
       </div>
       <p class="apk-note">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Pre-release APK — enable "Install from unknown sources" on Android to install.
+        Pre-release APK — this app is not yet on the Play Store, so Android will show a security warning when you try to install it. This is expected. To proceed, go to your phone's Settings → Security → enable "Install from unknown sources", then open the APK file again.
       </p>
     </div>
   </div>
@@ -835,6 +876,42 @@
     }, { threshold: 0.12 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
   </script>
+</script>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <button class="lightbox-prev" onclick="shiftLightbox(-1)">‹</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+  <button class="lightbox-next" onclick="shiftLightbox(1)">›</button>
+</div>
+
+<script>
+  const dashImgs = Array.from(document.querySelectorAll('.feature-card img'));
+  let currentIndex = 0;
+
+  dashImgs.forEach((img, i) => {
+    img.addEventListener('click', () => openLightbox(i));
+  });
+
+  function openLightbox(index) {
+    currentIndex = index;
+    document.getElementById('lightbox-img').src = dashImgs[index].src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+
+  function shiftLightbox(dir) {
+    currentIndex = (currentIndex + dir + dashImgs.length) % dashImgs.length;
+    document.getElementById('lightbox-img').src = dashImgs[currentIndex].src;
+  }
+
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+  });
+</script>
 
 </body>
 </html>
