@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakash Sejwani</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0f0d;
+    --surface: #111714;
+    --surface2: #1a2120;
+    --accent: #1d9e75;
+    --accent-light: #5dcaa5;
+    --accent-dim: #0f6e56;
+    --text: #e8f0ed;
+    --text-muted: #7a9990;
+    --text-dim: #4a6660;
+    --border: rgba(29, 158, 117, 0.15);
+    --border-bright: rgba(29, 158, 117, 0.35);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(10, 15, 13, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent-light);
+    letter-spacing: 0.08em;
+  }
+
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: 13px; font-weight: 400;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent-light); }
+
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 2rem 4rem;
+    max-width: 800px; margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-tag::before {
+    content: '';
+    display: inline-block; width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent-light);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.65rem 1.5rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #041a12;
+  }
+  .btn-primary:hover { background: var(--accent-light); }
+
+  .btn-outline {
+    background: transparent;
+    border: 0.5px solid var(--border-bright);
+    color: var(--text-muted);
+  }
+  .btn-outline:hover { border-color: var(--accent-light); color: var(--accent-light); }
+
+  section {
+    max-width: 800px; margin: 0 auto;
+    padding: 5rem 2rem;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 0.14em;
+    color: var(--accent-dim);
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1; height: 0.5px;
+    background: var(--border);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .about-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+  .about-text strong { color: var(--text); font-weight: 500; }
+
+  .about-stats {
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+
+  .stat-item {
+    padding: 1rem 1.25rem;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--accent-light);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 12px; color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card:hover {
+    border-color: var(--border-bright);
+    background: var(--surface2);
+  }
+
+  .project-card.featured {
+    border-color: var(--accent-dim);
+    background: linear-gradient(135deg, var(--surface2) 0%, rgba(15, 110, 86, 0.08) 100%);
+  }
+
+  .project-card.featured::before {
+    content: 'LIVE PRODUCT';
+    position: absolute; top: 1rem; right: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.12em;
+    color: var(--accent);
+    background: rgba(29, 158, 117, 0.1);
+    border: 0.5px solid var(--accent-dim);
+    padding: 3px 8px; border-radius: 3px;
+  }
+
+  .project-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem; font-weight: 400;
+    color: var(--text);
+  }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+
+  .project-tags {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.08em;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid var(--border);
+    padding: 3px 8px; border-radius: 3px;
+  }
+
+  .tag.medical {
+    color: var(--accent);
+    border-color: rgba(29, 158, 117, 0.25);
+    background: rgba(29, 158, 117, 0.06);
+  }
+
+  .project-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 0.06em;
+    color: var(--accent-light);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .project-link:hover { opacity: 1; }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .skill-group {
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .skill-group-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .skill-list {
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+
+  .skill-item {
+    font-size: 13px; color: var(--text-muted); font-weight: 300;
+  }
+
+  .contact-row {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+
+  .contact-card {
+    flex: 1; min-width: 180px;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+    display: block;
+  }
+  .contact-card:hover { border-color: var(--border-bright); }
+
+  .contact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--accent-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .contact-value {
+    font-size: 13px; color: var(--text-muted);
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    border-top: 0.5px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    .about-grid { grid-template-columns: 1fr; }
+    nav { padding: 1rem; }
+    .nav-links { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">PS / portfolio</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Medical professional · Developer</div>
+  <h1>Building tools at the intersection of <em>medicine & code</em></h1>
+  <p class="hero-sub">
+    Final-year medical student (MD, Jan 2027) who builds productivity and medical software. 
+    I combine clinical knowledge with code to create tools that actually solve real problems.
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">View my work</a>
+    <a href="#contact" class="btn btn-outline">Get in touch</a>
+  </div>
+</div>
+
+<section id="about">
+  <div class="section-label">About</div>
+  <div class="about-grid">
+    <div class="about-text">
+      <p style="margin-bottom: 1rem;">
+        I'm <strong>Prakash Sejwani</strong>, a final-year medical student in Jamaica finishing my MD in January 2027. 
+        On the side, I build software — productivity tools, interactive apps, and medical tools.
+      </p>
+      <p style="margin-bottom: 1rem;">
+        My edge is rare: I understand both the clinical problems and how to code the solutions. 
+        Most developers don't know medicine. Most doctors don't ship software. I do both.
+      </p>
+      <p>
+        Open to freelance projects, collaborations, and opportunities in <strong>health tech</strong>.
+      </p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-item">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Live shipped product</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">Jan '27</div>
+        <div class="stat-label">MD graduation</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">JM</div>
+        <div class="stat-label">Based in Jamaica</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-label">Projects</div>
+  <div class="projects-grid">
+
+    <div class="project-card featured">
+      <div class="project-top">
+        <div class="project-name">SCQ Scoreboard</div>
+        <a href="https://www.scqscoreboard.com" target="_blank" class="project-link">scqscoreboard.com ↗</a>
+      </div>
+      <p class="project-desc">
+        Competition-grade quiz scoreboard software for Jamaican school quiz competitions. 
+        Features dual-window layout (control panel + audience display), round timing, buzzer controls, 
+        school crest support, and a premium licensing system. Used in real competitions.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Windows App</span>
+        <span class="tag">License Server</span>
+        <span class="tag">Electron</span>
+        <span class="tag">Live Product</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-top">
+        <div class="project-name">Patient History Copilot</div>
+      </div>
+      <p class="project-desc">
+        An AI-powered assistant for medical students taking clinical histories from patients. 
+        Guides the history-taking process in real time, flags important follow-up questions, 
+        and helps structure findings — built from direct clinical experience.
+      </p>
+      <div class="project-tags">
+        <span class="tag medical">Medical</span>
+        <span class="tag">AI</span>
+        <span class="tag">In Progress</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-top">
+        <div class="project-name">Interactive experiments</div>
+      </div>
+      <p class="project-desc">
+        A collection of creative web experiments — a 3D interactive cube, a music visualizer, 
+        an Avatar: The Last Airbender fan site, and a browser-based game pushing the limits 
+        of what's possible with AI-assisted development.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Three.js</span>
+        <span class="tag">Web Audio API</span>
+        <span class="tag">Creative Coding</span>
+        <span class="tag">Games</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-label">Skills</div>
+  <div class="skills-grid">
+    <div class="skill-group">
+      <div class="skill-group-name">Development</div>
+      <div class="skill-list">
+        <span class="skill-item">JavaScript / HTML / CSS</span>
+        <span class="skill-item">Electron (desktop apps)</span>
+        <span class="skill-item">Node.js</span>
+        <span class="skill-item">Three.js / WebGL</span>
+        <span class="skill-item">AI-assisted development</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-name">Medical</div>
+      <div class="skill-list">
+        <span class="skill-item">Clinical medicine (MD)</span>
+        <span class="skill-item">Patient history taking</span>
+        <span class="skill-item">Clinical reasoning</span>
+        <span class="skill-item">Health informatics</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-name">Product</div>
+      <div class="skill-list">
+        <span class="skill-item">Software licensing</span>
+        <span class="skill-item">Product design</span>
+        <span class="skill-item">User support</span>
+        <span class="skill-item">Technical writing</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-label">Contact</div>
+  <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 300;">
+    Open to freelance projects, health tech collaborations, and interesting conversations.
+  </p>
+  <div class="contact-row">
+    <a href="https://github.com/rju23" target="_blank" class="contact-card">
+      <div class="contact-label">GitHub</div>
+      <div class="contact-value">github.com/rju23</div>
+    </a>
+    <a href="mailto:support@scqscoreboard.com" class="contact-card">
+      <div class="contact-label">Email</div>
+      <div class="contact-value">support@scqscoreboard.com</div>
+    </a>
+    <div class="contact-card">
+      <div class="contact-label">Based in</div>
+      <div class="contact-value">Jamaica 🇯🇲</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Prakash Sejwani · Medical professional & developer · 2026
+</footer>
+
+</body>
+</html>
