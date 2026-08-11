@@ -208,6 +208,24 @@
     }
     .phone-gallery::-webkit-scrollbar { display: none; }
 
+    .gallery-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .gallery-btn {
+      background: rgba(37, 99, 235, .2);
+      border: 1px solid rgba(56, 189, 248, .3);
+      color: var(--white);
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .gallery-btn:hover { background: rgba(37, 99, 235, .5); }
+
     .phone-frame {
       flex: 0 0 auto;
       width: 220px;
@@ -607,6 +625,10 @@
 
       </div>
     </div>
+    <div class="gallery-controls">
+      <button class="gallery-btn" onclick="document.querySelector('.phone-gallery').scrollBy({left:-240,behavior:'smooth'})">‹</button>
+      <button class="gallery-btn" onclick="document.querySelector('.phone-gallery').scrollBy({left:240,behavior:'smooth'})">›</button>
+    </div>
   </section>
 
   <div class="container"><div class="divider"></div></div>
@@ -639,56 +661,100 @@
           - Customers page (real names, emails, phones — consider skipping or full blur)
         ─────────────────────────────────────────────────────────
       -->
-      <div class="feature-grid fade-in">
-
-        <div class="feature-card">
-          <img src="assets/dash-overview.jpg" alt="Dashboard overview — booking stats" loading="lazy" />
-          <div class="feature-card-body">
-            <p class="feature-card-title">At-a-Glance Overview</p>
-            <p class="feature-card-desc">Total bookings, pending, completed, and customer count — live from Firestore.</p>
-          </div>
+      <div class="feature-card">
+        <img src="assets/Dash-homepage.png" alt="Dashboard overview" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">At-a-Glance Overview</p>
+          <p class="feature-card-desc">Total bookings, pending, completed, and customer count — live from Firestore.</p>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <img src="assets/dash-bookings.jpg" alt="Bookings management" loading="lazy" />
-          <div class="feature-card-body">
-            <p class="feature-card-title">Booking Management</p>
-            <p class="feature-card-desc">Search and filter bookings by status. View booking timeline and update status.</p>
-          </div>
+      <div class="feature-card">
+        <img src="assets/Dash-bookings.png" alt="Bookings management" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Booking Management</p>
+          <p class="feature-card-desc">Search and filter bookings by status. View booking timeline and update status.</p>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <img src="assets/dash-services.jpg" alt="Services configuration" loading="lazy" />
-          <div class="feature-card-body">
-            <p class="feature-card-title">Service Configuration</p>
-            <p class="feature-card-desc">Add main services and add-ons with per-vehicle pricing. Drag to reorder how they appear in the app.</p>
-          </div>
+      <div class="feature-card">
+        <img src="assets/Dash-customers.png" alt="Customer list" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Customer Management</p>
+          <p class="feature-card-desc">View all registered customers and their booking history.</p>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <img src="assets/dash-leadtime.jpg" alt="Lead time settings" loading="lazy" />
-          <div class="feature-card-body">
-            <p class="feature-card-title">Lead Time Control</p>
-            <p class="feature-card-desc">Set the minimum advance notice for bookings, with support for temporary and scheduled overrides.</p>
-          </div>
+      <div class="feature-card">
+        <img src="assets/Dash-drivers.png" alt="Drivers management" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Driver Management</p>
+          <p class="feature-card-desc">Add and manage drivers assigned to service bookings.</p>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <img src="assets/dash-announcement.jpg" alt="Announcement banner" loading="lazy" />
-          <div class="feature-card-body">
-            <p class="feature-card-title">Live Announcements</p>
-            <p class="feature-card-desc">Push a banner message to the app instantly. Pre-built templates for common scenarios, with optional expiry.</p>
-          </div>
+      <div class="feature-card">
+        <img src="assets/Dash-allservices.png" alt="All services" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">All Services</p>
+          <p class="feature-card-desc">View and manage all 14 services — both main services and add-ons in one place.</p>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <img src="assets/dash-blocked.jpg" alt="Blocked periods settings" loading="lazy" />
-          <div class="feature-card-body">
-            <p class="feature-card-title">Blocked Periods</p>
-            <p class="feature-card-desc">Block specific date and time ranges. Customers see those slots greyed out automatically in the booking flow.</p>
-          </div>
+      <div class="feature-card">
+        <img src="assets/Dash-filteredmain.png" alt="Main services filtered" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Main Services</p>
+          <p class="feature-card-desc">Filter to main services only. Drag to reorder how they appear in the app.</p>
         </div>
+      </div>
 
+      <div class="feature-card">
+        <img src="assets/Dash-filteredaddons.png" alt="Add-ons filtered" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Add-On Services</p>
+          <p class="feature-card-desc">Manage optional add-ons customers can stack on top of any main service.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <img src="assets/Dash-leadtime_1.png" alt="Lead time settings" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Lead Time — Overview</p>
+          <p class="feature-card-desc">Set the minimum advance notice required before a booking can be placed.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <img src="assets/Dash-leadtime_2.png" alt="Lead time options" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Lead Time — Controls</p>
+          <p class="feature-card-desc">Supports temporary overrides and scheduled changes for flexible operations.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <img src="assets/Dash-annoucement_1.png" alt="Announcement templates" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Announcements — Templates</p>
+          <p class="feature-card-desc">Pre-built message templates for common scenarios like high demand or weather delays.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <img src="assets/Dash-announcement_2.png" alt="Announcement scheduling" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Announcements — Scheduling</p>
+          <p class="feature-card-desc">Set expiry times or schedule messages to appear automatically on a future date.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <img src="assets/Dash-blockedtimes.png" alt="Blocked periods" loading="lazy" />
+        <div class="feature-card-body">
+          <p class="feature-card-title">Blocked Periods</p>
+          <p class="feature-card-desc">Block specific date and time ranges. Those slots appear greyed out in the customer app.</p>
+        </div>
       </div>
 
       <div style="margin-top: 36px;">
