@@ -19,7 +19,11 @@ const NAV = [
 
 export default function App() {
   const [section, setSection] = useState(
-    () => window.location.pathname.replace(/^\//, "") || "chat"
+    () => {
+      const path = window.location.pathname.replace(/^\//, "") || "chat";
+      const valid = ["chat","projects","about","services","contact","experiments","playground","buildlog"];
+      return valid.includes(path) ? path : "chat";
+    }
   );
   const [splash, setSplash]   = useState(true);
 
@@ -46,6 +50,19 @@ export default function App() {
     link.rel  = "stylesheet";
     link.href = "https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;1,400;1,500&family=Inter:wght@300;400;500&display=swap";
     document.head.appendChild(link);
+  }, []);
+
+  useEffect(() => {
+    const redirect = sessionStorage.getItem("pk1_redirect");
+    if (redirect) {
+      sessionStorage.removeItem("pk1_redirect");
+      const id = redirect.replace(/^\//, "") || "chat";
+      const validSections = ["chat","projects","about","services","contact","experiments","playground","buildlog"];
+      if (validSections.includes(id)) {
+        setSection(id);
+        window.history.replaceState({ pk1Section: id }, "", "/rju-portfolio/" + (id === "chat" ? "" : id));
+      }
+    }
   }, []);
 
   console.log("current section:", section);
