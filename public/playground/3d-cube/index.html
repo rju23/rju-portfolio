@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Interactive 3D Cube</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.158/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+
+<body>
+
+  <canvas id="bg"></canvas>
+
+  <div class="hud">
+
+  <!-- Sun rays -->
+  <div class="sun-rays"></div>
+
+  <!-- Fog haze -->
+  <div class="haze-overlay"></div>
+
+  <!-- Lightning bolts -->
+  <div class="lightning-layer">
+    <svg id="bolt-1" class="bolt" viewBox="0 0 50 220" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="38,0 18,85 30,85 8,165 22,165 4,220"
+        fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+      <polyline points="38,0 18,85 30,85 8,165 22,165 4,220"
+        fill="none" stroke="#aaccff" stroke-width="6" stroke-linejoin="round" opacity="0.3"/>
+    </svg>
+    <svg id="bolt-2" class="bolt" viewBox="0 0 50 220" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="12,0 34,78 20,78 40,158 26,158 44,220"
+        fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+      <polyline points="12,0 34,78 20,78 40,158 26,158 44,220"
+        fill="none" stroke="#aaccff" stroke-width="6" stroke-linejoin="round" opacity="0.3"/>
+    </svg>
+    <svg id="bolt-3" class="bolt" viewBox="0 0 50 220" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="20,0 42,80 28,80 46,155 30,155 48,220"
+        fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+      <polyline points="20,0 42,80 28,80 46,155 30,155 48,220"
+        fill="none" stroke="#aaccff" stroke-width="6" stroke-linejoin="round" opacity="0.3"/>
+    </svg>
+  </div>
+
+  <!-- Playground information -->
+  <div class="experiment-info">
+    <div class="eyebrow">PLAYGROUND / 001</div>
+
+    <h1>Interactive 3D Cube</h1>
+
+    <p>
+      A small Three.js experiment exploring 3D interaction,
+      camera controls and object manipulation.
+    </p>
+  </div>
+
+  <!-- Environment information -->
+  <div class="environment-info">
+    <div class="environment-label">ENVIRONMENT</div>
+
+    <div id="environment-name">
+      <span id="env-name-from">SUNNY</span>
+      <span id="env-name-to"></span>
+    </div>
+
+    <div class="environment-next">
+      <span id="environment-timer">05:00</span>
+    </div>
+  </div>
+
+  <!-- Environment selector -->
+  <div class="env-selector">
+    <div class="env-selector-label">SWITCH</div>
+    <div class="env-selector-btns">
+      <button class="env-btn active" data-env="sunny">Sunny</button>
+      <button class="env-btn" data-env="sunset">Sunset</button>
+      <button class="env-btn" data-env="night">Night</button>
+      <button class="env-btn" data-env="rain">Rain</button>
+      <button class="env-btn" data-env="thunderstorm">Storm</button>
+      <button class="env-btn" data-env="snow">Snow</button>
+      <button class="env-btn" data-env="fog">Fog</button>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-info">
+    <div><strong>Controls</strong></div>
+    <div>Left click + drag · Orbit</div>
+    <div>Right click + drag · Move cube</div>
+    <div>Scroll · Zoom</div>
+    <div>Double tap · Double bounce</div>
+  </div>
+
+  <!-- Cube control panel -->
+  <div class="cube-controls">
+    <div class="panel-label">Cube</div>
+
+    <div class="control-row">
+      <span class="control-name">Color</span>
+      <div class="color-swatches">
+        <button class="swatch active" data-color="green"  style="--c: #00ff00" title="Green"></button>
+        <button class="swatch"        data-color="cream"  style="--c: #fff8e7" title="Cream"></button>
+        <button class="swatch"        data-color="blue"   style="--c: #4499ff" title="Blue"></button>
+        <button class="swatch"        data-color="orange" style="--c: #ff8844" title="Orange"></button>
+        <button class="swatch"        data-color="white"  style="--c: #ffffff" title="White"></button>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <span class="control-name">Wireframe</span>
+      <div class="toggle-group">
+        <button id="wf-on"  class="toggle active">On</button>
+        <button id="wf-off" class="toggle">Off</button>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <span class="control-name">Rotation</span>
+      <div class="toggle-group">
+        <button data-speed="off"    class="toggle active">Off</button>
+        <button data-speed="slow"   class="toggle">Slow</button>
+        <button data-speed="normal" class="toggle">Normal</button>
+        <button data-speed="fast"   class="toggle">Fast</button>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <span class="control-name">Grid</span>
+      <div class="toggle-group">
+        <button id="grid-on"  class="toggle active">On</button>
+        <button id="grid-off" class="toggle">Off</button>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <span class="control-name">Axes</span>
+      <div class="toggle-group">
+        <button id="axes-on"  class="toggle active">On</button>
+        <button id="axes-off" class="toggle">Off</button>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <button id="btn-reset" class="reset-btn">Reset</button>
+    </div>
+  </div>
+
+ </div> <!-- /.hud -->
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -32,13 +32,6 @@ body {
   50%       { opacity: 0; }
 }
 
-@keyframes chipBounceIn {
-  0%   { opacity: 0; transform: translateY(10px) scale(0.9); }
-  60%  { transform: translateY(-4px) scale(1.03); }
-  80%  { transform: translateY(2px) scale(0.98); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   16%      { transform: translateX(-5px); }
@@ -47,25 +40,3 @@ body {
   67%      { transform: translateX(2px); }
   84%      { transform: translateX(-1px); }
 }
-
-@keyframes chipBounceOut {
-  0%   { opacity: 1; transform: translateY(0) scale(1); }
-  20%  { transform: translateY(2px) scale(0.98); }
-  40%  { opacity: 1; transform: translateY(-4px) scale(1.03); }
-  100% { opacity: 0; transform: translateY(10px) scale(0.9); }
-}
-
-@keyframes chipFadeOut {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(6px); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(-6px); }
-  40%       { transform: translateX(6px); }
-  60%       { transform: translateX(-4px); }
-  80%       { transform: translateX(4px); }
-}
-
-.shake { animation: shake 0.35s ease both; }
