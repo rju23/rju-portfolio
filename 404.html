@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      const base = "/rju-portfolio";
+      const path = window.location.pathname.replace(base, "") || "/";
+      sessionStorage.setItem("pk1_redirect", path);
+      window.location.replace(base + "/");
+    </script>
+  </head>
+</html>
