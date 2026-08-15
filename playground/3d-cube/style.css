@@ -1,0 +1,375 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Inter, Arial, sans-serif;
+  background: #080808;
+  color: #f2f2f2;
+}
+
+body {
+  position: relative;
+}
+
+canvas {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* -------------------------
+   HUD overlay
+------------------------- */
+
+.hud {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud button,
+.hud [data-color],
+.hud [data-speed] {
+  pointer-events: auto;
+}
+
+.sun-rays {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(
+    ellipse at top right,
+    rgba(255, 160, 50, 0.35) 0%,
+    rgba(255, 130, 30, 0.18) 20%,
+    rgba(255, 110, 20, 0.09) 40%,
+    rgba(255, 90, 10, 0.04) 60%,
+    transparent 80%
+  );
+  pointer-events: none;
+}
+
+.haze-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(140, 160, 175, 0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s;
+}
+
+.lightning-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bolt {
+  position: absolute;
+  top: 4%;
+  width: 40px;
+  height: 35vh;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px #aaddff) drop-shadow(0 0 12px #ffffff);
+  transition: opacity 0.04s;
+}
+
+#bolt-1 { left: 18%; }
+#bolt-2 { left: 47%; }
+#bolt-3 { right: 16%; }
+
+/* -------------------------
+   Experiment information
+------------------------- */
+
+.experiment-info {
+  position: fixed;
+  top: 32px;
+  left: 32px;
+  width: 320px;
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  opacity: 0.55;
+  margin-bottom: 10px;
+}
+
+.experiment-info h1 {
+  margin: 0 0 10px;
+
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.experiment-info p {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1.6;
+
+  opacity: 0.6;
+}
+
+/* -------------------------
+   Environment information
+------------------------- */
+
+.environment-info {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  z-index: 1;
+
+  text-align: right;
+
+  pointer-events: none;
+}
+
+.environment-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  opacity: 0.45;
+
+  margin-bottom: 5px;
+}
+
+#environment-name {
+  position: relative;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  height: 1.3em;
+}
+
+#env-name-from,
+#env-name-to {
+  position: absolute;
+  right: 0;
+  top: 0;
+  white-space: nowrap;
+  transition: opacity 0.3s;
+}
+
+.environment-next {
+  margin-top: 6px;
+
+  font-size: 11px;
+  opacity: 0.45;
+}
+
+/* -------------------------
+   Environment selector
+------------------------- */
+
+.env-selector {
+  position: fixed;
+  top: 110px;
+  right: 32px;
+  text-align: right;
+  pointer-events: all;
+}
+
+.env-selector-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  opacity: 0.45;
+  margin-bottom: 8px;
+}
+
+.env-selector-btns {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.env-btn {
+  padding: 2px 10px;
+  background: transparent;
+  border: 1px solid rgba(242, 242, 242, 0.12);
+  color: #f2f2f2;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.15s, border-color 0.15s;
+  text-align: right;
+}
+
+.env-btn:hover {
+  opacity: 0.7;
+}
+
+.env-btn.active {
+  opacity: 0.9;
+  border-color: rgba(242, 242, 242, 0.4);
+}
+
+/* -------------------------
+   Controls
+------------------------- */
+
+.controls-info {
+  position: fixed;
+  bottom: 28px;
+  left: 32px;
+  z-index: 1;
+
+  font-size: 11px;
+  line-height: 1.7;
+
+  opacity: 0.45;
+
+  pointer-events: none;
+}
+
+.controls-info strong {
+  display: block;
+  margin-bottom: 4px;
+
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  opacity: 0.8;
+}
+
+/* -------------------------
+   Cube Controls Panel
+------------------------- */
+
+.cube-controls {
+  position: fixed;
+  bottom: 28px;
+  right: 32px;
+  z-index: 1;
+
+  pointer-events: all;
+}
+
+.panel-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 10px;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.control-name {
+  width: 60px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+/* Color swatches */
+
+.color-swatches {
+  display: flex;
+  gap: 6px;
+}
+
+.swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--c);
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.45;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.swatch:hover {
+  opacity: 0.8;
+  transform: scale(1.15);
+}
+
+.swatch.active {
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45);
+}
+
+/* Toggle buttons */
+
+.toggle-group {
+  display: flex;
+  gap: 3px;
+}
+
+.toggle {
+  padding: 2px 8px;
+  background: transparent;
+  border: 1px solid rgba(242, 242, 242, 0.12);
+  color: #f2f2f2;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.15s, border-color 0.15s;
+}
+
+.toggle:hover {
+  opacity: 0.7;
+}
+
+.toggle.active {
+  opacity: 0.9;
+  border-color: rgba(242, 242, 242, 0.4);
+}
+
+/* Reset button */
+
+.reset-btn {
+  padding: 4px 14px;
+  background: transparent;
+  border: 1px solid rgba(242, 242, 242, 0.2);
+  color: #f2f2f2;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.reset-btn:hover {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .cube-controls {
+    bottom: 20px;
+    right: 20px;
+  }
+}
