@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText } from "lucide-react";
+import emailjs from "@emailjs/browser";
+import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 const BORDER   = "rgba(255,255,255,0.07)";
 const TEXT     = "#F4EFE7";
 const TEXT_DIM = "rgba(244,239,231,0.58)";
@@ -187,17 +189,20 @@ export default function App() {
           <TopBar />
         </div>
 
-        <div style={{
+        <div className="pk1-scroll" style={{
           position: "absolute", inset: "12px 12px 12px 0",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          paddingBottom: section === "chat" ? 90 : 0,
-          zIndex: 1, overflow: "auto",
+          display: "flex", flexDirection: "column",
+          alignItems: "stretch",
+          justifyContent: section === "chat" ? "center" : "flex-start",
+          paddingTop: section === "chat" ? 0 : 84,
+          paddingBottom: section === "chat" ? 90 : 40,
+          zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
           {section === "chat"        && <HeroText />}
           {section === "projects"    && <SectionView title="Projects"    sub="A selection of things I've built." />}
-          {section === "about"       && <SectionView title="About"       sub="A bit about me." />}
-          {section === "services"    && <SectionView title="Services"    sub="What I can build for you." />}
-          {section === "contact"     && <SectionView title="Contact"     sub="Get in touch." />}
+          {section === "about"       && <AboutView />}
+          {section === "services"    && <ServicesView onNavigate={navigateTo} />}
+          {section === "contact"     && <ContactView />}
           {section === "experiments" && <SectionView title="Experiments" sub="Things I built just to see if I could." />}
           {section === "buildlog"    && <SectionView title="Build Log"   sub="How things get built." />}
         </div>
@@ -248,7 +253,7 @@ function NavItem({ label, Icon, active, onClick }) {
   );
 }
 
-function InputBar() {
+function InputBar({ onNavigate }) {
   const [input, setInput]       = useState("");
   const [hovered, setHovered]   = useState(false);
   const [visible, setVisible]   = useState(false);
@@ -474,7 +479,14 @@ function InputBar() {
         color: "rgba(244,239,231,0.28)", marginTop: 10,
         fontFamily: "'Inter', sans-serif",
       }}>
-        PK-1 can make mistakes. Verify important information.
+        PK-1 can make mistakes.{" "}
+        <span
+          onClick={() => onNavigate && onNavigate("contact")}
+          style={{ textDecoration: "underline", cursor: "pointer" }}
+        >
+          Contact
+        </span>{" "}
+        to verify important information.
       </p>
     </div>
   );
@@ -695,6 +707,483 @@ function SectionView({ title, sub }) {
         background: "rgba(255,255,255,0.02)",
       }}>
         <span style={{ fontSize: 13 }}>Content coming soon.</span>
+      </div>
+    </div>
+  );
+}
+
+const aboutParagraphStyle = {
+  fontSize: 15.5, lineHeight: 1.8,
+  color: "rgba(244,239,231,0.72)",
+  fontFamily: "'Inter', sans-serif", fontWeight: 300,
+  margin: 0,
+};
+
+function AboutView() {
+  return (
+    <div style={{ padding: "0 48px", maxWidth: 780, margin: "0 auto", width: "100%" }}>
+      <div style={{
+        display: "grid", gridTemplateColumns: "320px 1fr", gap: 40,
+        marginBottom: 36, alignItems: "start",
+      }}>
+        <img
+          src="/images/prakash.jpg"
+          alt="Prakash Sejwani"
+          style={{
+            width: 320, height: 400, borderRadius: 16,
+            objectFit: "cover",
+            border: `1px solid ${BORDER}`,
+            flexShrink: 0,
+          }}
+        />
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{
+            fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em",
+            color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+          }}>
+            A builder at heart.
+          </div>
+          <p style={aboutParagraphStyle}>
+            From a young age, technology was the thing I couldn't stay away from. Not in the "future programmer" sense. I wasn't writing code in my bedroom. I was the person who knew the tricks nobody else knew, the one people called when something needed fixing, formatting, or figuring out. I rooted phones when that was still a thing. I spent hours on computers just because computers were interesting.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+        <p style={aboutParagraphStyle}>
+          That same instinct shows up everywhere. When water went out and I only had jugs, I didn't just deal with it. I built a gravity-fed system out of a metal straw and a large bottle so I'd have controlled running water. That's just how my brain works. If there's a problem, I'm already thinking about the system that solves it.
+        </p>
+        <p style={aboutParagraphStyle}>
+          I'm a final-year medical student at the University of the West Indies, and somewhere between studying and the chaos of COVID, I discovered I could build software. December 2025 was when it clicked. I built a scoring app for School's Challenge Quiz because the problem was right in front of me and no good solution existed. Watching it work, watching people use it, watching it actually sell, that opened something. I saw the intersection of everything I loved: technology, problem-solving, and now healthcare.
+        </p>
+        <p style={aboutParagraphStyle}>
+          Since then I've shipped a Flutter car wash booking app for a paying client, built an interactive admin dashboard, created medical tools including a drug learning platform, and kept building, most recently a Three.js model of SA node electrical activity. I work with AI as a core part of my development process, not as a shortcut, but as the tool that makes it possible for someone who thinks in systems rather than syntax to build things that actually work.
+        </p>
+        <p style={aboutParagraphStyle}>
+          The direction I'm heading is clear. AI and healthcare are going to collide in ways that most people in tech don't fully understand yet, because they've never been in a ward. I have. That combination is where I want to be.
+        </p>
+        <p style={aboutParagraphStyle}>
+          When I'm not building: cooking, badminton, ATLA rewatches, and whatever game currently has my attention. I also want an Arduino kit. One day.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const inputStyle = (focused) => ({
+  width: "100%",
+  background: "rgba(255,255,255,0.04)",
+  border: focused ? "1px solid rgba(217,138,76,0.45)" : "1px solid rgba(255,255,255,0.09)",
+  borderRadius: 10,
+  color: TEXT,
+  fontSize: 13.5,
+  fontFamily: "'Inter', sans-serif",
+  padding: "11px 14px",
+  outline: "none",
+  transition: "border-color 0.15s ease",
+});
+
+const COOLDOWN_SECONDS   = 60;
+const COOLDOWN_STORE_KEY = "pk1_contact_cooldown_until";
+
+// Reads the cooldown's end timestamp from localStorage and returns the
+// remaining whole seconds, so a page reload resumes it instead of resetting it.
+function readStoredCooldown() {
+  try {
+    const until = Number(localStorage.getItem(COOLDOWN_STORE_KEY));
+    if (!until) return 0;
+    const remaining = Math.ceil((until - Date.now()) / 1000);
+    return remaining > 0 ? remaining : 0;
+  } catch {
+    return 0; // storage unavailable (private mode, etc.) — fail open
+  }
+}
+
+function ContactView() {
+  const formRef   = useRef(null);
+  const [status, setStatus]   = useState("idle"); // idle | sending | success | error
+  const [focusedField, setFocusedField] = useState(null);
+  const [cooldown, setCooldown] = useState(readStoredCooldown);
+
+  // Resume the countdown on mount if a cooldown is still active from before reload.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const interval = setInterval(() => {
+      setCooldown(readStoredCooldown());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (cooldown <= 0 && status === "success") setStatus("idle");
+  }, [cooldown]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (formRef.current.honeypot.value) return; // bot detected, do nothing
+
+    setStatus("sending");
+
+    emailjs.sendForm(
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      formRef.current,
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    )
+      .then(() => {
+        setStatus("success");
+        formRef.current?.reset();
+
+        const until = Date.now() + COOLDOWN_SECONDS * 1000;
+        try { localStorage.setItem(COOLDOWN_STORE_KEY, String(until)); } catch {}
+        setCooldown(COOLDOWN_SECONDS);
+
+        const interval = setInterval(() => {
+          const remaining = readStoredCooldown();
+          setCooldown(remaining);
+          if (remaining <= 0) clearInterval(interval);
+        }, 1000);
+      })
+      .catch(() => {
+        setStatus("error");
+      });
+  };
+
+  return (
+    <div style={{ padding: "0 48px", maxWidth: 900, margin: "0 auto", width: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+        <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
+        <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
+          Contact
+        </h2>
+      </div>
+      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 36px 17px" }}>Get in touch.</p>
+
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "minmax(220px, 320px) 1fr",
+        gap: 28,
+      }}>
+        {/* ── Left: info ── */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <p style={{ fontSize: 14.5, lineHeight: 1.65, color: TEXT_DIM, margin: 0 }}>
+            Have a project in mind or just want to talk? Reach out.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: TEXT_DIM }}>
+              <MapPin size={15} color={ACCENT} strokeWidth={1.8} />
+              Kingston, Jamaica
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: TEXT_DIM }}>
+              <Clock size={15} color={ACCENT} strokeWidth={1.8} />
+              Usually replies within 24 hours
+            </div>
+            <a
+              href="mailto:sejwaniraj23@gmail.com"
+              style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: TEXT, textDecoration: "none" }}
+              onMouseEnter={e => e.currentTarget.style.color = ACCENT}
+              onMouseLeave={e => e.currentTarget.style.color = TEXT}
+            >
+              <Mail size={15} color={ACCENT} strokeWidth={1.8} />
+              sejwaniraj23@gmail.com
+            </a>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <a
+              href="https://wa.me/18763718377"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", gap: 9,
+                padding: "10px 14px", borderRadius: 10,
+                background: "rgba(255,255,255,0.035)",
+                border: `1px solid ${BORDER}`,
+                color: TEXT, fontSize: 13, fontFamily: "'Inter', sans-serif",
+                textDecoration: "none", transition: "border-color 0.15s ease, background 0.15s ease",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(217,138,76,0.3)"; e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = BORDER; e.currentTarget.style.background = "rgba(255,255,255,0.035)"; }}
+            >
+              <FaWhatsapp size={18} color={ACCENT} />
+              WhatsApp
+            </a>
+            <a
+              href="https://www.linkedin.com/in/prakash-sejwani-92b4b4350"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", gap: 9,
+                padding: "10px 14px", borderRadius: 10,
+                background: "rgba(255,255,255,0.035)",
+                border: `1px solid ${BORDER}`,
+                color: TEXT, fontSize: 13, fontFamily: "'Inter', sans-serif",
+                textDecoration: "none", transition: "border-color 0.15s ease, background 0.15s ease",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(217,138,76,0.3)"; e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = BORDER; e.currentTarget.style.background = "rgba(255,255,255,0.035)"; }}
+            >
+              <Users size={15} color={ACCENT} strokeWidth={1.8} />
+              LinkedIn
+            </a>
+            <a
+              href="https://github.com/rju23"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", gap: 9,
+                padding: "10px 14px", borderRadius: 10,
+                background: "rgba(255,255,255,0.035)",
+                border: `1px solid ${BORDER}`,
+                color: TEXT, fontSize: 13, fontFamily: "'Inter', sans-serif",
+                textDecoration: "none", transition: "border-color 0.15s ease, background 0.15s ease",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(217,138,76,0.3)"; e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = BORDER; e.currentTarget.style.background = "rgba(255,255,255,0.035)"; }}
+            >
+              <Link2 size={15} color={ACCENT} strokeWidth={1.8} />
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        {/* ── Right: form ── */}
+        <div style={{
+          padding: 24, borderRadius: 12,
+          background: "rgba(255,255,255,0.035)",
+          border: `1px solid ${BORDER}`,
+        }}>
+          <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <fieldset
+              disabled={status === "sending" || cooldown > 0}
+              style={{ border: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 16 }}
+            >
+              <div>
+                <label style={{ display: "block", fontSize: 12, color: TEXT_DIM, marginBottom: 6 }}>Name</label>
+                <input
+                  type="text" name="from_name" required
+                  placeholder="Your name"
+                  onFocus={() => setFocusedField("name")}
+                  onBlur={() => setFocusedField(null)}
+                  style={inputStyle(focusedField === "name")}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: 12, color: TEXT_DIM, marginBottom: 6 }}>Email</label>
+                <input
+                  type="email" name="from_email" required
+                  placeholder="you@example.com"
+                  onFocus={() => setFocusedField("email")}
+                  onBlur={() => setFocusedField(null)}
+                  style={inputStyle(focusedField === "email")}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: 12, color: TEXT_DIM, marginBottom: 6 }}>Message</label>
+                <textarea
+                  name="message" required rows={5}
+                  placeholder="What are you trying to build?"
+                  onFocus={() => setFocusedField("message")}
+                  onBlur={() => setFocusedField(null)}
+                  style={{ ...inputStyle(focusedField === "message"), resize: "vertical", fontFamily: "'Inter', sans-serif" }}
+                />
+              </div>
+            </fieldset>
+
+            {/* Honeypot — hidden from real users, bots fill it */}
+            <input
+              type="text"
+              name="honeypot"
+              style={{ display: "none" }}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+
+            {status === "success" && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "#5FBF7A" }}>
+                <Check size={14} />
+                Message sent. I'll be in touch soon.
+              </div>
+            )}
+
+            {status === "error" && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "#E88" }}>
+                <AlertCircle size={14} />
+                Something went wrong. Try emailing directly.
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={status === "sending" || cooldown > 0}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                padding: "12px 20px", borderRadius: 10, border: "none",
+                background: (status === "sending" || cooldown > 0) ? "rgba(217,138,76,0.5)" : ACCENT,
+                color: "#1A1108",
+                fontSize: 13.5, fontWeight: 500, fontFamily: "'Inter', sans-serif",
+                cursor: (status === "sending" || cooldown > 0) ? "default" : "pointer",
+                transition: "transform 0.15s ease, box-shadow 0.15s ease",
+              }}
+              onMouseEnter={e => { if (status !== "sending" && cooldown === 0) { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 18px rgba(217,138,76,0.35)"; } }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+            >
+              {status === "sending"
+                ? "Sending…"
+                : cooldown > 0
+                  ? `Wait ${cooldown}s`
+                  : <>Send message <ArrowRight size={15} strokeWidth={2.2} /></>}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const SERVICES = [
+  {
+    Icon: Smartphone,
+    title: "Mobile App Development",
+    tag: "Flutter · Android",
+    description:
+      "Android apps built on Flutter — a single codebase that's cross-platform by design, so an iOS release is a natural next step rather than a rebuild.",
+  },
+  {
+    Icon: Globe,
+    title: "Web App Development",
+    tag: "React / Vite · Dashboards · Supabase",
+    description:
+      "Fast, responsive web apps and dashboards backed by real infrastructure — the kind of tool your team actually keeps open all day.",
+  },
+  {
+    Icon: Monitor,
+    title: "Desktop App Development",
+    tag: "Electron · Windows",
+    description:
+      "Native-feeling desktop software for workflows that live on a screen, not a browser tab — built for reliability over novelty.",
+  },
+  {
+    Icon: Stethoscope,
+    title: "Clinical & Medical Tools",
+    tag: "Built by someone who's been in the room",
+    highlight: true,
+    description:
+      "Tools for clinics, charting and patient workflows, designed by a final-year medical student who understands the workflow before it's ever written in code. That's the difference between software that looks right and software that actually holds up on a busy ward.",
+  },
+  {
+    Icon: IdCard,
+    title: "Portfolio & Personal Brand Sites",
+    tag: "For professionals & creatives",
+    description:
+      "A site that makes the case for you before anyone reads a resume — clean, fast, and built around how you actually want to be seen.",
+  },
+  {
+    Icon: Wrench,
+    title: "Maintenance & Support",
+    tag: "Ongoing care for what's already live",
+    description:
+      "Bugs fixed, dependencies kept current, small improvements shipped — so the thing you launched keeps working long after launch day.",
+  },
+];
+
+function ServicesView({ onNavigate }) {
+  return (
+    <div style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+        <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
+        <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
+          Services
+        </h2>
+      </div>
+      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}>
+        What I can build for you.
+      </p>
+
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+        gap: 14,
+      }}>
+        {SERVICES.map(({ Icon, title, tag, description, highlight }) => (
+          <div
+            key={title}
+            style={{
+              padding: "22px 22px 24px",
+              borderRadius: 12,
+              background: highlight ? "rgba(217,138,76,0.06)" : "rgba(255,255,255,0.035)",
+              border: highlight ? "1px solid rgba(217,138,76,0.3)" : `1px solid ${BORDER}`,
+              display: "flex", flexDirection: "column", gap: 10,
+            }}
+          >
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              width: 34, height: 34, borderRadius: 9,
+              background: highlight ? "rgba(217,138,76,0.16)" : "rgba(255,255,255,0.06)",
+              color: ACCENT, flexShrink: 0,
+            }}>
+              <Icon size={16} strokeWidth={1.8} />
+            </div>
+
+            <div>
+              <h3 style={{
+                fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+                fontSize: 18, color: TEXT, margin: "0 0 4px",
+              }}>
+                {title}
+              </h3>
+              <div style={{
+                fontSize: 11, color: highlight ? ACCENT : TEXT_MUTE,
+                letterSpacing: "0.03em", marginBottom: 10,
+              }}>
+                {tag}
+              </div>
+              <p style={{ fontSize: 13, lineHeight: 1.65, color: TEXT_DIM, margin: 0 }}>
+                {description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      <div style={{
+        marginTop: 36, marginBottom: 24,
+        padding: "26px 30px", borderRadius: 14,
+        background: "rgba(255,255,255,0.035)",
+        border: `1px solid ${BORDER}`,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        gap: 20, flexWrap: "wrap",
+      }}>
+        <div>
+          <h3 style={{
+            fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+            fontSize: 20, color: TEXT, margin: "0 0 4px",
+          }}>
+            Have something in mind?
+          </h3>
+          <p style={{ fontSize: 13, color: TEXT_DIM, margin: 0 }}>
+            Tell me what you're trying to build, and we'll figure out the rest.
+          </p>
+        </div>
+        <button
+          onClick={() => onNavigate && onNavigate("contact")}
+          style={{
+            display: "flex", alignItems: "center", gap: 8,
+            padding: "11px 20px", borderRadius: 10, border: "none",
+            background: ACCENT, color: "#1A1108",
+            fontSize: 13.5, fontWeight: 500, fontFamily: "'Inter', sans-serif",
+            cursor: "pointer", flexShrink: 0,
+            transition: "transform 0.15s ease, box-shadow 0.15s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 18px rgba(217,138,76,0.35)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+        >
+          Get in touch
+          <ArrowRight size={15} strokeWidth={2.2} />
+        </button>
       </div>
     </div>
   );

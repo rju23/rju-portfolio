@@ -40,3 +40,20 @@ body {
   67%      { transform: translateX(2px); }
   84%      { transform: translateX(-1px); }
 }
+
+.pk1-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(217,138,76,0.35) transparent;
+}
+.pk1-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.pk1-scroll::-webkit-scrollbar-track { background: transparent; }
+.pk1-scroll::-webkit-scrollbar-thumb {
+  background: rgba(217,138,76,0.3);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.pk1-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(217,138,76,0.5);
+  background-clip: padding-box;
+}
