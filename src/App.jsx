@@ -14,16 +14,15 @@ const NAV = [
   { id: "about",       label: "About",       Icon: User          },
   { id: "services",    label: "Services",    Icon: Grid3x3       },
   { id: "contact",     label: "Contact",     Icon: Mail          },
-  { id: "experiments", label: "Experiments", Icon: FlaskConical  },
   { id: "playground",  label: "Playground",  Icon: Gamepad2      },
-  { id: "buildlog",    label: "Build Log",   Icon: ScrollText    },
+  { id: "comingsoon",  label: "Coming Soon", Icon: Sparkles      },
 ];
 
 export default function App() {
   const [section, setSection] = useState(
     () => {
       const path = window.location.pathname.replace(/^\//, "") || "chat";
-      const valid = ["chat","projects","about","services","contact","experiments","playground","buildlog"];
+      const valid = ["chat","projects","about","services","contact","playground","comingsoon"];
       return valid.includes(path) ? path : "chat";
     }
   );
@@ -59,7 +58,7 @@ export default function App() {
     if (redirect) {
       sessionStorage.removeItem("pk1_redirect");
       const id = redirect.replace(/^\//, "") || "chat";
-      const validSections = ["chat","projects","about","services","contact","experiments","playground","buildlog"];
+      const validSections = ["chat","projects","about","services","contact","playground","comingsoon"];
       if (validSections.includes(id)) {
         setSection(id);
         window.history.replaceState({ pk1Section: id }, "", "/rju-portfolio/" + (id === "chat" ? "" : id));
@@ -199,12 +198,11 @@ export default function App() {
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
           {section === "chat"        && <HeroText />}
-          {section === "projects"    && <SectionView title="Projects"    sub="A selection of things I've built." />}
+          {section === "projects"    && <ProjectsView onNavigate={navigateTo} />}
           {section === "about"       && <AboutView />}
           {section === "services"    && <ServicesView onNavigate={navigateTo} />}
           {section === "contact"     && <ContactView />}
-          {section === "experiments" && <SectionView title="Experiments" sub="Things I built just to see if I could." />}
-          {section === "buildlog"    && <SectionView title="Build Log"   sub="How things get built." />}
+          {section === "comingsoon" && <ComingSoonView />}
         </div>
 
         {section === "chat" && (
@@ -287,9 +285,8 @@ function InputBar({ onNavigate }) {
     { label: "Tell me about Prakash",        Icon: User         },
     { label: "What can he build for me?",    Icon: Grid3x3      },
     { label: "What is Prakash working on?",  Icon: Code2        },
-    { label: "Show me his experiments",      Icon: FlaskConical },
+    { label: "What's coming to PK-1?",       Icon: Sparkles     },
     { label: "Take me to the playground",    Icon: Gamepad2     },
-    { label: "View the build log",           Icon: ScrollText   },
     { label: "How can I contact Prakash?",   Icon: Mail         },
   ];
 
@@ -690,25 +687,491 @@ function SplashScreen({ onDone }) {
   );
 }
 
-function SectionView({ title, sub }) {
+const STATUS_STYLES = {
+  "Built":        { color: "#7FBF7F", background: "rgba(127,191,127,0.12)" },
+  "In progress":  { color: ACCENT,    background: "rgba(217,138,76,0.14)"  },
+  "Coming soon":  { color: TEXT_MUTE, background: "rgba(255,255,255,0.06)" },
+};
+
+const COMING_SOON_TABS = [
+  {
+    id: "experiments",
+    label: "Experiments",
+    Icon: FlaskConical,
+    subtitle: "Things I built just to see if I could.",
+    cards: [
+      {
+        tag: "Three.js · Medical",
+        title: "Medical Visualizer",
+        description: "Interactive visual representations of medical processes — SA node firing sequence, T1DM beta cell destruction, and more as I study.",
+        status: "In progress",
+      },
+      {
+        tag: "Audio · Canvas",
+        title: "Music Visualizer",
+        description: "A visualizer that reacts in real time to music being played.",
+        status: "Built",
+      },
+      {
+        tag: "Desktop · Electron",
+        title: "Media Sync",
+        description: "Sync two media players — pause one and the other immediately plays, and vice versa.",
+        status: "Built",
+      },
+    ],
+  },
+  {
+    id: "buildlog",
+    label: "Build Log",
+    Icon: ScrollText,
+    subtitle: "How things get built.",
+    cards: [
+      {
+        tag: "Coming soon",
+        title: "Short entries. Real process.",
+        description: "Build notes, decisions, what worked, what didn't — written as things happen, not after the fact.",
+        status: "Coming soon",
+      },
+    ],
+  },
+];
+
+function ComingSoonView() {
+  const [activeTab, setActiveTab] = useState("experiments");
+  const tab = COMING_SOON_TABS.find((t) => t.id === activeTab);
+  const gridCols = tab.cards.length > 1 ? "repeat(auto-fit, minmax(300px, 1fr))" : "1fr";
+
   return (
-    <div style={{ padding: "0 48px", maxWidth: 780, margin: "0 auto", width: "100%" }}>
+    <div style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+        <Sparkles size={18} color={ACCENT} strokeWidth={1.8} />
+        <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
+          Coming Soon
+        </h2>
+      </div>
+      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 20px 17px" }}>
+        A preview of what's next for PK-1.
+      </p>
+
+      <div style={{
+        display: "inline-flex", alignItems: "center", gap: 6,
+        padding: "5px 12px", borderRadius: 999,
+        background: "rgba(217,138,76,0.12)", border: "1px solid rgba(217,138,76,0.28)",
+        color: ACCENT, fontSize: 11, letterSpacing: "0.04em",
+        fontFamily: "'Inter', sans-serif", fontWeight: 500,
+        marginBottom: 24, marginLeft: 17,
+      }}>
+        <span style={{ width: 5, height: 5, borderRadius: "50%", background: ACCENT }} />
+        In development
+      </div>
+
+      <div style={{
+        display: "flex", gap: 4, marginLeft: 17, marginBottom: 24,
+        borderBottom: `1px solid ${BORDER}`,
+      }}>
+        {COMING_SOON_TABS.map((t) => {
+          const isActive = t.id === activeTab;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              style={{
+                display: "flex", alignItems: "center", gap: 7,
+                padding: "8px 14px", marginBottom: -1,
+                background: "transparent", border: "none",
+                borderBottom: isActive ? `2px solid ${ACCENT}` : "2px solid transparent",
+                color: isActive ? TEXT : TEXT_DIM,
+                fontSize: 13, fontFamily: "'Inter', sans-serif",
+                fontWeight: isActive ? 500 : 400,
+                cursor: "pointer",
+              }}
+            >
+              <t.Icon size={14} strokeWidth={1.8} color={isActive ? ACCENT : "currentColor"} />
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 20px 1px" }}>{tab.subtitle}</p>
+
+      <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: 14 }}>
+        {tab.cards.map((card) => {
+          const statusStyle = STATUS_STYLES[card.status] ?? STATUS_STYLES["Coming soon"];
+          return (
+            <div
+              key={card.title}
+              style={{
+                padding: "22px 22px 20px",
+                borderRadius: 12,
+                background: "rgba(255,255,255,0.035)",
+                border: `1px solid ${BORDER}`,
+                display: "flex", flexDirection: "column", gap: 10,
+                cursor: "default",
+              }}
+            >
+              <div style={{
+                fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em",
+                color: TEXT_MUTE, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+              }}>
+                {card.tag}
+              </div>
+
+              <h3 style={{
+                fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+                fontSize: 19, color: TEXT, margin: 0,
+              }}>
+                {card.title}
+              </h3>
+
+              <p style={{ fontSize: 13, lineHeight: 1.65, color: TEXT_DIM, margin: "0 0 8px", flex: 1 }}>
+                {card.description}
+              </p>
+
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <span style={{
+                  fontSize: 10.5, padding: "3px 9px", borderRadius: 999,
+                  fontFamily: "'Inter', sans-serif", fontWeight: 500,
+                  letterSpacing: "0.02em",
+                  color: statusStyle.color, background: statusStyle.background,
+                }}>
+                  {card.status}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const PROJECTS = [
+  { id: "876-revive",          title: "876 Revive & Drive",         tag: "Client Work",       description: "A Flutter car wash booking app with a full admin dashboard for managing bookings in real time.", platform: "Android" },
+  { id: "scq-scoreboard",      title: "SCQ Scoreboard",             tag: "Personal · Selling", description: "A Windows desktop scoring app built for School's Challenge Quiz competitions. My first shipped product.", platform: "Windows" },
+  { id: "uno-calculator",      title: "Uno Calculator",             tag: "Personal",           description: "A Flutter app that tracks and calculates Uno scores across multiple players and rounds.", platform: "Android" },
+  { id: "client-management",   title: "Client Management System",   tag: "Personal Tool",      description: "A system I built for myself to manage clients, projects, contracts and follow-ups.", platform: "Web" },
+  { id: "pk1-portfolio",       title: "PK-1 Portfolio",             tag: "Personal",           description: "This portfolio — an AI platform aesthetic built in React/Vite with a prompt-driven navigation system.", platform: "Web" },
+  { id: "medical-visualizer",  title: "Medical Visualizer",         tag: "Experiment",         description: "Interactive Three.js visual representations of medical processes — SA node firing sequence, T1DM beta cell destruction.", platform: "Web" },
+  { id: "music-visualizer",    title: "Music Visualizer",           tag: "Experiment",         description: "A real-time visualizer that reacts to music being played.", platform: "Web" },
+  { id: "media-sync",          title: "Media Sync",                 tag: "Experiment",         description: "A desktop app that syncs two media players — pause one and the other immediately plays.", platform: "Desktop" },
+  { id: "interactive-3d-cube", title: "Interactive 3D Cube",        tag: "Playground",         description: "A Three.js experiment — orbit, move and customise a 3D cube across different environments.", platform: "Web" },
+];
+
+function ProjectsView({ onNavigate }) {
+  const [activeProject, setActiveProject] = useState(null);
+
+  const handleSelect = (project) => {
+    setActiveProject(project.id);
+  };
+
+  return (
+    <div style={{ padding: "0 48px", maxWidth: 980, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
         <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
-          {title}
+          Projects
         </h2>
       </div>
-      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 36px 17px" }}>{sub}</p>
+      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}>Things I've built.</p>
+
       <div style={{
-        border: `1px dashed ${BORDER}`, borderRadius: 14, minHeight: 260,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        flexDirection: "column", gap: 10, color: TEXT_MUTE,
-        background: "rgba(255,255,255,0.02)",
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: 14,
       }}>
-        <span style={{ fontSize: 13 }}>Content coming soon.</span>
+        {PROJECTS.map((project) => {
+          const isActive = activeProject === project.id;
+          return (
+            <div
+              key={project.id}
+              onClick={() => handleSelect(project)}
+              style={{
+                position: "relative",
+                padding: "20px 20px 18px",
+                borderRadius: 12,
+                background: "rgba(255,255,255,0.035)",
+                border: isActive ? "1px solid rgba(255,255,255,0.14)" : `1px solid ${BORDER}`,
+                display: "flex", flexDirection: "column", gap: 8,
+                cursor: "pointer",
+                transition: "transform 0.18s ease, border-color 0.18s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)";
+                const link = e.currentTarget.querySelector("[data-view-link]");
+                if (link) link.style.color = TEXT;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.borderColor = BORDER;
+                const link = e.currentTarget.querySelector("[data-view-link]");
+                if (link) link.style.color = TEXT_MUTE;
+              }}
+            >
+              <div style={{
+                position: "absolute", top: 14, right: 16,
+                fontSize: 10, padding: "3px 8px", borderRadius: 999,
+                color: TEXT_MUTE, background: "rgba(255,255,255,0.06)",
+                fontFamily: "'Inter', sans-serif", fontWeight: 500,
+                letterSpacing: "0.02em",
+              }}>
+                {project.platform}
+              </div>
+
+              <div style={{
+                fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em",
+                color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+                paddingRight: 60,
+              }}>
+                {project.tag}
+              </div>
+
+              <h3 style={{
+                fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+                fontSize: 18, color: TEXT, margin: 0,
+              }}>
+                {project.title}
+              </h3>
+
+              <p style={{ fontSize: 13, lineHeight: 1.6, color: TEXT_DIM, margin: "0 0 6px", flex: 1 }}>
+                {project.description}
+              </p>
+
+              <span
+                data-view-link
+                style={{
+                  fontSize: 12, color: TEXT_MUTE,
+                  fontFamily: "'Inter', sans-serif", fontWeight: 500,
+                  transition: "color 0.18s ease",
+                }}
+              >
+                View project →
+              </span>
+            </div>
+          );
+        })}
       </div>
+
+      {activeProject && (
+        <ProjectShell
+          projectId={activeProject}
+          onBack={() => setActiveProject(null)}
+          onNavigate={(section) => { setActiveProject(null); onNavigate(section); }}
+        >
+          <div style={{ color: "#F4EFE7", padding: 40 }}>
+            Project experience coming soon for: {activeProject}
+          </div>
+        </ProjectShell>
+      )}
     </div>
+  );
+}
+
+const PROJECT_THEMES = {
+  "876-revive":          { color: "#E85D26", label: "876 Revive & Drive" },
+  "scq-scoreboard":      { color: "#2D6BE4", label: "SCQ Scoreboard" },
+  "uno-calculator":      { color: "#E83B3B", label: "Uno Calculator" },
+  "client-management":   { color: "#2DB57A", label: "Client Management" },
+  "pk1-portfolio":       { color: "#D98A4C", label: "PK-1 Portfolio" },
+  "medical-visualizer":  { color: "#26C4E8", label: "Medical Visualizer" },
+  "music-visualizer":    { color: "#9B26E8", label: "Music Visualizer" },
+  "media-sync":          { color: "#E8C426", label: "Media Sync" },
+  "interactive-3d-cube": { color: "#4CE826", label: "Interactive 3D Cube" },
+};
+
+function hexToRgb(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+}
+
+function ProjectShell({ projectId, onBack, onNavigate, children }) {
+  const theme = PROJECT_THEMES[projectId] ?? { color: ACCENT, label: projectId };
+  const rgb = hexToRgb(theme.color);
+
+  const [splashing, setSplashing] = useState(true);
+  const [fading, setFading]       = useState(false);
+  const [navOpen, setNavOpen]     = useState(false);
+
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => setFading(true), 1800);
+    const doneTimer = setTimeout(() => setSplashing(false), 2300);
+    return () => { clearTimeout(fadeTimer); clearTimeout(doneTimer); };
+  }, []);
+
+  useEffect(() => {
+    if (!navOpen) return;
+    const onKey = (e) => { if (e.key === "Escape") setNavOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navOpen]);
+
+  const navButtonStyle = {
+    width: "100%", textAlign: "left",
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: 10, padding: 14,
+    fontFamily: "'Inter', sans-serif", fontSize: 14,
+    color: TEXT, cursor: "pointer",
+    transition: "background 0.15s ease, border-color 0.15s ease",
+  };
+
+  return (
+    <>
+      {/* Layer 2 — project content */}
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 50,
+        background: "#0A0908",
+        opacity: splashing ? 0 : 1,
+        transition: "opacity 0.5s ease",
+      }}>
+        {children}
+      </div>
+
+      {/* Layer 1 — splash */}
+      {splashing && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 100,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          background: `radial-gradient(circle at 50% 45%, ${theme.color} 0%, #0A0908 75%)`,
+          opacity: fading ? 0 : 1,
+          transition: "opacity 0.5s ease",
+          pointerEvents: fading ? "none" : "all",
+        }}>
+          <Sparkles size={48} color={theme.color} strokeWidth={1.5} />
+          <h2 style={{
+            fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+            fontSize: 22, color: "#fff", margin: "18px 0 8px",
+          }}>
+            {theme.label}
+          </h2>
+          <p style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 12,
+            color: "rgba(255,255,255,0.45)", letterSpacing: "0.04em",
+          }}>
+            Loading...
+          </p>
+        </div>
+      )}
+
+      {/* Layer 3 — floating orb */}
+      {!splashing && (
+        <button
+          onClick={() => setNavOpen(true)}
+          style={{
+            position: "fixed", bottom: 28, right: 28, zIndex: 200,
+            width: 44, height: 44, borderRadius: "50%",
+            background: `${theme.color}E6`,
+            border: "none", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            "--orb-color": rgb,
+            animation: "orbPulse 3s ease-in-out infinite",
+            transition: "transform 0.15s ease, box-shadow 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "scale(1.08)";
+            e.currentTarget.style.boxShadow = `0 0 20px 4px rgba(${rgb}, 0.5)`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
+          <Sparkles size={18} color="#fff" strokeWidth={1.8} />
+        </button>
+      )}
+
+      {/* Navigation overlay */}
+      {navOpen && (
+        <div
+          onClick={() => setNavOpen(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 300,
+            background: "rgba(0,0,0,0.75)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "relative",
+              background: "rgba(20,18,16,0.95)",
+              borderRadius: 20, padding: 40,
+              maxWidth: 400, width: "90%",
+              display: "flex", flexDirection: "column", alignItems: "center",
+              textAlign: "center",
+              border: `1px solid rgba(${rgb},0.25)`,
+            }}
+          >
+            <button
+              onClick={() => setNavOpen(false)}
+              aria-label="Close"
+              style={{
+                position: "absolute", top: 14, right: 16,
+                background: "transparent", border: "none",
+                color: TEXT_MUTE, fontSize: 20, lineHeight: 1,
+                cursor: "pointer",
+              }}
+            >
+              ×
+            </button>
+
+            <Sparkles size={28} color={theme.color} strokeWidth={1.6} />
+
+            <h3 style={{
+              fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+              fontSize: 22, color: TEXT, margin: "16px 0 6px",
+            }}>
+              Where to next?
+            </h3>
+            <p style={{
+              fontFamily: "'Inter', sans-serif", fontSize: 13,
+              color: TEXT_DIM, margin: "0 0 24px",
+            }}>
+              You're in {theme.label}
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%" }}>
+              <button
+                style={navButtonStyle}
+                onClick={() => setNavOpen(false)}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.09)"; e.currentTarget.style.borderColor = theme.color; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+              >
+                Continue exploring
+              </button>
+              <button
+                style={navButtonStyle}
+                onClick={() => { setNavOpen(false); onBack(); }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.09)"; e.currentTarget.style.borderColor = theme.color; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+              >
+                Back to Projects
+              </button>
+              <button
+                style={navButtonStyle}
+                onClick={() => { setNavOpen(false); onNavigate("chat"); }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.09)"; e.currentTarget.style.borderColor = theme.color; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+              >
+                Go to Chat
+              </button>
+              <button
+                style={navButtonStyle}
+                onClick={() => { setNavOpen(false); onNavigate("contact"); }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.09)"; e.currentTarget.style.borderColor = theme.color; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+              >
+                Contact Prakash
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
