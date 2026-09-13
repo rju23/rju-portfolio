@@ -62,3 +62,68 @@ body {
   background: rgba(217,138,76,0.5);
   background-clip: padding-box;
 }
+
+/* --- 876 Revive & Drive case study --- */
+.rv-splash-logo {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+.rv-splash-logo.rv-in {
+  opacity: 1;
+  transform: scale(1);
+}
+.rv-splash-logo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255,229,127,0.45) 50%, transparent 80%);
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.rv-splash-logo.rv-sweep::after {
+  opacity: 1;
+  transform: translateX(200%);
+  transition: transform 0.75s ease-in-out;
+}
+
+.rv-splash-tagline {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.rv-splash-tagline.rv-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rv-splash-wrap {
+  transition: opacity 0.5s ease;
+}
+
+.rv-fade-up-section {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.rv-fade-up-section.rv-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes rvPulseTravel {
+  0%   { left: 0%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+.rv-sync-pulse {
+  animation: rvPulseTravel 2.2s ease-in-out infinite;
+}
+
+@media (max-width: 700px) {
+  .rv-step-line { display: none; }
+  .rv-two-col { grid-template-columns: 1fr !important; }
+}

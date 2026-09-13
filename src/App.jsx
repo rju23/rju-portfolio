@@ -1,12 +1,60 @@
 import { useState, useEffect, useRef } from "react";
 import emailjs from "@emailjs/browser";
-import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle } from "lucide-react";
+import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 const BORDER   = "rgba(255,255,255,0.07)";
 const TEXT     = "#F4EFE7";
 const TEXT_DIM = "rgba(244,239,231,0.58)";
 const TEXT_MUTE= "rgba(244,239,231,0.32)";
 const ACCENT   = "#D98A4C";
+
+function openLightbox(src) {
+  window.dispatchEvent(new CustomEvent("rv-lightbox", { detail: src }));
+}
+
+function Lightbox() {
+  const [src, setSrc] = useState(null);
+
+  useEffect(() => {
+    const onOpen = (e) => setSrc(e.detail);
+    window.addEventListener("rv-lightbox", onOpen);
+    return () => window.removeEventListener("rv-lightbox", onOpen);
+  }, []);
+
+  useEffect(() => {
+    if (!src) return;
+    const onKey = (e) => { if (e.key === "Escape") setSrc(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [src]);
+
+  if (!src) return null;
+
+  return (
+    <div
+      onClick={() => setSrc(null)}
+      style={{
+        position: "fixed", inset: 0, zIndex: 10000,
+        background: "rgba(0,0,0,0.85)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: 32, cursor: "zoom-out",
+      }}
+    >
+      <img
+        src={src}
+        alt=""
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: "100%", maxHeight: "100%",
+          objectFit: "contain",
+          borderRadius: 8,
+          boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+          cursor: "default",
+        }}
+      />
+    </div>
+  );
+}
 
 const NAV = [
   { id: "chat",        label: "Chat",        Icon: MessageSquare },
@@ -79,6 +127,7 @@ export default function App() {
     }}>
 
       {/* ── Background ── */}
+      <Lightbox />
       {splash && <SplashScreen onDone={() => setSplash(false)} />}
       <img
         id="parallax-bg"
@@ -959,9 +1008,13 @@ function ProjectsView({ onNavigate }) {
           onBack={() => setActiveProject(null)}
           onNavigate={(section) => { setActiveProject(null); onNavigate(section); }}
         >
-          <div style={{ color: "#F4EFE7", padding: 40 }}>
-            Project experience coming soon for: {activeProject}
-          </div>
+          {activeProject === "876-revive" ? (
+            <ReviveProject onNextProject={() => setActiveProject("scq-scoreboard")} />
+          ) : (
+            <div style={{ color: "#F4EFE7", padding: 40 }}>
+              Project experience coming soon for: {activeProject}
+            </div>
+          )}
         </ProjectShell>
       )}
     </div>
@@ -989,15 +1042,18 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
   const theme = PROJECT_THEMES[projectId] ?? { color: ACCENT, label: projectId };
   const rgb = hexToRgb(theme.color);
 
-  const [splashing, setSplashing] = useState(true);
+  const hasOwnSplash = projectId === "876-revive";
+
+  const [splashing, setSplashing] = useState(!hasOwnSplash);
   const [fading, setFading]       = useState(false);
   const [navOpen, setNavOpen]     = useState(false);
 
   useEffect(() => {
+    if (hasOwnSplash) return;
     const fadeTimer = setTimeout(() => setFading(true), 1800);
     const doneTimer = setTimeout(() => setSplashing(false), 2300);
     return () => { clearTimeout(fadeTimer); clearTimeout(doneTimer); };
-  }, []);
+  }, [hasOwnSplash]);
 
   useEffect(() => {
     if (!navOpen) return;
@@ -1175,6 +1231,721 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
   );
 }
 
+/* ============================== 876 Revive & Drive ============================== */
+
+const RV = {
+  bg: "#F5F4EC",
+  grid: "url('/images/grid.png')",
+  green: "#007A2F",
+  darkGreen: "#005922",
+  gold: "#D4A017",
+  goldLight: "#FFE57F",
+  ink: "#1A1A1A",
+  inkDim: "rgba(26,26,26,0.55)",
+  border: "rgba(0,122,47,0.2)",
+  card: "rgba(255,255,255,0.7)",
+};
+
+const RV_SLIDES = [
+  { src: "/images/slide-1.jpg", title: "Pick Your Services", subtitle: "Add-ons included" },
+  { src: "/images/slide-2.jpg", title: "Set Your Location",  subtitle: "We come to you" },
+  { src: "/images/slide-3.jpg", title: "Choose a Time",      subtitle: "Real-time availability" },
+  { src: "/images/slide-4.jpg", title: "Review & Confirm",   subtitle: "WhatsApp handoff included" },
+];
+
+function RvHeroSlideshow() {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setActive((i) => (i + 1) % RV_SLIDES.length);
+    }, 3500);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div>
+      <div style={{
+        position: "relative", width: "100%", aspectRatio: "9 / 19.5", maxHeight: 480,
+        borderRadius: 12, overflow: "hidden",
+        border: `1px solid ${RV.border}`,
+        background: "#f5f4ec",
+      }}>
+        {RV_SLIDES.map((slide, i) => (
+          <div
+            key={slide.src}
+            style={{
+              position: "absolute", inset: 0,
+              opacity: i === active ? 1 : 0,
+              transition: "opacity 400ms ease",
+            }}
+          >
+            <img
+              src={slide.src}
+              alt={slide.title}
+              onClick={() => openLightbox(slide.src)}
+              style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block", background: "#f5f4ec", cursor: "zoom-in" }}
+              onError={(e) => { e.currentTarget.style.display = "none"; }}
+            />
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.65) 100%)",
+            }} />
+            <div style={{ position: "absolute", left: 20, right: 20, bottom: 20 }}>
+              <div style={{ fontFamily: "'Roboto', sans-serif", fontWeight: 700, fontSize: 22, color: "#fff" }}>
+                {slide.title}
+              </div>
+              <div style={{ fontFamily: "'Roboto', sans-serif", fontWeight: 700, fontSize: 22, color: RV.gold }}>
+                {slide.subtitle}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 14 }}>
+        {RV_SLIDES.map((slide, i) => (
+          <span
+            key={slide.src}
+            style={{
+              width: 8, height: 8, borderRadius: "50%",
+              background: i === active ? RV.green : "rgba(0,122,47,0.25)",
+              transition: "background 300ms ease",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function RvSlideshow({ images, aspectRatio = "16 / 9", interval = 3500, style, fit = "contain" }) {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setActive((i) => (i + 1) % images.length);
+    }, interval);
+    return () => clearInterval(t);
+  }, [images.length, interval]);
+
+  return (
+    <div>
+      <div style={{
+        position: "relative", width: "100%", aspectRatio,
+        borderRadius: 12, overflow: "hidden",
+        border: `1px solid ${RV.border}`,
+        background: "rgba(0,122,47,0.06)",
+        ...style,
+      }}>
+        {images.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            onClick={() => openLightbox(src)}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%", objectFit: fit, display: "block",
+              opacity: i === active ? 1 : 0,
+              cursor: "zoom-in",
+              transition: "opacity 400ms ease",
+            }}
+            onError={(e) => { e.currentTarget.style.display = "none"; }}
+          />
+        ))}
+      </div>
+      {images.length > 1 && (
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 14 }}>
+          {images.map((src, i) => (
+            <span
+              key={src}
+              style={{
+                width: 8, height: 8, borderRadius: "50%",
+                background: i === active ? RV.green : "rgba(0,122,47,0.25)",
+                transition: "background 300ms ease",
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RvReflection({ src, aspectRatio = "9 / 19", reflectionRatio = "9 / 7" }) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        aspectRatio: reflectionRatio,
+        overflow: "hidden",
+        borderRadius: "0 0 12px 12px",
+        marginTop: -1,
+        WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.32), transparent 75%)",
+        maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.32), transparent 75%)",
+        pointerEvents: "none",
+      }}
+    >
+      <div style={{ width: "100%", aspectRatio, transform: "scaleY(-1)" }}>
+        <img
+          src={src}
+          alt=""
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function RvImagePlaceholder({ src, alt, style, label, fit = "cover" }) {
+  return (
+    <div
+      style={{
+        background: "rgba(0,122,47,0.06)",
+        border: `1px solid ${RV.border}`,
+        borderRadius: 12,
+        overflow: "hidden",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        position: "relative",
+        ...style,
+      }}
+    >
+      {label && (
+        <span style={{
+          position: "absolute", fontFamily: "'Roboto', sans-serif",
+          fontSize: 12.5, color: RV.inkDim, textAlign: "center", padding: "0 16px",
+        }}>
+          {label}
+        </span>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        onClick={() => openLightbox(src)}
+        style={{ width: "100%", height: "100%", objectFit: fit, display: "block", position: "relative", zIndex: 1, cursor: "zoom-in" }}
+        onError={(e) => { e.currentTarget.style.display = "none"; }}
+      />
+    </div>
+  );
+}
+
+function RvPill({ children }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      padding: "6px 14px",
+      borderRadius: 999,
+      border: `1px solid rgba(0,122,47,0.4)`,
+      color: RV.green,
+      fontFamily: "'Roboto', sans-serif", fontSize: 12.5, fontWeight: 500,
+      background: "rgba(0,122,47,0.05)",
+    }}>
+      {children}
+    </span>
+  );
+}
+
+function RvSectionHeading({ eyebrow, title, subtitle }) {
+  return (
+    <div style={{ textAlign: "center", marginBottom: 44 }}>
+      {eyebrow && (
+        <div style={{
+          fontFamily: "'Roboto', sans-serif", fontSize: 12, fontWeight: 600,
+          letterSpacing: "0.14em", textTransform: "uppercase",
+          color: RV.green, marginBottom: 12,
+        }}>
+          {eyebrow}
+        </div>
+      )}
+      <h2 style={{
+        fontFamily: "'Roboto', sans-serif", fontWeight: 900,
+        fontSize: 36, color: RV.ink, margin: 0,
+      }}>
+        {title}
+      </h2>
+      {subtitle && (
+        <p style={{
+          fontFamily: "'Roboto', sans-serif", fontSize: 14, color: RV.inkDim,
+          marginTop: 12, maxWidth: 560, marginLeft: "auto", marginRight: "auto", lineHeight: 1.55,
+        }}>
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+}
+
+const RV_SCREENS = [
+  { num: "01", name: "Home",     file: "screen-home.jpg",     desc: "Active booking status, balance, and one-tap booking" },
+  { num: "02", name: "Services", file: "screen-services.jpg", desc: "Full catalog browsable by vehicle type and add-ons" },
+  { num: "03", name: "Activity", file: "screen-activity.jpg", desc: "Booking history, cancellations, and payment status" },
+  { num: "04", name: "Account",  file: "screen-account.jpg",  desc: "Saved vehicles, addresses, and preferences" },
+];
+
+const RV_STEPS = [
+  { title: "Pick Services",     desc: "Choose services and add-ons. Cart persists across sessions." },
+  { title: "Set Location",      desc: "Pin your address on a map or use a saved location." },
+  { title: "Choose a Time",     desc: "Real-time availability based on driver schedules." },
+  { title: "Review & Confirm",  desc: "Final summary. WhatsApp redirect. Terms." },
+  { title: "WhatsApp Handoff",  desc: "Confirmation sent. Admin notified. Booking is live." },
+];
+
+const RV_FEATURES = [
+  { Icon: Users,       title: "Guest and Account Booking", desc: "Guests book without an account. Logged-in users get saved details pre-filled. Both use the same booking flow." },
+  { Icon: ShoppingCart, title: "Persistent Cart",           desc: "The cart survives logout and re-login. If an admin changes a price while a customer has it in their cart, the price updates automatically." },
+  { Icon: Pause,        title: "Pause and Resume",          desc: "Step away mid-booking and pick up exactly where you left off. Requires an account." },
+  { Icon: RefreshCw,    title: "Smart Time Refresh",        desc: "Slots refresh every 60 seconds. A 10-minute idle check catches stale selections before you confirm." },
+  { Icon: Zap,          title: "Conflict Detection",        desc: "If two people try to book the same driver at the same second, only one gets it. The other retries automatically." },
+  { Icon: WifiOff,      title: "Offline Fallback",          desc: "Booking drafts save locally when offline and sync when connection returns." },
+];
+
+const RV_GATES = [
+  { name: "Operating hours", desc: "Is this time within business hours?" },
+  { name: "Lead time",       desc: "Is there enough notice for a same-day booking?" },
+  { name: "Blocked periods", desc: "Has the admin blocked this date or time range?" },
+  { name: "Driver roster",   desc: "Is any driver actually scheduled to work today?" },
+  { name: "Conflict check",  desc: "Does any driver have a gap big enough for this job?" },
+  { name: "Load balancing",  desc: "Of the drivers available, who has the fewest jobs today?" },
+  { name: "Atomic lock",     desc: "The slot is reserved in a single database transaction. If two bookings arrive at the same millisecond, only one wins. The other retries." },
+];
+
+const RV_RACE_CONDITIONS = [
+  { title: "Two people tap Confirm at the exact same moment", problem: "Both see the slot as free.", solution: "A unique lock document means only one can write it — Firestore won't let both succeed." },
+  { title: "The first attempt fails", problem: "The customer just gets an error.", solution: "The system quietly retries up to 3 times and suggests the next open slot if all fail." },
+  { title: "All bookings pile onto one driver", problem: "One driver is overloaded while another sits idle.", solution: "The system counts each driver's bookings and always picks the one with the least — updated in the same transaction." },
+  { title: "The admin needs to override the system", problem: "A driver finishing early can't be scheduled because the algorithm says occupied.", solution: "The admin can force a window open. Business rules like blackout dates and operating hours still apply." },
+  { title: "A customer sits on the time picker for 10 minutes", problem: "The slot they chose may be gone by the time they confirm.", solution: "A quiet re-check runs in the background and flags the slot as stale before they submit." },
+];
+
+const RV_SETTINGS_TABS = [
+  { Icon: Tag,          title: "Services",            desc: "Manage the full catalog. Set prices per vehicle type. Price changes reprice open customer carts in real time." },
+  { Icon: Clock,         title: "Timing",               desc: "Set lead time, block dates, configure travel buffer. Changing the buffer re-checks all existing bookings before applying." },
+  { Icon: Megaphone,     title: "Announcements",        desc: "Post banners to the app. The system auto-posts a fully booked banner when the day fills up and removes it when a slot opens." },
+  { Icon: Smartphone,    title: "Guest Verification",   desc: "Toggle SMS verification for guest bookings. Phone number confirmed before any booking is created." },
+  { Icon: Archive,       title: "Archives",             desc: "Past and cancelled bookings kept for records without cluttering the active view." },
+  { Icon: FlaskConical,  title: "Testing Tools",        desc: "A full staging environment inside the production dashboard. Simulate a fully booked day, test scenarios, and run QA without touching real bookings." },
+];
+
+function RvSplash({ visible }) {
+  const [phase, setPhase] = useState("start"); // start -> logo -> sweep -> tagline -> hold -> exit
+  const [exiting, setExiting] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("logo"), 20);
+    const t2 = setTimeout(() => setPhase("sweep"), 20 + 800 + 300);
+    const t3 = setTimeout(() => setPhase("tagline"), 20 + 800 + 300 + 750 + 150);
+    const t4 = setTimeout(() => setExiting(true), 20 + 800 + 300 + 750 + 150 + 600 + 1600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div
+      className="rv-splash-wrap"
+      style={{
+        position: "fixed", inset: 0, zIndex: 250,
+        background: "#0A0A0A",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        opacity: exiting ? 0 : 1,
+        transitionDuration: "0.5s",
+      }}
+    >
+      <div
+        className={`rv-splash-logo${phase !== "start" ? " rv-in" : ""}${phase === "sweep" || phase === "tagline" || phase === "hold" ? " rv-sweep" : ""}`}
+        style={{
+          width: "62%", maxWidth: 320, aspectRatio: "1 / 1",
+          borderRadius: 18,
+          background: "rgba(0,122,47,0.12)",
+          border: `1px solid ${RV.border}`,
+        }}
+      >
+        <img
+          src="/images/logo.jpeg"
+          alt="876 Revive & Drive"
+          style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 18, display: "block" }}
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
+        />
+      </div>
+
+      <div className={`rv-splash-tagline${phase === "tagline" || phase === "hold" ? " rv-in" : ""}`} style={{ marginTop: 24, textAlign: "center" }}>
+        <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: 26 }}>
+          <span style={{
+            background: "linear-gradient(90deg, #FFFFFF, #C0C0C0, #E8E8E8)",
+            WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent",
+          }}>
+            876 Revive
+          </span>
+          <span style={{
+            background: "linear-gradient(90deg, #D4A017, #FFE57F, #B8860B, #FFD700)",
+            WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent",
+          }}>
+            {" "}& Drive
+          </span>
+        </div>
+        <div style={{
+          fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 11,
+          letterSpacing: "0.18em", color: "#007A2F", marginTop: 8,
+        }}>
+          MOBILE CAR WASH & VEHICLE DETAILING
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReviveProject({ onNextProject }) {
+  const [splashing, setSplashing] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setSplashing(false), 4700);
+    return () => clearTimeout(t);
+  }, []);
+
+  const cardStyle = {
+    background: RV.card,
+    border: `1px solid ${RV.border}`,
+    borderRadius: 16,
+    boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+    borderTop: `3px solid ${RV.green}`,
+    padding: 16,
+  };
+
+  return (
+    <>
+      <RvSplash visible={splashing} />
+
+      <div
+        className="pk1-scroll"
+        style={{
+          position: "fixed", inset: 0, zIndex: 100,
+          background: RV.bg,
+          backgroundImage: RV.grid,
+          backgroundSize: "480px",
+          backgroundRepeat: "repeat",
+          overflowY: "auto",
+          fontFamily: "'Roboto', sans-serif", color: RV.ink,
+          display: "flex", flexDirection: "column", gap: 48,
+        }}
+      >
+        {/* HERO */}
+        <section style={{ padding: "56px 24px 70px", maxWidth: 1100, margin: "0 auto" }}>
+          <div className="rv-two-col" style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 48, alignItems: "center" }}>
+            <div>
+              <div style={{
+                fontSize: 12, fontWeight: 600,
+                letterSpacing: "0.14em", textTransform: "uppercase", color: RV.green, marginBottom: 18,
+              }}>
+                CLIENT WORK · MOBILE + WEB
+              </div>
+              <h1 style={{
+                fontWeight: 900, fontSize: "clamp(30px, 4.2vw, 46px)", lineHeight: 1.2, margin: 0,
+              }}>
+                <span style={{ color: RV.ink }}>A car wash booking</span><br />
+                <span style={{ color: RV.green }}>system that works.</span>
+              </h1>
+              <p style={{ fontSize: 15, lineHeight: 1.55, color: RV.inkDim, marginTop: 20, maxWidth: 480 }}>
+                Built for 876 Revive & Drive — a mobile car wash business in Jamaica. One app for customers, one dashboard for the admin, connected in real time.
+              </p>
+              <div style={{ display: "flex", gap: 14, marginTop: 30, flexWrap: "wrap" }}>
+                <button
+                  disabled
+                  style={{
+                    padding: "13px 26px", borderRadius: 10, border: "none",
+                    background: RV.green, color: "#fff", fontFamily: "'Roboto', sans-serif",
+                    fontSize: 14, fontWeight: 500, cursor: "not-allowed", opacity: 0.55,
+                  }}
+                >
+                  Download App
+                </button>
+                <button
+                  style={{
+                    padding: "13px 26px", borderRadius: 10, background: "transparent",
+                    border: `1px solid ${RV.green}`, color: RV.green, fontFamily: "'Roboto', sans-serif",
+                    fontSize: 14, fontWeight: 500, cursor: "pointer",
+                  }}
+                >
+                  Try Dashboard
+                </button>
+              </div>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 26 }}>
+                <RvPill>Flutter</RvPill>
+                <RvPill>Firebase</RvPill>
+                <RvPill>Mobile</RvPill>
+                <RvPill>Web Dashboard</RvPill>
+              </div>
+            </div>
+
+            <RvHeroSlideshow />
+          </div>
+        </section>
+
+        {/* PROBLEM */}
+        <section style={{ background: RV.darkGreen, padding: "63px 24px" }}>
+          <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
+            <p style={{
+              fontStyle: "italic", fontWeight: 300, fontSize: 21, lineHeight: 1.55,
+              color: "#fff", margin: "0 0 22px",
+            }}>
+              "Before this app, bookings came in over WhatsApp and phone calls. No schedule. No way to know if a driver was free. A missed call was a missed booking."
+            </p>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", margin: 0 }}>
+              876 Revive & Drive needed a complete system. Not just an app.
+            </p>
+          </div>
+        </section>
+
+        {/* THE APP */}
+        <section style={{ padding: "70px 24px", maxWidth: 1100, margin: "0 auto" }}>
+          <RvSectionHeading title="The App" subtitle="Four screens. Everything a customer needs." />
+          <div style={{
+            display: "flex", flexWrap: "nowrap", gap: 28, overflowX: "auto",
+          }}>
+            {RV_SCREENS.map((s) => (
+              <div key={s.name} style={{ display: "flex", flexDirection: "column", gap: 12, flex: "1 1 0", minWidth: 160 }}>
+                <div>
+                  <RvImagePlaceholder
+                    src={`/images/${s.file}`}
+                    alt={s.name}
+                    style={{ aspectRatio: "9 / 19", width: "100%", background: RV.bg }}
+                  >
+                  </RvImagePlaceholder>
+                  <RvReflection src={`/images/${s.file}`} aspectRatio="9 / 19" reflectionRatio="9 / 3.2" />
+                </div>
+                <div style={{ position: "relative", height: "auto" }}>
+                  <div style={{ fontWeight: 900, fontSize: 34, color: "rgba(0,122,47,0.15)", lineHeight: 1 }}>{s.num}</div>
+                  <div style={{ fontWeight: 600, fontSize: 14.5, color: RV.green, marginTop: -6 }}>{s.name}</div>
+                  <div style={{ fontSize: 12.5, color: RV.inkDim, lineHeight: 1.5, marginTop: 4 }}>{s.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* BOOKING FLOW */}
+        <section style={{ padding: "28px 24px 70px", maxWidth: 1100, margin: "0 auto" }}>
+          <RvSectionHeading title="How a booking works" />
+          <div style={{
+            display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 24, position: "relative",
+          }}>
+            {RV_STEPS.map((step, i) => (
+              <div key={step.title} style={{
+                flex: "1 1 170px", display: "flex", flexDirection: "column", alignItems: "center",
+                textAlign: "center", position: "relative", minWidth: 150,
+              }}>
+                {i < RV_STEPS.length - 1 && (
+                  <div className="rv-step-line" style={{
+                    position: "absolute", top: 18, left: "60%", width: "90%", height: 1,
+                    background: RV.border,
+                  }} />
+                )}
+                <div style={{
+                  width: 36, height: 36, borderRadius: "50%", background: RV.green,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#fff", fontWeight: 700, fontSize: 14, marginBottom: 14, position: "relative", zIndex: 1,
+                }}>
+                  {i + 1}
+                </div>
+                <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 6 }}>{step.title}</div>
+                <div style={{ fontSize: 12.5, color: RV.inkDim, lineHeight: 1.5 }}>{step.desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FEATURE SPOTLIGHT */}
+        <section style={{ padding: "28px 24px 70px", maxWidth: 1100, margin: "0 auto" }}>
+          <RvSectionHeading title="What makes it stand out" />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+            {RV_FEATURES.map(({ Icon, title, desc }) => (
+              <div key={title} style={cardStyle}>
+                <Icon size={24} color={RV.green} strokeWidth={1.8} style={{ marginBottom: 14 }} />
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{title}</div>
+                <div style={{ fontSize: 14, color: RV.inkDim, lineHeight: 1.55 }}>{desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* BOOKING ALGORITHM */}
+        <section style={{ padding: "28px 24px 77px", maxWidth: 1160, margin: "0 auto" }}>
+          <div className="rv-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "start" }}>
+            <div>
+              <h2 style={{ fontWeight: 900, fontSize: 36, lineHeight: 1.3, margin: "0 0 18px" }}>
+                Two layers of protection against double-bookings.
+              </h2>
+              <p style={{ fontSize: 14.5, lineHeight: 1.55, color: RV.inkDim, marginBottom: 36 }}>
+                When a booking comes in, the system temporarily blocks out a window around that slot while it waits for admin approval. Once the admin confirms and sets the real service time, the schedule adjusts to the exact duration. The longer that approval takes, the wider the temporary block sits — which is why fast approvals keep the schedule tight. The algorithm handles instant collisions automatically. The admin keeps the calendar accurate.
+              </p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                {RV_GATES.map((g, i) => (
+                  <div key={g.name} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                    <div style={{
+                      fontFamily: "monospace", color: RV.green,
+                      fontSize: 15, fontWeight: 700, flexShrink: 0, width: 26,
+                    }}>
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 4 }}>{g.name}</div>
+                      <div style={{ fontSize: 13, color: RV.inkDim, lineHeight: 1.55 }}>{g.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, paddingTop: 6 }}>
+              {RV_RACE_CONDITIONS.map((rc) => (
+                <div key={rc.title} style={cardStyle}>
+                  <div style={{ fontWeight: 700, fontSize: 14.5, color: RV.gold, marginBottom: 8 }}>{rc.title}</div>
+                  <div style={{ fontSize: 13, color: RV.inkDim, lineHeight: 1.55, marginBottom: 6 }}>
+                    <strong style={{ color: RV.ink }}>Problem:</strong> {rc.problem}
+                  </div>
+                  <div style={{ fontSize: 13, color: RV.inkDim, lineHeight: 1.55 }}>
+                    <strong style={{ color: RV.ink }}>Solution:</strong> {rc.solution}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* DASHBOARD */}
+        <section style={{ padding: "28px 24px 77px", maxWidth: 1100, margin: "0 auto" }}>
+          <RvSectionHeading title="The Admin Dashboard" subtitle="Real-time control over every booking, driver, and setting." />
+
+          <RvSlideshow
+            images={["/images/dashboard-home1.png", "/images/dashboard-home2.png"]}
+            aspectRatio="224 / 100"
+            style={{ marginBottom: 12 }}
+          />
+          <p style={{ fontSize: 13, color: RV.inkDim, textAlign: "center", marginBottom: 48, marginTop: 12 }}>
+            Live driver grid, booking stats, and override controls on one screen.
+          </p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+            {RV_SETTINGS_TABS.map(({ Icon, title, desc }) => (
+              <div key={title} style={{ ...cardStyle, display: "flex", gap: 16, alignItems: "flex-start" }}>
+                <Icon size={20} color={RV.green} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 2 }} />
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6 }}>{title}</div>
+                  <div style={{ fontSize: 13, color: RV.inkDim, lineHeight: 1.55 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* OVERRIDE */}
+        <section style={{ background: RV.darkGreen, padding: "63px 24px" }}>
+          <div className="rv-two-col" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.15fr", gap: 48, alignItems: "start" }}>
+            <div>
+              <h2 style={{ fontWeight: 900, fontSize: 36, color: "#fff", margin: "0 0 10px" }}>The Override</h2>
+              <div style={{ fontWeight: 500, fontSize: 15, color: RV.gold, marginBottom: 24 }}>
+                When the algorithm says no, but the admin knows better.
+              </div>
+              <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "rgba(255,255,255,0.75)", marginBottom: 18 }}>
+                The system normally blocks a driver if their schedule shows a conflict. But sometimes a driver finishes early, or two stops can be back-to-back. The override lets the admin force a window open.
+              </p>
+              <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "rgba(255,255,255,0.75)", marginBottom: 28 }}>
+                It only bypasses the occupancy check. Operating hours, blackout dates, lead time, and driver roster rules still apply. It is a narrow, auditable exception — not a way to break the system.
+              </p>
+
+              <div style={{
+                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
+                borderRadius: 12, padding: 20,
+                display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16,
+              }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: RV.gold, marginBottom: 8 }}>
+                    What it bypasses
+                  </div>
+                  <div style={{ fontSize: 13, color: "#fff" }}>Driver occupancy conflict</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", marginBottom: 8 }}>
+                    What it does NOT bypass
+                  </div>
+                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.55 }}>
+                    Operating hours · Blackout dates · Lead time · Driver roster
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <RvImagePlaceholder
+              src="/images/dashboard-override.png"
+              alt="Override screenshot"
+              fit="cover"
+              style={{ width: "100%", aspectRatio: "16 / 10", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)" }}
+            />
+          </div>
+        </section>
+
+        {/* REAL-TIME SYNC */}
+        <section style={{ padding: "70px 24px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+          <RvSectionHeading title="App and dashboard, always in sync." />
+          <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28 }}>
+            <div style={{ ...cardStyle, flex: 1, textAlign: "center" }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>Customer App</div>
+              <div style={{ fontSize: 12.5, color: RV.inkDim }}>Booking confirmed</div>
+            </div>
+            <div style={{ position: "relative", flex: "0 0 100px", height: 4, background: RV.border, borderRadius: 2 }}>
+              <div className="rv-sync-pulse" style={{
+                position: "absolute", top: -3, width: 10, height: 10, borderRadius: "50%",
+                background: RV.gold, boxShadow: `0 0 10px ${RV.gold}`,
+              }} />
+            </div>
+            <div style={{ ...cardStyle, flex: 1, textAlign: "center" }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>Admin Dashboard</div>
+              <div style={{ fontSize: 12.5, color: RV.inkDim }}>Booking appears</div>
+            </div>
+          </div>
+          <p style={{ fontSize: 13.5, color: RV.inkDim, lineHeight: 1.55 }}>
+            The moment a customer confirms, it appears in the dashboard. Override a slot in the dashboard, it shows as available in the app. No refresh. No delay.
+          </p>
+        </section>
+
+        {/* TECH STACK */}
+        <section style={{ padding: "14px 24px 70px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+          <RvSectionHeading title="Built with" />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
+            {["Flutter", "Dart", "Firebase", "Firestore", "Cloud Functions", "FCM", "Google Maps", "React", "JavaScript"].map((t) => (
+              <RvPill key={t}>{t}</RvPill>
+            ))}
+          </div>
+        </section>
+
+        {/* STATUS */}
+        <section style={{ padding: "0 24px 70px", textAlign: "center" }}>
+          <p style={{ fontSize: 15, color: RV.inkDim, maxWidth: 560, margin: "0 auto", lineHeight: 1.55 }}>
+            Delivered and in use. Pending Play Store deployment. Driver app phase planned.
+          </p>
+        </section>
+
+        {/* NEXT PROJECT */}
+        <div
+          onClick={onNextProject}
+          style={{
+            background: RV.darkGreen,
+            padding: "20px 24px",
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+            cursor: "pointer",
+            fontSize: 14, color: "#fff",
+          }}
+        >
+          <span style={{ color: "rgba(255,255,255,0.6)" }}>876 Revive & Drive</span>
+          <span>Next · SCQ Scoreboard →</span>
+        </div>
+      </div>
+    </>
+  );
+}
+
 const aboutParagraphStyle = {
   fontSize: 15.5, lineHeight: 1.8,
   color: "rgba(244,239,231,0.72)",
@@ -1185,18 +1956,20 @@ const aboutParagraphStyle = {
 function AboutView() {
   return (
     <div style={{ padding: "0 48px", maxWidth: 780, margin: "0 auto", width: "100%" }}>
-      <div style={{
+      <div className="rv-two-col" style={{
         display: "grid", gridTemplateColumns: "320px 1fr", gap: 40,
         marginBottom: 36, alignItems: "start",
       }}>
         <img
           src="/images/prakash.jpg"
           alt="Prakash Sejwani"
+          onClick={() => openLightbox("/images/prakash.jpg")}
           style={{
-            width: 320, height: 400, borderRadius: 16,
+            width: "100%", maxWidth: 320, height: 400, borderRadius: 16,
             objectFit: "cover",
             border: `1px solid ${BORDER}`,
             flexShrink: 0,
+            cursor: "zoom-in",
           }}
         />
 
