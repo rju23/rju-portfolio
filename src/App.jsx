@@ -933,11 +933,15 @@ function ProjectsView({ onNavigate }) {
           const isActive = activeProject === project.id;
           const isRevive = project.id === "876-revive";
           const isScq = project.id === "scq-scoreboard";
+          const isUno = project.id === "uno-calculator";
+          const isPk1 = project.id === "pk1-portfolio";
 
           const reviveDefaultBorder = "rgba(0,122,47,0.35)";
           const reviveHoverBorder = "rgba(0,122,47,0.7)";
           const scqDefaultBorder = "rgba(200,162,74,0.35)";
           const scqHoverBorder = "rgba(200,162,74,0.75)";
+          const unoDefaultBorder = "rgba(227,38,58,0.35)";
+          const unoHoverBorder = "rgba(227,38,58,0.7)";
 
           return (
             <div
@@ -951,14 +955,20 @@ function ProjectsView({ onNavigate }) {
                   ? "#050F07"
                   : isScq
                   ? "radial-gradient(220px 140px at 30% -10%, rgba(240,200,74,0.22), transparent 65%), linear-gradient(160deg, #8a1420 0%, #5c0e18 55%, #2a0709 100%)"
+                  : isUno
+                  ? "radial-gradient(220px 140px at 80% -10%, rgba(245,196,0,0.25), transparent 60%), radial-gradient(200px 160px at 5% 115%, rgba(0,87,168,0.2), transparent 60%), linear-gradient(160deg, #4a0d14 0%, #29070b 55%, #170406 100%)"
                   : "rgba(255,255,255,0.035)",
-                backgroundImage: isRevive ? "url('/images/grid.png')" : undefined,
-                backgroundRepeat: isRevive ? "repeat" : undefined,
-                backgroundSize: isRevive ? "480px" : undefined,
+                ...(isRevive ? {
+                  backgroundImage: "url('/images/grid.png')",
+                  backgroundRepeat: "repeat",
+                  backgroundSize: "480px",
+                } : null),
                 border: isRevive
                   ? `1px solid ${reviveDefaultBorder}`
                   : isScq
                   ? `1px solid ${scqDefaultBorder}`
+                  : isUno
+                  ? `1px solid ${unoDefaultBorder}`
                   : (isActive ? "1px solid rgba(255,255,255,0.14)" : `1px solid ${BORDER}`),
                 boxShadow: "none",
                 display: "flex", flexDirection: "column", gap: 8,
@@ -966,18 +976,21 @@ function ProjectsView({ onNavigate }) {
                 transition: "transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.transform = isUno ? "translateY(-4px)" : "translateY(-3px)";
                 if (isRevive) {
                   e.currentTarget.style.borderColor = reviveHoverBorder;
                   e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,122,47,0.15)";
                 } else if (isScq) {
                   e.currentTarget.style.borderColor = scqHoverBorder;
                   e.currentTarget.style.boxShadow = "0 4px 24px rgba(200,162,74,0.18)";
+                } else if (isUno) {
+                  e.currentTarget.style.borderColor = unoHoverBorder;
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(227,38,58,0.22)";
                 } else {
                   e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)";
                 }
                 const link = e.currentTarget.querySelector("[data-view-link]");
-                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#f0c84a" : TEXT;
+                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#f0c84a" : isUno ? "#F5C400" : TEXT;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
@@ -987,19 +1000,22 @@ function ProjectsView({ onNavigate }) {
                 } else if (isScq) {
                   e.currentTarget.style.borderColor = scqDefaultBorder;
                   e.currentTarget.style.boxShadow = "none";
+                } else if (isUno) {
+                  e.currentTarget.style.borderColor = unoDefaultBorder;
+                  e.currentTarget.style.boxShadow = "none";
                 } else {
                   e.currentTarget.style.borderColor = BORDER;
                 }
                 const link = e.currentTarget.querySelector("[data-view-link]");
-                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#c8a24a" : TEXT_MUTE;
+                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "#F5C400" : TEXT_MUTE;
               }}
             >
               <div style={{
                 position: "absolute", top: 14, right: 16,
                 fontSize: 10, padding: "3px 8px", borderRadius: 999,
-                color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : TEXT_MUTE,
-                background: isRevive ? "rgba(0,122,47,0.1)" : isScq ? "rgba(200,162,74,0.12)" : "rgba(255,255,255,0.06)",
-                border: isRevive ? "1px solid rgba(0,122,47,0.5)" : isScq ? "1px solid rgba(200,162,74,0.5)" : "none",
+                color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "#F5C400" : TEXT_MUTE,
+                background: isRevive ? "rgba(0,122,47,0.1)" : isScq ? "rgba(200,162,74,0.12)" : isUno ? "rgba(245,196,0,0.12)" : "rgba(255,255,255,0.06)",
+                border: isRevive ? "1px solid rgba(0,122,47,0.5)" : isScq ? "1px solid rgba(200,162,74,0.5)" : isUno ? "1px solid rgba(245,196,0,0.4)" : "none",
                 fontFamily: "'Inter', sans-serif", fontWeight: 500,
                 letterSpacing: "0.02em",
               }}>
@@ -1008,7 +1024,7 @@ function ProjectsView({ onNavigate }) {
 
               <div style={{
                 fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em",
-                color: isRevive ? "#D4A017" : isScq ? "#2dd4bf" : ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+                color: isRevive ? "#D4A017" : isScq ? "#2dd4bf" : isUno ? "#F5C400" : ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
                 paddingRight: 60,
               }}>
                 {project.tag}
@@ -1016,25 +1032,39 @@ function ProjectsView({ onNavigate }) {
 
               <h3 style={{
                 fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
-                fontSize: 18, color: isRevive ? "#0A1F0D" : isScq ? "#f0c84a" : TEXT, margin: 0,
+                fontSize: 18, color: isRevive ? "#0A1F0D" : isScq ? "#f0c84a" : isUno ? "#fff" : TEXT, margin: 0,
               }}>
                 {project.title}
               </h3>
 
-              <p style={{ fontSize: 13, lineHeight: 1.6, color: isRevive ? "rgba(10,31,13,0.68)" : isScq ? "rgba(255,255,255,0.6)" : TEXT_DIM, margin: "0 0 6px", flex: 1 }}>
+              <p style={{ fontSize: 13, lineHeight: 1.6, color: isRevive ? "rgba(10,31,13,0.68)" : isScq ? "rgba(255,255,255,0.6)" : isUno ? "rgba(255,255,255,0.62)" : TEXT_DIM, margin: "0 0 6px", flex: 1 }}>
                 {project.description}
               </p>
 
               <span
                 data-view-link
                 style={{
-                  fontSize: 12, color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : TEXT_MUTE,
+                  fontSize: 12, color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "rgba(245,196,0,0.75)" : TEXT_MUTE,
                   fontFamily: "'Inter', sans-serif", fontWeight: 500,
                   transition: "color 0.18s ease",
                 }}
               >
                 View project →
               </span>
+
+              {isPk1 && (
+                <img
+                  src="/images/prakash.jpg"
+                  alt="Prakash Sejwani"
+                  style={{
+                    position: "absolute", bottom: -10, right: -10,
+                    width: 36, height: 36, borderRadius: "50%",
+                    objectFit: "cover",
+                    border: `2px solid ${ACCENT}`,
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                  }}
+                />
+              )}
             </div>
           );
         })}
@@ -1050,6 +1080,13 @@ function ProjectsView({ onNavigate }) {
             <ReviveProject onNextProject={() => setActiveProject("scq-scoreboard")} />
           ) : activeProject === "scq-scoreboard" ? (
             <ScoreboardProject onNextProject={() => setActiveProject("uno-calculator")} />
+          ) : activeProject === "uno-calculator" ? (
+            <UnoProject onNextProject={() => setActiveProject("client-management")} />
+          ) : activeProject === "pk1-portfolio" ? (
+            <PortfolioProject
+              onNextProject={() => setActiveProject("medical-visualizer")}
+              onViewLiveSite={() => { setActiveProject(null); onNavigate("chat"); }}
+            />
           ) : (
             <div style={{ color: "#F4EFE7", padding: 40 }}>
               Project experience coming soon for: {activeProject}
@@ -1082,7 +1119,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
   const theme = PROJECT_THEMES[projectId] ?? { color: ACCENT, label: projectId };
   const rgb = hexToRgb(theme.color);
 
-  const hasOwnSplash = projectId === "876-revive" || projectId === "scq-scoreboard";
+  const hasOwnSplash = projectId === "876-revive" || projectId === "scq-scoreboard" || projectId === "uno-calculator" || projectId === "pk1-portfolio";
 
   const [splashing, setSplashing] = useState(!hasOwnSplash);
   const [fading, setFading]       = useState(false);
@@ -1292,6 +1329,126 @@ const RV_SLIDES = [
   { src: "/images/slide-3.jpg", title: "Choose a Time",      subtitle: "Real-time availability" },
   { src: "/images/slide-4.jpg", title: "Review & Confirm",   subtitle: "WhatsApp handoff included" },
 ];
+
+function PortfolioProject({ onNextProject, onViewLiveSite }) {
+  const [splash, setSplash] = useState(true);
+
+  return (
+    <>
+      {splash && <SplashScreen onDone={() => setSplash(false)} />}
+
+      <div style={{
+        position: "fixed", inset: 0,
+        background: "#0D0C0B",
+        overflow: "hidden",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        opacity: splash ? 0 : 1,
+        transition: "opacity 0.4s ease",
+      }}>
+        <img
+          src="/bg.png"
+          alt=""
+          style={{
+            position: "absolute", top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "108%", height: "108%",
+            objectFit: "cover", objectPosition: "center",
+            userSelect: "none", pointerEvents: "none",
+          }}
+        />
+
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: `
+            radial-gradient(ellipse 70% 40% at 30% 60%, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0) 100%),
+            radial-gradient(ellipse 100% 30% at 50% 100%, rgba(10,9,8,0.6) 0%, rgba(10,9,8,0) 70%),
+            linear-gradient(to right, rgba(10,9,8,0.55) 0%, rgba(10,9,8,0.1) 35%, rgba(10,9,8,0) 60%)
+          `,
+        }} />
+
+        <div style={{
+          position: "relative", zIndex: 1,
+          width: "min(560px, 92vw)",
+          background: "rgba(20,18,16,0.72)",
+          border: `1px solid ${BORDER}`,
+          borderRadius: 20,
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          padding: "44px 40px",
+          display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+        }}>
+          <img
+            src="/images/prakash.jpg"
+            alt="Prakash Sejwani"
+            style={{
+              position: "absolute", bottom: -14, right: -14,
+              width: 48, height: 48, borderRadius: "50%",
+              objectFit: "cover",
+              border: `2px solid ${ACCENT}`,
+              boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
+            }}
+          />
+
+          <Sparkles size={32} color={ACCENT} strokeWidth={1.5} />
+
+          <h2 style={{
+            fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+            fontSize: 32, color: TEXT, margin: "18px 0 16px",
+          }}>
+            You're looking at it.
+          </h2>
+
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.75, color: TEXT_DIM, margin: "0 0 14px" }}>
+            This portfolio was designed and built entirely by me — from the atmospheric background and the floating sidebar, to the prompt-based navigation and every project page inside it.
+          </p>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.75, color: TEXT_DIM, margin: "0 0 24px" }}>
+            It is built with React and Vite, deployed on Vercel, and uses a real AI assistant (EmailJS for contact, iframe embeds for demos). No templates. No themes. Just ideas turned into code.
+          </p>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 24 }}>
+            {["React", "Vite", "Vercel", "EmailJS"].map((t) => (
+              <span key={t} style={{
+                padding: "5px 14px", borderRadius: 999,
+                border: "1px solid rgba(217,138,76,0.4)",
+                color: ACCENT, fontSize: 12, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+              }}>
+                {t}
+              </span>
+            ))}
+          </div>
+
+          <div style={{ width: "100%", height: 1, background: BORDER, marginBottom: 24 }} />
+
+          <div style={{ display: "flex", gap: 12, width: "100%" }}>
+            <button
+              onClick={onViewLiveSite}
+              style={{
+                flex: 1, padding: "12px 0", borderRadius: 10,
+                border: `1px solid ${BORDER}`, background: "transparent", color: TEXT,
+                fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: 13.5,
+                cursor: "pointer",
+              }}
+            >
+              View live site
+            </button>
+            <button
+              onClick={onNextProject}
+              style={{
+                flex: 1, padding: "12px 0", borderRadius: 10,
+                border: "none", background: ACCENT, color: "#1A1108",
+                fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13.5,
+                cursor: "pointer",
+              }}
+            >
+              Next project →
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
 
 function RvHeroSlideshow() {
   const [active, setActive] = useState(0);
@@ -3102,6 +3259,729 @@ function ScoreboardProject({ onNextProject }) {
         </div>
       </div>
     </>
+  );
+}
+
+const UNO_COLORS = {
+  red:    "#E3263A",
+  yellow: "#F5C400",
+  green:  "#1A9E4A",
+  blue:   "#0057A8",
+  black:  "#1A1A1A",
+  white:  "#FFFFFF",
+  wild:   "linear-gradient(135deg, #E3263A, #F5C400, #1A9E4A, #0057A8)",
+};
+
+function useUnoFonts() {
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap";
+    document.head.appendChild(link);
+    return () => { document.head.removeChild(link); };
+  }, []);
+}
+
+function UnoCard({ color, label, children, animClass }) {
+  const bg = UNO_COLORS[color] || UNO_COLORS.red;
+  const isWild = color === "wild";
+
+  return (
+    <div
+      className={animClass}
+      style={{
+        position: "relative",
+        width: "min(520px, 92vw)",
+        height: "min(720px, 88vh)",
+        borderRadius: 24,
+        background: bg,
+        backgroundImage: isWild ? UNO_COLORS.wild : undefined,
+        boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+        flexShrink: 0,
+      }}
+    >
+      {/* white inner border */}
+      <div style={{
+        position: "absolute", inset: 8,
+        borderRadius: 18,
+        border: "6px solid #FFFFFF",
+        pointerEvents: "none",
+      }} />
+
+      {/* top-left corner */}
+      <div style={{
+        position: "absolute", top: 22, left: 22,
+        width: 40, height: 56,
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <div style={{
+          position: "absolute", inset: 0,
+          borderRadius: "50%",
+          background: "rgba(255,255,255,0.2)",
+        }} />
+        <span style={{
+          position: "relative",
+          fontFamily: "'Nunito', sans-serif", fontWeight: 900,
+          fontSize: 22, color: "#FFFFFF",
+        }}>
+          {label}
+        </span>
+      </div>
+
+      {/* bottom-right corner */}
+      <div style={{
+        position: "absolute", bottom: 22, right: 22,
+        width: 40, height: 56,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        transform: "rotate(180deg)",
+      }}>
+        <div style={{
+          position: "absolute", inset: 0,
+          borderRadius: "50%",
+          background: "rgba(255,255,255,0.2)",
+        }} />
+        <span style={{
+          position: "relative",
+          fontFamily: "'Nunito', sans-serif", fontWeight: 900,
+          fontSize: 22, color: "#FFFFFF",
+        }}>
+          {label}
+        </span>
+      </div>
+
+      {/* center oval */}
+      <div style={{
+        position: "absolute",
+        top: "50%", left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "90%", height: "82%",
+        borderRadius: "50% / 16%",
+        background: "#FFFFFF",
+        overflow: "hidden",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        boxSizing: "border-box",
+      }}>
+        <div style={{
+          width: "100%", maxHeight: "100%",
+          overflowY: "auto",
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          padding: "26px 28px",
+          boxSizing: "border-box",
+        }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UnoPillBadge({ children, color = "#E3263A", background }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      padding: "4px 12px",
+      borderRadius: 999,
+      fontSize: 11.5, fontWeight: 600,
+      fontFamily: "'Inter', sans-serif",
+      color: background ? color : "#fff",
+      background: background || color,
+    }}>
+      {children}
+    </span>
+  );
+}
+
+const UNO_CARD_VALUES = {
+  "0": 0, "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9,
+  "Skip": 20, "Rev": 20, "+2": 20, "Wild": 50, "+4": 50,
+};
+
+function UnoDemoCard() {
+  const [selected, setSelected] = useState([]);
+  const [saved, setSaved] = useState(false);
+
+  const total = selected.reduce((sum, c) => sum + UNO_CARD_VALUES[c.face], 0);
+
+  const addCard = (face) => {
+    setSelected((prev) => [...prev, { face, uid: `${face}-${Date.now()}-${Math.random()}` }]);
+  };
+  const removeCard = (uid) => {
+    setSelected((prev) => prev.filter((c) => c.uid !== uid));
+  };
+  const clear = () => setSelected([]);
+  const save = () => {
+    setSaved(true);
+    setTimeout(() => {
+      setSaved(false);
+      setSelected([]);
+    }, 1200);
+  };
+
+  const faces = ["0","1","2","3","4","5","6","7","8","9","Skip","Rev","+2","Wild","+4"];
+  const faceColor = (f) => {
+    if (["Skip","Rev","+2"].includes(f)) return UNO_COLORS.blue;
+    if (["Wild","+4"].includes(f)) return "#1A1A1A";
+    return UNO_COLORS.red;
+  };
+
+  return (
+    <>
+      <h3 style={{
+        fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 20,
+        color: "#1A1A1A", margin: "0 0 12px", textAlign: "center",
+      }}>
+        Try the calculator
+      </h3>
+
+      <div style={{
+        display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6,
+        width: "100%", marginBottom: 10,
+      }}>
+        {faces.map((f) => (
+          <button
+            key={f}
+            onClick={() => addCard(f)}
+            style={{
+              aspectRatio: "1 / 0.6",
+              borderRadius: 8,
+              border: "none",
+              background: faceColor(f),
+              color: "#fff",
+              fontFamily: "'Nunito', sans-serif", fontWeight: 800,
+              fontSize: 11,
+              cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              padding: "2px 4px",
+              textAlign: "center",
+            }}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
+      <div style={{
+        width: "100%", minHeight: 30,
+        display: "flex", flexWrap: "wrap", gap: 6,
+        marginBottom: 10, overflowX: "auto",
+      }}>
+        {selected.map((c) => (
+          <span
+            key={c.uid}
+            onClick={() => removeCard(c.uid)}
+            style={{
+              padding: "3px 9px", borderRadius: 999,
+              background: UNO_COLORS.blue, color: "#fff",
+              fontSize: 11, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+              cursor: "pointer", whiteSpace: "nowrap",
+            }}
+          >
+            {c.face} ×
+          </span>
+        ))}
+      </div>
+
+      <div style={{
+        width: "100%", padding: "10px 14px", borderRadius: 12,
+        background: "#F3F3F3", textAlign: "center", marginBottom: 12,
+      }}>
+        <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 15, color: "#1A1A1A" }}>
+          Round Total: {total} pts
+        </span>
+      </div>
+
+      <div style={{ display: "flex", gap: 10, width: "100%" }}>
+        <button
+          onClick={clear}
+          style={{
+            flex: 1, padding: "10px 0", borderRadius: 10,
+            border: "1px solid rgba(0,0,0,0.15)", background: "#fff",
+            color: "#1A1A1A", fontFamily: "'Inter', sans-serif", fontWeight: 600,
+            fontSize: 13, cursor: "pointer",
+          }}
+        >
+          Clear
+        </button>
+        <button
+          onClick={save}
+          style={{
+            flex: 1.4, padding: "10px 0", borderRadius: 10,
+            border: "none", background: UNO_COLORS.red,
+            color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 600,
+            fontSize: 13, cursor: "pointer",
+          }}
+        >
+          {saved ? "✓ Saved!" : "Save Score"}
+        </button>
+      </div>
+    </>
+  );
+}
+
+const UNO_CARDS = [
+  { id: "intro",      color: "red",    label: "01" },
+  { id: "story",      color: "yellow", label: "02" },
+  { id: "calculator", color: "green",  label: "03" },
+  { id: "modes",      color: "blue",   label: "04" },
+  { id: "houserules", color: "wild",   label: "UNO" },
+  { id: "demo",       color: "red",    label: "05" },
+  { id: "download",   color: "yellow", label: "06" },
+];
+
+const UNO_BG_CARD_POSITIONS = [
+  { top: "6%",  left: "4%",  rotate: -18, color: UNO_COLORS.red },
+  { top: "10%", left: "84%", rotate: 22,  color: UNO_COLORS.yellow },
+  { top: "40%", left: "2%",  rotate: 12,  color: UNO_COLORS.blue },
+  { top: "68%", left: "88%", rotate: -25, color: UNO_COLORS.green },
+  { top: "80%", left: "8%",  rotate: 30,  color: UNO_COLORS.yellow },
+  { top: "4%",  left: "45%", rotate: -10, color: UNO_COLORS.blue },
+  { top: "88%", left: "50%", rotate: 16,  color: UNO_COLORS.red },
+  { top: "35%", left: "92%", rotate: -30, color: UNO_COLORS.green },
+];
+
+const UNO_BG_DOTS = [
+  { top: "15%", left: "20%", color: UNO_COLORS.red },
+  { top: "25%", left: "70%", color: UNO_COLORS.yellow },
+  { top: "55%", left: "12%", color: UNO_COLORS.green },
+  { top: "60%", left: "80%", color: UNO_COLORS.blue },
+  { top: "78%", left: "35%", color: UNO_COLORS.red },
+  { top: "90%", left: "65%", color: UNO_COLORS.yellow },
+  { top: "8%",  left: "60%", color: UNO_COLORS.blue },
+];
+
+function UnoBackdrop() {
+  return (
+    <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
+      {/* radial gradient blobs */}
+      <div style={{
+        position: "absolute", top: "-15%", left: "-15%",
+        width: "60vw", height: "60vw",
+        background: `radial-gradient(circle, ${UNO_COLORS.red} 0%, transparent 70%)`,
+        opacity: 0.11,
+      }} />
+      <div style={{
+        position: "absolute", top: "-18%", right: "-15%",
+        width: "55vw", height: "55vw",
+        background: `radial-gradient(circle, ${UNO_COLORS.yellow} 0%, transparent 70%)`,
+        opacity: 0.1,
+      }} />
+      <div style={{
+        position: "absolute", bottom: "-25%", left: "50%", transform: "translateX(-50%)",
+        width: "70vw", height: "60vw",
+        background: `radial-gradient(circle, ${UNO_COLORS.blue} 0%, transparent 70%)`,
+        opacity: 0.12,
+      }} />
+
+      {/* scattered uno card shapes */}
+      {UNO_BG_CARD_POSITIONS.map((c, i) => (
+        <div key={i} style={{
+          position: "absolute",
+          top: c.top, left: c.left,
+          width: 72, height: 108,
+          borderRadius: 10,
+          background: c.color,
+          border: "2px solid rgba(255,255,255,0.5)",
+          opacity: 0.11,
+          transform: `rotate(${c.rotate}deg)`,
+        }} />
+      ))}
+
+      {/* scattered dots */}
+      {UNO_BG_DOTS.map((d, i) => (
+        <div key={i} style={{
+          position: "absolute",
+          top: d.top, left: d.left,
+          width: 4, height: 4,
+          borderRadius: "50%",
+          background: d.color,
+          opacity: 0.32,
+        }} />
+      ))}
+    </div>
+  );
+}
+
+function UnoSplash({ visible }) {
+  const [phase, setPhase] = useState("start");
+  const [exiting, setExiting] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("logo"), 20);
+    const t2 = setTimeout(() => setPhase("sweep"), 20 + 800 + 300);
+    const t3 = setTimeout(() => setPhase("tagline"), 20 + 800 + 300 + 750 + 150);
+    const t4 = setTimeout(() => setExiting(true), 20 + 800 + 300 + 750 + 150 + 600 + 1600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div
+      className="rv-splash-wrap"
+      style={{
+        position: "fixed", inset: 0, zIndex: 250,
+        background: "#1A1A1A",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        opacity: exiting ? 0 : 1,
+        transitionDuration: "0.5s",
+      }}
+    >
+      <div
+        className={`rv-splash-logo${phase !== "start" ? " rv-in" : ""}${phase === "sweep" || phase === "tagline" || phase === "hold" ? " rv-sweep" : ""}`}
+        style={{ width: 140, height: 140, borderRadius: 24 }}
+      >
+        <img
+          src="/images/uno-icon.png"
+          alt="UNO Scorekeeper"
+          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
+        />
+      </div>
+
+      <div className={`rv-splash-tagline${phase === "tagline" || phase === "hold" ? " rv-in" : ""}`} style={{ marginTop: 24, textAlign: "center" }}>
+        <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 24, color: "#fff" }}>
+          UNO Scorekeeper
+        </div>
+        <div style={{
+          fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: 11,
+          letterSpacing: "0.15em", textTransform: "uppercase",
+          color: "rgba(255,255,255,0.55)", marginTop: 8,
+        }}>
+          Score Calculator For Game Night
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UnoProject({ onNextProject }) {
+  useUnoFonts();
+
+  const [splashing, setSplashing] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(null);
+  const [animating, setAnimating] = useState(false);
+  const touchStartX = useRef(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => setSplashing(false), 4700);
+    return () => clearTimeout(t);
+  }, []);
+
+  const throwForward = () => {
+    if (animating || currentIndex >= UNO_CARDS.length - 1) return;
+    setAnimating(true);
+    setDirection("forward");
+    setTimeout(() => {
+      setCurrentIndex((i) => i + 1);
+      setAnimating(false);
+    }, 380);
+  };
+
+  const throwBack = () => {
+    if (animating || currentIndex <= 0) return;
+    setAnimating(true);
+    setDirection("back");
+    setTimeout(() => {
+      setCurrentIndex((i) => i - 1);
+      setAnimating(false);
+    }, 380);
+  };
+
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 60) {
+      if (diff > 0) throwForward();
+      else throwBack();
+    }
+    touchStartX.current = null;
+  };
+
+  const card = UNO_CARDS[currentIndex];
+  const animClass = animating
+    ? (direction === "forward" ? "throw-right" : "throw-left")
+    : (direction === "forward" ? "deal-in" : direction === "back" ? "deal-in-left" : "");
+
+  const isSecondToLast = currentIndex === UNO_CARDS.length - 2;
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 100,
+      background: "#141414",
+      overflow: "hidden",
+      fontFamily: "'Inter', sans-serif",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }}>
+      <UnoBackdrop />
+
+      <UnoSplash visible={splashing} />
+
+      <>
+          <div
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            {/* ghost cards */}
+            <div style={{
+              position: "absolute",
+              transform: "translateY(8px) scale(0.97)",
+              zIndex: -1,
+              background: "#2a2a2a",
+              borderRadius: 24,
+              width: "min(520px, 92vw)",
+              height: "min(720px, 88vh)",
+              opacity: 0.6,
+            }} />
+            <div style={{
+              position: "absolute",
+              transform: "translateY(16px) scale(0.94)",
+              zIndex: -2,
+              background: "#2a2a2a",
+              borderRadius: 24,
+              width: "min(520px, 92vw)",
+              height: "min(720px, 88vh)",
+              opacity: 0.35,
+            }} />
+
+            <UnoCard key={card.id} color={card.color} label={card.label} animClass={animClass}>
+              {card.id === "intro" && (
+                <>
+                  <img src="/images/uno-icon.png" alt="UNO" style={{ width: 64, marginBottom: 14 }} />
+                  <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 32, color: "#1A1A1A", margin: "0 0 12px", textAlign: "center" }}>
+                    UNO Scorekeeper
+                  </h2>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "rgba(0,0,0,0.55)", textAlign: "center", margin: "0 0 18px", lineHeight: 1.6 }}>
+                    A score calculator built for the card game that already has rules nobody agrees on.
+                  </p>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 22 }}>
+                    <UnoPillBadge color={UNO_COLORS.red}>Flutter</UnoPillBadge>
+                    <UnoPillBadge color={UNO_COLORS.red}>Android</UnoPillBadge>
+                    <UnoPillBadge color={UNO_COLORS.red}>iOS</UnoPillBadge>
+                  </div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(0,0,0,0.4)", margin: 0 }}>
+                    Throw the card to continue →
+                  </p>
+                </>
+              )}
+
+              {card.id === "story" && (
+                <div style={{ width: "100%" }}>
+                  <div style={{ textAlign: "center" }}>
+                    <span style={{
+                      fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 700,
+                      letterSpacing: "0.1em", color: UNO_COLORS.yellow, textTransform: "uppercase",
+                    }}>
+                      Why it exists
+                    </span>
+                    <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 26, color: "#1A1A1A", margin: "6px 0 16px" }}>
+                      Built for game night.
+                    </h2>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "rgba(0,0,0,0.65)", lineHeight: 1.6, margin: 0, textAlign: "left" }}>
+                      UNO scoring is more complicated than most people realize. Cards have real point values. There are two ways to win. And every group plays with their own house rules.
+                    </p>
+                    <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "rgba(0,0,0,0.65)", lineHeight: 1.6, margin: 0, textAlign: "left" }}>
+                      I built UNO Scorekeeper so nobody has to keep score in their head or on a napkin. You tap the cards you played, it calculates the points.
+                    </p>
+                    <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "rgba(0,0,0,0.65)", lineHeight: 1.6, margin: 0, textAlign: "left" }}>
+                      It even has a "PK House Rules" preset — because every group eventually invents their own rules, and mine deserved to be saved.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {card.id === "calculator" && (
+                <div style={{ width: "100%", textAlign: "center" }}>
+                  <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 20, color: "#1A1A1A", margin: "0 0 3px" }}>
+                    Tap the cards. Get the score.
+                  </h2>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(0,0,0,0.5)", margin: "0 0 12px" }}>
+                    Real UNO point values, built in.
+                  </p>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 4, marginBottom: 12, width: "100%" }}>
+                    {["0","1","2","3","4","5","6","7","8","9","Skip","Rev","+2","Wild","+4"].map((f) => {
+                      const c = ["Skip","Rev","+2"].includes(f) ? UNO_COLORS.blue : ["Wild","+4"].includes(f) ? "#1A1A1A" : UNO_COLORS.red;
+                      return (
+                        <div key={f} style={{
+                          aspectRatio: "1 / 0.55", borderRadius: 6, background: c,
+                          color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+                          fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 9.5,
+                        }}>
+                          {f}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: "rgba(0,0,0,0.6)", fontFamily: "'Inter', sans-serif", textAlign: "left", marginBottom: 10, lineHeight: 1.7 }}>
+                    <div>Number cards → Face value (0–9)</div>
+                    <div>Skip / Rev / +2 → 20 points each</div>
+                    <div>Wild / +4 → 50 points each</div>
+                  </div>
+                  <div style={{ padding: "8px 14px", borderRadius: 12, background: "#F3F3F3", display: "inline-block" }}>
+                    <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 14, color: "#1A1A1A" }}>
+                      Round Total: 70 pts
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {card.id === "modes" && (
+                <div style={{ width: "100%", textAlign: "center" }}>
+                  <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 24, color: "#1A1A1A", margin: "0 0 16px" }}>
+                    Two ways to play.
+                  </h2>
+                  <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
+                    <div style={{ flex: 1, padding: "14px 12px", borderRadius: 14, background: "rgba(0,87,168,0.1)", textAlign: "left" }}>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13, color: UNO_COLORS.blue, marginBottom: 6 }}>
+                        Max Points Win
+                      </div>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(0,0,0,0.6)", lineHeight: 1.5, marginBottom: 8 }}>
+                        The player who reaches the target score first wins. Points are good.
+                      </div>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "rgba(0,0,0,0.4)", fontStyle: "italic" }}>
+                        First to 500 wins
+                      </div>
+                    </div>
+                    <div style={{ flex: 1, padding: "14px 12px", borderRadius: 14, background: "rgba(227,38,58,0.08)", textAlign: "left" }}>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13, color: UNO_COLORS.red, marginBottom: 6 }}>
+                        Max Points Lose
+                      </div>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(0,0,0,0.6)", lineHeight: 1.5, marginBottom: 8 }}>
+                        Points accumulate against you. First to the limit is out.
+                      </div>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "rgba(0,0,0,0.4)", fontStyle: "italic" }}>
+                        First to 500 loses
+                      </div>
+                    </div>
+                  </div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(0,0,0,0.45)", margin: 0 }}>
+                    Set your own target score. Default is 500.
+                  </p>
+                </div>
+              )}
+
+              {card.id === "houserules" && (
+                <div style={{ width: "100%", textAlign: "center" }}>
+                  <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 26, margin: "0 0 14px" }}>
+                    <span style={{ color: UNO_COLORS.red }}>PK</span>{" "}
+                    <span style={{ color: UNO_COLORS.yellow }}>House</span>{" "}
+                    <span style={{ color: UNO_COLORS.green }}>Rules</span>
+                  </h2>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13.5, color: "rgba(0,0,0,0.6)", lineHeight: 1.6, margin: "0 0 16px" }}>
+                    Every group eventually makes up their own rules. UNO Scorekeeper lets you save yours — and comes with a built-in PK House Rules preset so you can play the right way from the start.
+                  </p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
+                    <UnoPillBadge color={UNO_COLORS.red}>Stack +2s and +4s</UnoPillBadge>
+                    <UnoPillBadge color={UNO_COLORS.yellow}>0 = swap hands with anyone</UnoPillBadge>
+                    <UnoPillBadge color={UNO_COLORS.green}>7 = swap with chosen player</UnoPillBadge>
+                    <UnoPillBadge color={UNO_COLORS.blue}>Jump-in rule</UnoPillBadge>
+                  </div>
+                </div>
+              )}
+
+              {card.id === "demo" && <UnoDemoCard />}
+
+              {card.id === "download" && (
+                <div style={{ width: "100%", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <img src="/images/uno-icon.png" alt="UNO" style={{ width: 56, marginBottom: 12 }} />
+                  <h2 style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 900, fontSize: 28, color: "#1A1A1A", margin: "0 0 6px" }}>
+                    UNO Scorekeeper
+                  </h2>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "rgba(0,0,0,0.5)", margin: "0 0 22px" }}>
+                    Free. Available on Android.
+                  </p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", marginBottom: 16 }}>
+                    <a href="https://github.com/rju23/uno-calculator-app/releases/download/v1.0/Uno.Calculator.apk" style={{
+                      padding: "12px 0", borderRadius: 12, background: UNO_COLORS.green,
+                      color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13.5,
+                      textDecoration: "none", textAlign: "center",
+                    }}>
+                      Download for Android
+                    </a>
+                  </div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, color: "rgba(0,0,0,0.4)", margin: "0 0 24px" }}>
+                    Built with Flutter · No ads · No accounts needed
+                  </p>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 10.5, color: "rgba(0,0,0,0.3)", margin: 0 }}>
+                    ← Throw back to replay
+                  </p>
+                </div>
+              )}
+            </UnoCard>
+          </div>
+
+          <div style={{
+            position: "fixed", bottom: 32, left: 0, right: 0,
+            display: "flex", justifyContent: "center", alignItems: "center", gap: 20,
+            zIndex: 200,
+          }}>
+            {currentIndex > 0 && (
+              <button
+                onClick={throwBack}
+                disabled={animating}
+                style={{
+                  padding: "10px 20px", borderRadius: 999,
+                  background: "rgba(0,0,0,0.6)", color: "#fff",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13,
+                  cursor: animating ? "default" : "pointer",
+                }}
+              >
+                ← Draw Back
+              </button>
+            )}
+
+            <span style={{
+              fontFamily: "'Inter', sans-serif", fontSize: 12,
+              color: "rgba(255,255,255,0.45)",
+            }}>
+              Card {currentIndex + 1} of {UNO_CARDS.length}
+            </span>
+
+            {currentIndex < UNO_CARDS.length - 1 && (
+              <button
+                onClick={throwForward}
+                disabled={animating}
+                className={isSecondToLast ? "uno-pulse" : ""}
+                style={{
+                  padding: "10px 20px", borderRadius: 999,
+                  background: UNO_COLORS[card.color] === UNO_COLORS.wild ? UNO_COLORS.red : (UNO_COLORS[card.color] || UNO_COLORS.red),
+                  backgroundImage: card.color === "wild" ? UNO_COLORS.wild : undefined,
+                  color: "#fff",
+                  border: "none",
+                  fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13,
+                  cursor: animating ? "default" : "pointer",
+                }}
+              >
+                {isSecondToLast ? "UNO! →" : "Throw →"}
+              </button>
+            )}
+
+            {currentIndex === UNO_CARDS.length - 1 && (
+              <button
+                onClick={onNextProject}
+                style={{
+                  padding: "10px 20px", borderRadius: 999,
+                  background: UNO_COLORS.green,
+                  color: "#fff",
+                  border: "none",
+                  fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13,
+                  cursor: "pointer",
+                }}
+              >
+                Next Project →
+              </button>
+            )}
+          </div>
+        </>
+    </div>
   );
 }
 

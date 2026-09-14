@@ -27,6 +27,40 @@ body {
   50%       { box-shadow: 0 0 0 8px rgba(var(--orb-color), 0); }
 }
 
+@keyframes unoSplashIn {
+  0%   { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes unoPulseText {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 1; }
+}
+@keyframes throwRight {
+  0%   { transform: translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+}
+@keyframes throwLeft {
+  0%   { transform: translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateX(-120vw) rotate(-25deg); opacity: 0; }
+}
+@keyframes dealIn {
+  0%   { transform: scale(0.92) translateY(12px); opacity: 0.6; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes dealInFromLeft {
+  0%   { transform: scale(0.92) translateX(-40px); opacity: 0.6; }
+  100% { transform: scale(1) translateX(0); opacity: 1; }
+}
+@keyframes pulseUno {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(227,38,58,0.5); }
+  50%       { transform: scale(1.04); box-shadow: 0 0 0 8px rgba(227,38,58,0); }
+}
+.throw-right     { animation: throwRight 380ms ease-in forwards; }
+.throw-left      { animation: throwLeft 380ms ease-in forwards; }
+.deal-in         { animation: dealIn 380ms cubic-bezier(0.22,1,0.36,1) forwards; }
+.deal-in-left    { animation: dealInFromLeft 380ms cubic-bezier(0.22,1,0.36,1) forwards; }
+.uno-pulse       { animation: pulseUno 1.2s ease-in-out infinite; }
+
 @keyframes shimmer {
   0%   { transform: translateX(-100%); }
   100% { transform: translateX(400%); }
