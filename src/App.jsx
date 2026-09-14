@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import emailjs from "@emailjs/browser";
-import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive } from "lucide-react";
+import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive, Trophy, Timer, RotateCcw, Image, Music } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 const BORDER   = "rgba(255,255,255,0.07)";
 const TEXT     = "#F4EFE7";
@@ -931,6 +931,14 @@ function ProjectsView({ onNavigate }) {
       }}>
         {PROJECTS.map((project) => {
           const isActive = activeProject === project.id;
+          const isRevive = project.id === "876-revive";
+          const isScq = project.id === "scq-scoreboard";
+
+          const reviveDefaultBorder = "rgba(0,122,47,0.35)";
+          const reviveHoverBorder = "rgba(0,122,47,0.7)";
+          const scqDefaultBorder = "rgba(200,162,74,0.35)";
+          const scqHoverBorder = "rgba(200,162,74,0.75)";
+
           return (
             <div
               key={project.id}
@@ -939,29 +947,59 @@ function ProjectsView({ onNavigate }) {
                 position: "relative",
                 padding: "20px 20px 18px",
                 borderRadius: 12,
-                background: "rgba(255,255,255,0.035)",
-                border: isActive ? "1px solid rgba(255,255,255,0.14)" : `1px solid ${BORDER}`,
+                background: isRevive
+                  ? "#050F07"
+                  : isScq
+                  ? "radial-gradient(220px 140px at 30% -10%, rgba(240,200,74,0.22), transparent 65%), linear-gradient(160deg, #8a1420 0%, #5c0e18 55%, #2a0709 100%)"
+                  : "rgba(255,255,255,0.035)",
+                backgroundImage: isRevive ? "url('/images/grid.png')" : undefined,
+                backgroundRepeat: isRevive ? "repeat" : undefined,
+                backgroundSize: isRevive ? "480px" : undefined,
+                border: isRevive
+                  ? `1px solid ${reviveDefaultBorder}`
+                  : isScq
+                  ? `1px solid ${scqDefaultBorder}`
+                  : (isActive ? "1px solid rgba(255,255,255,0.14)" : `1px solid ${BORDER}`),
+                boxShadow: "none",
                 display: "flex", flexDirection: "column", gap: 8,
                 cursor: "pointer",
-                transition: "transform 0.18s ease, border-color 0.18s ease",
+                transition: "transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-3px)";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)";
+                if (isRevive) {
+                  e.currentTarget.style.borderColor = reviveHoverBorder;
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,122,47,0.15)";
+                } else if (isScq) {
+                  e.currentTarget.style.borderColor = scqHoverBorder;
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(200,162,74,0.18)";
+                } else {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)";
+                }
                 const link = e.currentTarget.querySelector("[data-view-link]");
-                if (link) link.style.color = TEXT;
+                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#f0c84a" : TEXT;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.borderColor = BORDER;
+                if (isRevive) {
+                  e.currentTarget.style.borderColor = reviveDefaultBorder;
+                  e.currentTarget.style.boxShadow = "none";
+                } else if (isScq) {
+                  e.currentTarget.style.borderColor = scqDefaultBorder;
+                  e.currentTarget.style.boxShadow = "none";
+                } else {
+                  e.currentTarget.style.borderColor = BORDER;
+                }
                 const link = e.currentTarget.querySelector("[data-view-link]");
-                if (link) link.style.color = TEXT_MUTE;
+                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#c8a24a" : TEXT_MUTE;
               }}
             >
               <div style={{
                 position: "absolute", top: 14, right: 16,
                 fontSize: 10, padding: "3px 8px", borderRadius: 999,
-                color: TEXT_MUTE, background: "rgba(255,255,255,0.06)",
+                color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : TEXT_MUTE,
+                background: isRevive ? "rgba(0,122,47,0.1)" : isScq ? "rgba(200,162,74,0.12)" : "rgba(255,255,255,0.06)",
+                border: isRevive ? "1px solid rgba(0,122,47,0.5)" : isScq ? "1px solid rgba(200,162,74,0.5)" : "none",
                 fontFamily: "'Inter', sans-serif", fontWeight: 500,
                 letterSpacing: "0.02em",
               }}>
@@ -970,7 +1008,7 @@ function ProjectsView({ onNavigate }) {
 
               <div style={{
                 fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em",
-                color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+                color: isRevive ? "#D4A017" : isScq ? "#2dd4bf" : ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
                 paddingRight: 60,
               }}>
                 {project.tag}
@@ -978,19 +1016,19 @@ function ProjectsView({ onNavigate }) {
 
               <h3 style={{
                 fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
-                fontSize: 18, color: TEXT, margin: 0,
+                fontSize: 18, color: isRevive ? "#0A1F0D" : isScq ? "#f0c84a" : TEXT, margin: 0,
               }}>
                 {project.title}
               </h3>
 
-              <p style={{ fontSize: 13, lineHeight: 1.6, color: TEXT_DIM, margin: "0 0 6px", flex: 1 }}>
+              <p style={{ fontSize: 13, lineHeight: 1.6, color: isRevive ? "rgba(10,31,13,0.68)" : isScq ? "rgba(255,255,255,0.6)" : TEXT_DIM, margin: "0 0 6px", flex: 1 }}>
                 {project.description}
               </p>
 
               <span
                 data-view-link
                 style={{
-                  fontSize: 12, color: TEXT_MUTE,
+                  fontSize: 12, color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : TEXT_MUTE,
                   fontFamily: "'Inter', sans-serif", fontWeight: 500,
                   transition: "color 0.18s ease",
                 }}
@@ -1010,6 +1048,8 @@ function ProjectsView({ onNavigate }) {
         >
           {activeProject === "876-revive" ? (
             <ReviveProject onNextProject={() => setActiveProject("scq-scoreboard")} />
+          ) : activeProject === "scq-scoreboard" ? (
+            <ScoreboardProject onNextProject={() => setActiveProject("uno-calculator")} />
           ) : (
             <div style={{ color: "#F4EFE7", padding: 40 }}>
               Project experience coming soon for: {activeProject}
@@ -1042,7 +1082,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
   const theme = PROJECT_THEMES[projectId] ?? { color: ACCENT, label: projectId };
   const rgb = hexToRgb(theme.color);
 
-  const hasOwnSplash = projectId === "876-revive";
+  const hasOwnSplash = projectId === "876-revive" || projectId === "scq-scoreboard";
 
   const [splashing, setSplashing] = useState(!hasOwnSplash);
   const [fading, setFading]       = useState(false);
@@ -1289,7 +1329,7 @@ function RvHeroSlideshow() {
             />
             <div style={{
               position: "absolute", inset: 0,
-              background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.65) 100%)",
+              background: "linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.45) 100%)",
             }} />
             <div style={{ position: "absolute", left: 20, right: 20, bottom: 20 }}>
               <div style={{ fontFamily: "'Roboto', sans-serif", fontWeight: 700, fontSize: 22, color: "#fff" }}>
@@ -1650,25 +1690,54 @@ function ReviveProject({ onNextProject }) {
                 Built for 876 Revive & Drive — a mobile car wash business in Jamaica. One app for customers, one dashboard for the admin, connected in real time.
               </p>
               <div style={{ display: "flex", gap: 14, marginTop: 30, flexWrap: "wrap" }}>
-                <button
-                  disabled
+                <a
+                  href="https://github.com/rju23/Revive-and-drive-portfolio/releases/download/v1.0.0/app-release.apk"
                   style={{
                     padding: "13px 26px", borderRadius: 10, border: "none",
                     background: RV.green, color: "#fff", fontFamily: "'Roboto', sans-serif",
-                    fontSize: 14, fontWeight: 500, cursor: "not-allowed", opacity: 0.55,
+                    fontSize: 14, fontWeight: 500, cursor: "pointer", textDecoration: "none",
+                    display: "inline-flex", alignItems: "center",
                   }}
                 >
                   Download App
-                </button>
-                <button
+                </a>
+                <a
+                  href="https://pk-876rd-portfolio-demo.web.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     padding: "13px 26px", borderRadius: 10, background: "transparent",
                     border: `1px solid ${RV.green}`, color: RV.green, fontFamily: "'Roboto', sans-serif",
-                    fontSize: 14, fontWeight: 500, cursor: "pointer",
+                    fontSize: 14, fontWeight: 500, cursor: "pointer", textDecoration: "none",
+                    display: "inline-flex", alignItems: "center",
                   }}
                 >
                   Try Dashboard
-                </button>
+                </a>
+              </div>
+              <div style={{
+                marginTop: 18, maxWidth: 480, padding: "14px 16px",
+                borderRadius: 10, border: `1px solid ${RV.green}33`, background: `${RV.green}0d`,
+                display: "flex", flexDirection: "column", gap: 8,
+              }}>
+                <div style={{
+                  fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+                  color: RV.green,
+                }}>
+                  Demo Disclaimers
+                </div>
+                <p style={{ fontSize: 12.5, lineHeight: 1.55, color: RV.inkDim, margin: 0 }}>
+                  This is a snapshot of the client's actual app and dashboard, not the live version — it won't receive updates as their real product evolves. Since this demo was copied over from the client's project, a few things may be broken, but I did my best to keep the main features working.
+                </p>
+                <p style={{ fontSize: 12.5, lineHeight: 1.55, color: RV.inkDim, margin: 0 }}>
+                  <span style={{ color: RV.ink, fontWeight: 600 }}>Dashboard login</span> — akashiedits100@gmail.com / kingboss1234
+                </p>
+                <p style={{ fontSize: 12.5, lineHeight: 1.55, color: RV.inkDim, margin: 0 }}>
+                  <span style={{ color: RV.ink, fontWeight: 600 }}>Installing the APK</span> — since it's not on the Play Store, Android will show a warning ("Unknown app" / "Play Protect"). That's expected — tap "Install anyway" (or "More details" → "Install anyway") to proceed.
+                </p>
+                <p style={{ fontSize: 12.5, lineHeight: 1.55, color: RV.ink, fontWeight: 700, margin: 0 }}>
+                  Heads up: on the booking screen's "select address" step, the map won't load properly — this replica wasn't set up with a Google Maps API key.
+                </p>
               </div>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 26 }}>
                 <RvPill>Flutter</RvPill>
@@ -1846,10 +1915,10 @@ function ReviveProject({ onNextProject }) {
             <div>
               <h2 style={{ fontWeight: 900, fontSize: 36, color: "#fff", margin: "0 0 10px" }}>The Override</h2>
               <div style={{ fontWeight: 500, fontSize: 15, color: RV.gold, marginBottom: 24 }}>
-                When the algorithm says no, but the admin knows better.
+                When the algorithm says no, but administrator knows better.
               </div>
               <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "rgba(255,255,255,0.75)", marginBottom: 18 }}>
-                The system normally blocks a driver if their schedule shows a conflict. But sometimes a driver finishes early, or two stops can be back-to-back. The override lets the admin force a window open.
+                The system normally blocks a driver if their schedule shows a conflict. But sometimes a driver finishes early, or two stops can be back-to-back. The override lets the administrator force a window open.
               </p>
               <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "rgba(255,255,255,0.75)", marginBottom: 28 }}>
                 It only bypasses the occupancy check. Operating hours, blackout dates, lead time, and driver roster rules still apply. It is a narrow, auditable exception — not a way to break the system.
@@ -1940,6 +2009,1096 @@ function ReviveProject({ onNextProject }) {
         >
           <span style={{ color: "rgba(255,255,255,0.6)" }}>876 Revive & Drive</span>
           <span>Next · SCQ Scoreboard →</span>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ============================== SCQ Scoreboard ============================== */
+
+const SCQ = {
+  maroonDeep: "#1a0508",
+  maroon: "#3f0b11",
+  maroonLight: "#7a101c",
+  gold: "#c8a24a",
+  goldBright: "#f0c84a",
+  goldGlow: "rgba(200,162,74,0.4)",
+  teal: "#2dd4bf",
+  cpBg: "#0b0f14",
+  cpSurface: "#0f172a",
+  text: "rgba(255,255,255,0.92)",
+  muted: "rgba(255,255,255,0.55)",
+};
+
+const SCQ_ROUNDS = {
+  ALTERNATE: { label: "ALTERNATE", duration: 240, correct: 1, wrong: 0 },
+  SPEED:     { label: "SPEED",     duration: 60,  correct: 1, wrong: 0 },
+  BUZZER:    { label: "BUZZER",    duration: 240, correct: 2, wrong: -2 },
+};
+
+const SCQ_WHATSAPP = "https://wa.me/18763718377";
+const SCQ_WIN_DOWNLOAD = "https://github.com/rju23/scq-scoreboard-updates/releases/download/v2.6.0/SCQ-Scoreboard-Setup-2.6.0.exe";
+const SCQ_MAC_DOWNLOAD = "https://github.com/rju23/School-Challenge-Quiz-Scoreboard/releases/download/v2.6.8/SCQ.Scoreboard-2.6.0-arm64.dmg";
+
+function useScqFonts() {
+  useEffect(() => {
+    if (document.getElementById("scq-fonts-link")) return;
+    const link = document.createElement("link");
+    link.id = "scq-fonts-link";
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap";
+    document.head.appendChild(link);
+  }, []);
+}
+
+function ScqSplash({ visible }) {
+  const [phase, setPhase] = useState("start"); // start -> logo -> sweep -> tagline -> hold -> exit
+  const [exiting, setExiting] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("logo"), 20);
+    const t2 = setTimeout(() => setPhase("sweep"), 20 + 800 + 300);
+    const t3 = setTimeout(() => setPhase("tagline"), 20 + 800 + 300 + 750 + 150);
+    const t4 = setTimeout(() => setExiting(true), 20 + 800 + 300 + 750 + 150 + 600 + 1600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div
+      className="rv-splash-wrap"
+      style={{
+        position: "fixed", inset: 0, zIndex: 250,
+        background: SCQ.maroonDeep,
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        opacity: exiting ? 0 : 1,
+        transitionDuration: "0.5s",
+      }}
+    >
+      <div
+        className={`rv-splash-logo${phase !== "start" ? " rv-in" : ""}${phase === "sweep" || phase === "tagline" || phase === "hold" ? " rv-sweep" : ""}`}
+        style={{ width: 160, height: 160, borderRadius: 18 }}
+      >
+        <img
+          src="/images/scq-logo.png"
+          alt="SCQ Scoreboard"
+          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
+        />
+      </div>
+
+      <div className={`rv-splash-tagline${phase === "tagline" || phase === "hold" ? " rv-in" : ""}`} style={{ marginTop: 24, textAlign: "center" }}>
+        <div style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: 22, color: SCQ.gold }}>
+          SCQ Scoreboard
+        </div>
+        <div style={{
+          fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: 11,
+          letterSpacing: "0.15em", textTransform: "uppercase",
+          color: "rgba(255,255,255,0.55)", marginTop: 8,
+        }}>
+          Competition-Grade Quiz Software
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScoreboardDivider({ label }) {
+  return (
+    <div style={{
+      background: "linear-gradient(90deg, #3f0b11, #7a101c, #3f0b11)",
+      borderTop: "1px solid rgba(200,162,74,0.4)",
+      borderBottom: "1px solid rgba(200,162,74,0.4)",
+      padding: "10px 40px",
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      flexWrap: "wrap", gap: 8,
+    }}>
+      <span style={{ color: "#c8a24a", fontFamily: "'Orbitron', sans-serif", fontSize: 11, letterSpacing: "0.2em" }}>
+        ◆ {label}
+      </span>
+      <span style={{ color: "rgba(200,162,74,0.4)", fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: "0.1em" }}>
+        SCQ SCOREBOARD
+      </span>
+    </div>
+  );
+}
+
+function ScqPill({ children, small }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center",
+      padding: small ? "5px 12px" : "6px 16px", borderRadius: 999,
+      border: `1px solid ${SCQ.gold}`, color: SCQ.gold,
+      fontFamily: "'Inter', sans-serif", fontSize: small ? 11.5 : 12.5, fontWeight: 500,
+      letterSpacing: "0.02em", whiteSpace: "nowrap",
+    }}>
+      {children}
+    </span>
+  );
+}
+
+function ScqSectionHeading({ title, subtitle }) {
+  return (
+    <div style={{ textAlign: "center", marginBottom: 40 }}>
+      <h2 style={{
+        fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(22px, 3.2vw, 32px)",
+        color: SCQ.gold, margin: 0,
+      }}>
+        {title}
+      </h2>
+      {subtitle && (
+        <p style={{
+          fontFamily: "'Inter', sans-serif", fontSize: 14.5, color: SCQ.muted,
+          marginTop: 12, maxWidth: 620, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6,
+        }}>
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ScqDownloadButtons({ stacked }) {
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: stacked ? "center" : "flex-start" }}>
+        <a
+          href={SCQ_WIN_DOWNLOAD}
+          style={{
+            padding: "14px 26px", borderRadius: 10, border: "none",
+            background: SCQ.gold, color: SCQ.maroonDeep, textDecoration: "none",
+            fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 14,
+            display: "inline-flex", alignItems: "center",
+          }}
+        >
+          Download for Windows
+        </a>
+        <a
+          href={SCQ_MAC_DOWNLOAD}
+          style={{
+            padding: "14px 26px", borderRadius: 10, background: "transparent",
+            border: `1px solid ${SCQ.gold}`, color: SCQ.gold, textDecoration: "none",
+            fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 14,
+            display: "inline-flex", alignItems: "center",
+          }}
+        >
+          Download for macOS
+        </a>
+      </div>
+      <p style={{
+        fontFamily: "'Inter', sans-serif", fontSize: 12, color: SCQ.muted,
+        marginTop: 12, textAlign: stacked ? "center" : "left",
+      }}>
+        Windows includes automatic in-app updates · macOS updates via website download
+      </p>
+    </div>
+  );
+}
+
+function ScqDemo() {
+  const [demo, setDemo] = useState({
+    started: false,
+    teamA: "Team A",
+    teamB: "Team B",
+    scoreA: 0,
+    scoreB: 0,
+    round: "ALTERNATE",
+    timeRemaining: 240,
+    timerRunning: false,
+    audioClips: [],
+    audioPlaying: false,
+    visualActive: false,
+  });
+  const [teamAInput, setTeamAInput] = useState("");
+  const [teamBInput, setTeamBInput] = useState("");
+  const [audioNameInput, setAudioNameInput] = useState("");
+  const [flashA, setFlashA] = useState(false);
+  const [flashB, setFlashB] = useState(false);
+  const audioTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    if (!demo.timerRunning) return;
+    const interval = setInterval(() => {
+      setDemo((d) => {
+        if (d.timeRemaining <= 0) return { ...d, timerRunning: false };
+        return { ...d, timeRemaining: d.timeRemaining - 1 };
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [demo.timerRunning]);
+
+  useEffect(() => {
+    return () => { if (audioTimeoutRef.current) clearTimeout(audioTimeoutRef.current); };
+  }, []);
+
+  const startDemo = () => {
+    setDemo((d) => ({
+      ...d,
+      started: true,
+      teamA: teamAInput.trim() || "Team A",
+      teamB: teamBInput.trim() || "Team B",
+    }));
+  };
+
+  const selectRound = (roundKey) => {
+    setDemo((d) => ({
+      ...d,
+      round: roundKey,
+      timeRemaining: SCQ_ROUNDS[roundKey].duration,
+      timerRunning: false,
+    }));
+  };
+
+  const applyScore = (team, result) => {
+    const points = SCQ_ROUNDS[demo.round][result];
+    setDemo((d) => ({
+      ...d,
+      [team === "A" ? "scoreA" : "scoreB"]: d[team === "A" ? "scoreA" : "scoreB"] + points,
+    }));
+    if (team === "A") { setFlashA(true); setTimeout(() => setFlashA(false), 350); }
+    else { setFlashB(true); setTimeout(() => setFlashB(false), 350); }
+  };
+
+  const toggleTimer = (action) => {
+    if (action === "start") setDemo((d) => ({ ...d, timerRunning: true }));
+    if (action === "pause") setDemo((d) => ({ ...d, timerRunning: false }));
+    if (action === "reset") setDemo((d) => ({ ...d, timerRunning: false, timeRemaining: SCQ_ROUNDS[d.round].duration }));
+  };
+
+  const resetScores = () => {
+    setDemo((d) => ({ ...d, scoreA: 0, scoreB: 0 }));
+  };
+
+  const addAudioClip = () => {
+    const name = audioNameInput.trim();
+    if (!name) return;
+    setDemo((d) => ({ ...d, audioClips: [...d.audioClips, name] }));
+    setAudioNameInput("");
+  };
+
+  const playAudio = () => {
+    setDemo((d) => ({ ...d, audioPlaying: true }));
+    if (audioTimeoutRef.current) clearTimeout(audioTimeoutRef.current);
+    audioTimeoutRef.current = setTimeout(() => setDemo((d) => ({ ...d, audioPlaying: false })), 2200);
+  };
+
+  const formatTime = (s) => {
+    const m = Math.floor(s / 60).toString().padStart(2, "0");
+    const sec = (s % 60).toString().padStart(2, "0");
+    return `${m}:${sec}`;
+  };
+
+  const cpButtonBase = {
+    border: "none", borderRadius: 8, cursor: "pointer",
+    fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 12.5,
+    padding: "8px 12px", color: "#fff",
+  };
+
+  if (!demo.started) {
+    return (
+      <div style={{
+        maxWidth: 480, margin: "0 auto", display: "flex", flexDirection: "column",
+        alignItems: "center", gap: 18, padding: "24px 20px",
+      }}>
+        <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 20, color: SCQ.gold, margin: 0, textAlign: "center" }}>
+          Run a match
+        </h3>
+        <div style={{ display: "flex", gap: 12, width: "100%", flexWrap: "wrap" }}>
+          <input
+            value={teamAInput}
+            onChange={(e) => setTeamAInput(e.target.value)}
+            placeholder="Team A"
+            style={{
+              flex: 1, minWidth: 140, padding: "12px 14px", borderRadius: 8,
+              background: SCQ.cpBg, border: `1px solid rgba(255,255,255,0.12)`,
+              color: SCQ.text, fontFamily: "'Inter', sans-serif", fontSize: 14, outline: "none",
+            }}
+            onFocus={(e) => { e.target.style.borderColor = SCQ.gold; }}
+            onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.12)"; }}
+          />
+          <input
+            value={teamBInput}
+            onChange={(e) => setTeamBInput(e.target.value)}
+            placeholder="Team B"
+            style={{
+              flex: 1, minWidth: 140, padding: "12px 14px", borderRadius: 8,
+              background: SCQ.cpBg, border: `1px solid rgba(255,255,255,0.12)`,
+              color: SCQ.text, fontFamily: "'Inter', sans-serif", fontSize: 14, outline: "none",
+            }}
+            onFocus={(e) => { e.target.style.borderColor = SCQ.gold; }}
+            onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.12)"; }}
+          />
+        </div>
+        <button
+          onClick={startDemo}
+          className="scq-cp-btn"
+          style={{
+            ...cpButtonBase, background: SCQ.gold, color: SCQ.maroonDeep,
+            padding: "14px 38px", fontSize: 15, fontFamily: "'Orbitron', sans-serif", fontWeight: 700,
+          }}
+        >
+          Kick Off
+        </button>
+      </div>
+    );
+  }
+
+  const roundMeta = SCQ_ROUNDS[demo.round];
+
+  return (
+    <>
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+        background: SCQ.cpBg, border: `1px solid ${SCQ.goldGlow}`, borderRadius: 999,
+        padding: "8px 22px", maxWidth: 320, margin: "0 auto 8px",
+      }}>
+        <span className="scq-pulse-live" style={{ width: 8, height: 8, borderRadius: "50%", background: "#34d399", flexShrink: 0 }} />
+        <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 11.5, letterSpacing: "0.12em", color: SCQ.gold }}>
+          MATCH IN PROGRESS
+        </span>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}>
+        <button
+          onClick={resetScores}
+          className="scq-cp-btn"
+          style={{
+            border: `1px solid ${SCQ.gold}`, borderRadius: 8, cursor: "pointer",
+            fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 12.5,
+            padding: "8px 18px", color: SCQ.gold, background: "transparent",
+          }}
+        >
+          Reset Scores
+        </button>
+      </div>
+
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "center",
+        gap: 0, flexWrap: "wrap", padding: "20px 12px 60px",
+        overflowX: "auto", maxWidth: "100%",
+      }}>
+        {/* LEFT — Control Panel */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          <span style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 600,
+            letterSpacing: "0.1em", textTransform: "uppercase", color: SCQ.muted,
+          }}>
+            PC Screen
+          </span>
+          <div style={{
+            width: "clamp(300px, 34vw, 380px)",
+            transform: "perspective(900px) rotateX(-4deg)",
+            background: SCQ.cpBg, borderRadius: 12,
+            border: "1px solid rgba(255,255,255,0.1)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.55)",
+            overflow: "hidden",
+          }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "10px 14px", background: SCQ.cpSurface,
+              borderBottom: "1px solid rgba(255,255,255,0.08)",
+            }}>
+              <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#fb7185" }} />
+              <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#f0c84a" }} />
+              <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#2dd4bf" }} />
+              <span style={{
+                marginLeft: 8, fontFamily: "'Inter', sans-serif", fontSize: 11.5,
+                color: SCQ.teal, fontWeight: 500,
+              }}>
+                Control Panel
+              </span>
+            </div>
+
+            <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 16 }}>
+              {/* Round selector */}
+              <div style={{ display: "flex", gap: 8 }}>
+                {Object.keys(SCQ_ROUNDS).map((key) => {
+                  const active = demo.round === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => selectRound(key)}
+                      className="scq-cp-btn"
+                      style={{
+                        ...cpButtonBase, flex: "1 1 0", minWidth: 0, padding: "8px 6px", fontSize: 11.5,
+                        borderRadius: 999,
+                        background: active ? SCQ.teal : "rgba(255,255,255,0.06)",
+                        color: active ? "#0b0f14" : SCQ.text,
+                      }}
+                    >
+                      {SCQ_ROUNDS[key].label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div style={{
+                display: "flex", justifyContent: "space-between",
+                fontFamily: "'Inter', sans-serif", fontSize: 10.5, color: SCQ.muted,
+              }}>
+                <span>(+1 / 0)</span>
+                <span>(+1 / 0)</span>
+                <span>(+2 / -2)</span>
+              </div>
+
+              {/* Score controls + timer */}
+              <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)", gap: 8, alignItems: "center" }}>
+                <div style={{ textAlign: "center", minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600, color: SCQ.teal, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {demo.teamA}
+                  </div>
+                  <div className={flashA ? "scq-score-flash" : ""} style={{
+                    fontFamily: "'Orbitron', sans-serif", fontSize: 32, color: "#fff", margin: "4px 0",
+                  }}>
+                    {demo.scoreA}
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4, justifyContent: "center" }}>
+                    <button className="scq-cp-btn" onClick={() => applyScore("A", "correct")} style={{ ...cpButtonBase, background: SCQ.teal, color: "#0b0f14", padding: "6px 7px", fontSize: 10.5, whiteSpace: "nowrap" }}>✓ Correct</button>
+                    <button className="scq-cp-btn" onClick={() => applyScore("A", "wrong")} style={{ ...cpButtonBase, background: "#fb7185", padding: "6px 7px", fontSize: 10.5, whiteSpace: "nowrap" }}>✗ Wrong</button>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: "center", minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 24, color: SCQ.gold }}>
+                    {formatTime(demo.timeRemaining)}
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginTop: 6, justifyContent: "center" }}>
+                    <button className="scq-cp-btn" onClick={() => toggleTimer("start")} style={{ ...cpButtonBase, background: "rgba(255,255,255,0.08)", padding: "5px 7px", fontSize: 10, whiteSpace: "nowrap" }}>Start</button>
+                    <button className="scq-cp-btn" onClick={() => toggleTimer("pause")} style={{ ...cpButtonBase, background: "rgba(255,255,255,0.08)", padding: "5px 7px", fontSize: 10, whiteSpace: "nowrap" }}>Pause</button>
+                    <button className="scq-cp-btn" onClick={() => toggleTimer("reset")} style={{ ...cpButtonBase, background: "rgba(255,255,255,0.08)", padding: "5px 7px", fontSize: 10, whiteSpace: "nowrap" }}>Reset</button>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: "center", minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600, color: SCQ.teal, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {demo.teamB}
+                  </div>
+                  <div className={flashB ? "scq-score-flash" : ""} style={{
+                    fontFamily: "'Orbitron', sans-serif", fontSize: 32, color: "#fff", margin: "4px 0",
+                  }}>
+                    {demo.scoreB}
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4, justifyContent: "center" }}>
+                    <button className="scq-cp-btn" onClick={() => applyScore("B", "correct")} style={{ ...cpButtonBase, background: SCQ.teal, color: "#0b0f14", padding: "6px 7px", fontSize: 10.5, whiteSpace: "nowrap" }}>✓ Correct</button>
+                    <button className="scq-cp-btn" onClick={() => applyScore("B", "wrong")} style={{ ...cpButtonBase, background: "#fb7185", padding: "6px 7px", fontSize: 10.5, whiteSpace: "nowrap" }}>✗ Wrong</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Audio + Visual */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                <div>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: SCQ.muted, marginBottom: 6 }}>Audio clips</div>
+                  <div style={{ display: "flex", gap: 4, marginBottom: 6 }}>
+                    <input
+                      value={audioNameInput}
+                      onChange={(e) => setAudioNameInput(e.target.value)}
+                      placeholder="Audio clip name"
+                      style={{
+                        flex: 1, minWidth: 0, padding: "6px 8px", borderRadius: 6,
+                        background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+                        color: SCQ.text, fontFamily: "'Inter', sans-serif", fontSize: 11, outline: "none",
+                      }}
+                    />
+                    <button className="scq-cp-btn" onClick={addAudioClip} style={{ ...cpButtonBase, background: "rgba(255,255,255,0.1)", padding: "6px 10px", fontSize: 10.5, whiteSpace: "nowrap" }}>Add Clip</button>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, maxHeight: 70, overflowY: "auto" }}>
+                    {demo.audioClips.map((clip, i) => (
+                      <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
+                        <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 10.5, color: SCQ.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{clip}</span>
+                        <button
+                          className="scq-cp-btn"
+                          onClick={playAudio}
+                          style={{
+                            ...cpButtonBase, padding: "3px 8px", fontSize: 10,
+                            background: demo.audioPlaying ? SCQ.teal : "rgba(45,212,191,0.25)",
+                            color: demo.audioPlaying ? "#0b0f14" : SCQ.teal,
+                            animation: demo.audioPlaying ? "scoreFlash 0.6s ease-in-out infinite" : "none",
+                          }}
+                        >
+                          ▶ Play
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: SCQ.muted, marginBottom: 6 }}>Visual</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    <button className="scq-cp-btn" onClick={() => setDemo((d) => ({ ...d, visualActive: true }))} style={{ ...cpButtonBase, background: "rgba(255,255,255,0.1)", padding: "6px 10px", fontSize: 10.5, whiteSpace: "nowrap" }}>Show Visual</button>
+                    <button className="scq-cp-btn" onClick={() => setDemo((d) => ({ ...d, visualActive: false }))} style={{ ...cpButtonBase, background: "rgba(255,255,255,0.1)", padding: "6px 10px", fontSize: 10.5, whiteSpace: "nowrap" }}>Hide Visual</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* HDMI line */}
+        <div style={{
+          width: 260, minWidth: 80, height: 2, background: "rgba(200,162,74,0.55)",
+          position: "relative", alignSelf: "center", margin: "0 12px",
+        }}>
+          <span style={{
+            position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+            background: SCQ.maroonDeep, padding: "2px 8px",
+            fontFamily: "monospace", fontSize: 9, color: SCQ.gold, letterSpacing: "0.08em",
+            whiteSpace: "nowrap",
+          }}>
+            Likely HDMI Connection
+          </span>
+        </div>
+
+        {/* RIGHT — Main Scoreboard */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          <span style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 600,
+            letterSpacing: "0.1em", textTransform: "uppercase", color: SCQ.gold,
+          }}>
+            Second Screen
+          </span>
+          <div style={{
+            width: "clamp(340px, 40vw, 480px)",
+            transform: "perspective(900px) rotateX(4deg)",
+            borderRadius: 14, border: `2px solid ${SCQ.gold}`,
+            boxShadow: "0 26px 60px rgba(0,0,0,0.6)",
+            position: "relative", overflow: "hidden",
+            background: `radial-gradient(900px 300px at 50% 0%, rgba(200,162,74,0.22), transparent 60%), linear-gradient(180deg, ${SCQ.maroonLight}, ${SCQ.maroonDeep})`,
+          }}>
+            <div className="scq-broadcast-glow" style={{
+              position: "absolute", top: -60, left: "50%", transform: "translateX(-50%)",
+              width: 300, height: 200, borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(240,200,74,0.35), transparent 70%)",
+              pointerEvents: "none",
+            }} />
+
+            <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)", padding: "30px 18px 40px", gap: 12, alignItems: "center", position: "relative" }}>
+              <div style={{ textAlign: "center", minWidth: 0 }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,255,255,0.85)", marginBottom: 6, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{demo.teamA}</div>
+                <div className={flashA ? "scq-score-flash" : ""} style={{
+                  fontFamily: "'Orbitron', sans-serif", fontWeight: 900,
+                  fontSize: "clamp(2.4rem, 5vw, 3.6rem)", color: SCQ.goldBright,
+                  textShadow: "0 0 20px rgba(240,200,74,0.6)",
+                }}>
+                  {demo.scoreA}
+                </div>
+              </div>
+
+              <div style={{ textAlign: "center", minWidth: 0 }}>
+                <div style={{
+                  display: "inline-block", padding: "4px 14px", borderRadius: 999,
+                  border: `1px solid ${SCQ.gold}`, color: SCQ.gold,
+                  fontFamily: "'Inter', sans-serif", fontSize: 10.5, letterSpacing: "0.08em",
+                  marginBottom: 10,
+                }}>
+                  {roundMeta.label}
+                </div>
+                <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 22, color: "#fff" }}>
+                  {formatTime(demo.timeRemaining)}
+                </div>
+              </div>
+
+              <div style={{ textAlign: "center", minWidth: 0 }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,255,255,0.85)", marginBottom: 6, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{demo.teamB}</div>
+                <div className={flashB ? "scq-score-flash" : ""} style={{
+                  fontFamily: "'Orbitron', sans-serif", fontWeight: 900,
+                  fontSize: "clamp(2.4rem, 5vw, 3.6rem)", color: SCQ.goldBright,
+                  textShadow: "0 0 20px rgba(240,200,74,0.6)",
+                }}>
+                  {demo.scoreB}
+                </div>
+              </div>
+            </div>
+
+            {demo.audioPlaying && (
+              <div style={{
+                position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)",
+                display: "flex", gap: 4, alignItems: "flex-end", height: 20,
+              }}>
+                <span className="scq-audio-bar" style={{ animationDelay: "0s" }} />
+                <span className="scq-audio-bar" style={{ animationDelay: "0.15s" }} />
+                <span className="scq-audio-bar" style={{ animationDelay: "0.3s" }} />
+              </div>
+            )}
+
+            {demo.visualActive && (
+              <div style={{
+                position: "absolute", inset: 0, background: "rgba(0,0,0,0.72)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <button
+                  onClick={() => setDemo((d) => ({ ...d, visualActive: false }))}
+                  style={{
+                    position: "absolute", top: 12, right: 14, background: "transparent",
+                    border: "none", color: SCQ.gold, fontSize: 18, cursor: "pointer",
+                  }}
+                  aria-label="Dismiss visual"
+                >
+                  ✕
+                </button>
+                <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 18, color: SCQ.gold }}>
+                  [ Visual Question ]
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+const SCQ_FEATURE_ROWS = [
+  { name: "Three Round Types", desc: "Alternate, Speed, Buzzer — each with correct timers and point values" },
+  { name: "Dual Screen Sync", desc: "Control Panel + Main Scoreboard update instantly together" },
+  { name: "Main Timer", desc: "Per-round countdown with start, pause, reset and hold-to-confirm" },
+  { name: "Question Timer", desc: "Separate per-question countdown controllable from the panel" },
+  { name: "Score Undo", desc: "Double-tap Shift to reverse the last scoring action" },
+  { name: "Visual Questions", desc: "Push image questions to the audience screen from the control panel" },
+  { name: "Audio Clips", desc: "Upload and play audio with hotkey support" },
+  { name: "Junior and Senior Modes", desc: "Speed round adapts — 3 minutes for senior, 4 subjects for junior" },
+  { name: "Query Adjustments", desc: "Retroactive point corrections with confirm modal" },
+  { name: "Presenting Mode", desc: "Dedicated second-monitor layout for large venues" },
+];
+
+const SCQ_INSTALL_STEPS = [
+  { title: "If this appears when downloading", img: "/images/scq-smartscreen-1.webp" },
+  { title: "Click More Info", img: "/images/scq-smartscreen-2.webp" },
+  { title: "Then click Run Anyway", img: "/images/scq-smartscreen-3.webp" },
+];
+
+function ScqPricingFeature({ children }) {
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+      <span style={{ color: SCQ.gold, flexShrink: 0 }}>✓</span>
+      <span style={{ fontSize: 13, color: "rgba(255,255,255,0.8)" }}>{children}</span>
+    </div>
+  );
+}
+
+function ScoreboardProject({ onNextProject }) {
+  useScqFonts();
+  const [splashing, setSplashing] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setSplashing(false), 4700);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <>
+      <ScqSplash visible={splashing} />
+
+      <div
+        className="pk1-scroll"
+        style={{
+          position: "fixed", inset: 0, zIndex: 100,
+          background: "linear-gradient(180deg, #7a101c 0%, #3f0b11 40%, #1a0508 100%)",
+          overflowY: "auto",
+          fontFamily: "'Inter', sans-serif", color: "#fff",
+        }}
+      >
+        {/* SECTION 1 — HERO */}
+        <section style={{
+          minHeight: "100vh", display: "grid", gridTemplateColumns: "1.05fr 0.95fr",
+          gap: 40, alignItems: "center", padding: "90px 48px 60px", maxWidth: 1200, margin: "0 auto",
+        }}>
+          <div>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "rgba(0,0,0,0.35)", borderRadius: 999, padding: "6px 14px",
+              marginBottom: 22,
+            }}>
+              <span className="scq-pulse-live" style={{ width: 7, height: 7, borderRadius: "50%", background: "#34d399" }} />
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, fontWeight: 600, letterSpacing: "0.08em", color: "#fff" }}>LIVE</span>
+            </div>
+
+            <h1 style={{
+              fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(34px, 5vw, 52px)",
+              lineHeight: 1.0, margin: 0,
+            }}>
+              <span style={{ color: SCQ.goldBright, textShadow: "0 0 24px rgba(240,200,74,0.55)" }}>SCQ</span><br />
+              <span style={{ color: "#fff" }}>Scoreboard</span>
+            </h1>
+
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: SCQ.muted, marginTop: 20, maxWidth: 480, lineHeight: 1.5 }}>
+              Built for Jamaican coaches training for TVJ's School's Challenge Quiz competition.
+            </p>
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: "rgba(255,255,255,0.7)", marginTop: 12, maxWidth: 480, lineHeight: 1.7 }}>
+              Most teams train with a tally on a whiteboard. SCQ Scoreboard gives coaches a full match simulation — the same rounds, timing, and scoring format used in official TVJ matches, with a broadcast-quality audience display and a separate control panel for the scorer. The scorer sees the full tally breakdown. The audience sees only the scores. Visuals and audio work exactly as they do on the real TVJ broadcast.
+            </p>
+
+            <div style={{ marginTop: 28 }}>
+              <ScqDownloadButtons />
+            </div>
+
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 22 }}>
+              <ScqPill small>Free mode available</ScqPill>
+              <ScqPill small>Premium unlock</ScqPill>
+              <ScqPill small>Digital delivery</ScqPill>
+            </div>
+          </div>
+
+          <div className="scq-broadcast-glow-wrap" style={{
+            position: "relative", borderRadius: 16, border: `2px solid ${SCQ.gold}`,
+            overflow: "hidden", boxShadow: "0 30px 70px rgba(0,0,0,0.6)",
+            background: `radial-gradient(900px 320px at 50% 0%, rgba(200,162,74,0.25), transparent 60%), ${SCQ.maroonDeep}`,
+          }}>
+            <div className="scq-broadcast-glow" style={{
+              position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)",
+              width: 360, height: 220, borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(240,200,74,0.35), transparent 70%)",
+              pointerEvents: "none",
+            }} />
+            <div style={{ position: "relative", padding: "22px 24px 10px", textAlign: "center" }}>
+              <span style={{
+                display: "inline-block", padding: "5px 18px", borderRadius: 999,
+                border: `1px solid ${SCQ.gold}`, color: SCQ.gold,
+                fontFamily: "'Inter', sans-serif", fontSize: 11.5, letterSpacing: "0.1em",
+              }}>
+                ALTERNATE
+              </span>
+            </div>
+            <div style={{ position: "relative", display: "grid", gridTemplateColumns: "1fr 1fr", padding: "28px 24px 34px", gap: 12 }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 10 }}>Team A</div>
+                <div style={{
+                  fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(3rem, 6vw, 4.4rem)",
+                  color: SCQ.goldBright, textShadow: "0 0 24px rgba(240,200,74,0.6)",
+                }}>
+                  —
+                </div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 10 }}>Team B</div>
+                <div style={{
+                  fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(3rem, 6vw, 4.4rem)",
+                  color: SCQ.goldBright, textShadow: "0 0 24px rgba(240,200,74,0.6)",
+                }}>
+                  —
+                </div>
+              </div>
+            </div>
+            <div style={{
+              position: "relative", padding: "10px 16px", textAlign: "center",
+              borderTop: "1px solid rgba(200,162,74,0.3)",
+            }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 10.5, color: SCQ.muted, letterSpacing: "0.04em" }}>
+                Not endorsed by TVJ · Used by real coaches
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 1.5 — WHY I BUILT IT */}
+        <ScoreboardDivider label="PRE-MATCH — WHY THIS EXISTS" />
+        <section style={{ padding: "60px 24px 70px", maxWidth: 900, margin: "0 auto" }}>
+          <h2 style={{
+            fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(22px, 3.2vw, 32px)",
+            color: SCQ.gold, margin: "0 0 20px", textAlign: "center",
+          }}>
+            Why I built it
+          </h2>
+          <p style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.8,
+            color: "rgba(255,255,255,0.78)", margin: 0, textAlign: "center",
+          }}>
+            Schools competing in TVJ's School's Challenge Quiz train the way they always have — drawing tallies on whiteboards. I built SCQ Scoreboard to change that. Coaches now run full match simulations with real timing, real scoring rules, and a display that looks like the actual broadcast. The app is not officially endorsed by TVJ, but it is being used by coaches who have purchased it.
+          </p>
+        </section>
+
+        {/* SECTION 2 — DUAL WINDOW SHOWCASE */}
+        <ScoreboardDivider label="ROUND 1 — DUAL WINDOW SETUP" />
+        <section style={{ padding: "60px 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
+          <ScqSectionHeading
+            title="Two screens. One match."
+            subtitle="Run the Control Panel on your laptop. Project the Main Scoreboard to a TV or projector."
+          />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
+            <div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: SCQ.teal, textAlign: "center", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                Control Panel
+              </div>
+              <div
+                onClick={() => openLightbox("/images/scq-cp.webp")}
+                style={{
+                  background: SCQ.cpBg, borderRadius: 12, padding: 10,
+                  boxShadow: "0 20px 50px rgba(0,0,0,0.5)", cursor: "zoom-in",
+                }}
+              >
+                <img
+                  src="/images/scq-cp.webp"
+                  alt="Control Panel screenshot"
+                  style={{ width: "100%", borderRadius: 8, display: "block" }}
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
+                />
+              </div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: SCQ.gold, textAlign: "center", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                Main Scoreboard
+              </div>
+              <div
+                onClick={() => openLightbox("/images/scq-ms.webp")}
+                style={{
+                  background: SCQ.maroonDeep, borderRadius: 12, padding: 10,
+                  border: `1px solid ${SCQ.gold}`,
+                  boxShadow: "0 20px 50px rgba(0,0,0,0.5)", cursor: "zoom-in",
+                }}
+              >
+                <img
+                  src="/images/scq-ms.webp"
+                  alt="Main Scoreboard screenshot"
+                  style={{ width: "100%", borderRadius: 8, display: "block" }}
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 3 — LIVE STATS SCOREBOARD */}
+        <ScoreboardDivider label="ROUND 2 — BY THE NUMBERS" />
+        <section style={{
+          position: "relative", overflow: "hidden", padding: "60px 24px",
+          background: `radial-gradient(900px 320px at 50% 0%, rgba(200,162,74,0.22), transparent 60%), linear-gradient(180deg, ${SCQ.maroonLight}, ${SCQ.maroonDeep})`,
+        }}>
+          <div className="scq-broadcast-glow" style={{
+            position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)",
+            width: 420, height: 240, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(240,200,74,0.35), transparent 70%)",
+            pointerEvents: "none",
+          }} />
+          <div style={{
+            position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
+            gap: 0, maxWidth: 700, margin: "0 auto", flexWrap: "wrap",
+          }}>
+            {[
+              { value: "3", label: "ROUND TYPES" },
+              { value: "2", label: "SCREENS" },
+              { value: "∞", label: "MATCH FORMATS" },
+            ].map((stat, i) => (
+              <div key={stat.label} style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ textAlign: "center", padding: "0 40px" }}>
+                  <div style={{
+                    fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(2.6rem, 5vw, 3.6rem)",
+                    color: SCQ.goldBright, textShadow: "0 0 20px rgba(240,200,74,0.6)",
+                  }}>
+                    {stat.value}
+                  </div>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, letterSpacing: "0.1em", color: "#fff", marginTop: 6 }}>
+                    {stat.label}
+                  </div>
+                </div>
+                {i < 2 && <div style={{ width: 1, height: 60, background: "rgba(200,162,74,0.4)" }} />}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION 4 — INTERACTIVE DEMO */}
+        <ScoreboardDivider label="ROUND 3 — TRY IT YOURSELF" />
+        <section style={{ padding: "60px 16px 80px" }}>
+          <ScqSectionHeading
+            title="Try it yourself"
+            subtitle="A simplified version of the actual app. Control panel on the left, audience display on the right."
+          />
+          <ScqDemo />
+        </section>
+
+        {/* SECTION 5 — FEATURES AS LEADERBOARD */}
+        <ScoreboardDivider label="ROUND 4 — FEATURES" />
+        <section style={{ padding: "60px 24px 80px", maxWidth: 1000, margin: "0 auto" }}>
+          <ScqSectionHeading title="What's in the match" />
+          <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)" }}>
+            {SCQ_FEATURE_ROWS.map((row, i) => (
+              <div
+                key={row.name}
+                style={{
+                  display: "grid", gridTemplateColumns: "50px 1fr 1fr 40px", alignItems: "center",
+                  gap: 12, padding: "14px 18px",
+                  background: i % 2 === 0 ? "rgba(0,0,0,0.25)" : "rgba(0,0,0,0.12)",
+                }}
+              >
+                <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 15, color: SCQ.gold }}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13.5, color: "#fff" }}>
+                  {row.name}
+                </span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12.5, color: SCQ.muted }}>
+                  {row.desc}
+                </span>
+                <span style={{ color: SCQ.gold, fontSize: 16, textAlign: "right" }}>✓</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION 6 — INSTALLATION GUIDE */}
+        <ScoreboardDivider label="ROUND 5 — INSTALLATION" />
+        <section style={{ padding: "60px 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
+          <ScqSectionHeading
+            title="First-time install on Windows"
+            subtitle="You may see a SmartScreen warning. This is expected for new software. The app is malware-checked and code-certified by SSL.com."
+          />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+            {SCQ_INSTALL_STEPS.map((step, i) => (
+              <div key={step.title} style={{
+                background: SCQ.maroon, borderRadius: 12, padding: 20,
+                border: "1px solid rgba(200,162,74,0.25)",
+              }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: "50%", background: SCQ.gold,
+                  color: SCQ.maroonDeep, display: "flex", alignItems: "center", justifyContent: "center",
+                  fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: 14, marginBottom: 14,
+                }}>
+                  {i + 1}
+                </div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "#fff", margin: "0 0 14px", fontWeight: 500 }}>
+                  {step.title}
+                </p>
+                <img
+                  src={step.img}
+                  alt={step.title}
+                  style={{ width: "100%", borderRadius: 8, display: "block" }}
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION 7 — PRICING AS MATCH ENTRY */}
+        <ScoreboardDivider label="ROUND 6 — LICENSING" />
+        <section style={{ padding: "60px 24px 40px", maxWidth: 1100, margin: "0 auto" }}>
+          <ScqSectionHeading
+            title="Pick your plan"
+            subtitle="One-time payment · License key delivered to your email · Payment via bank transfer"
+          />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+            {/* Panel 1 — Individual */}
+            <div style={{ background: "rgba(0,0,0,0.3)", borderTop: `3px solid ${SCQ.gold}`, borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: "0.12em", color: SCQ.gold, textTransform: "uppercase" }}>STANDARD</span>
+              <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 20, color: "#fff", margin: 0 }}>Individual</h3>
+              <div>
+                <span style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: 34, color: SCQ.goldBright }}>15,000</span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: SCQ.muted, marginLeft: 6 }}>JMD</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <ScqPricingFeature>1 device</ScqPricingFeature>
+                <ScqPricingFeature>One-time payment</ScqPricingFeature>
+                <ScqPricingFeature>All current features</ScqPricingFeature>
+                <ScqPricingFeature>Free bug fixes for life</ScqPricingFeature>
+                <ScqPricingFeature>Ideal for coaches and students</ScqPricingFeature>
+              </div>
+              <a
+                href={SCQ_WHATSAPP}
+                target="_blank" rel="noopener noreferrer"
+                style={{
+                  marginTop: "auto", textAlign: "center", padding: "12px 16px", borderRadius: 8,
+                  background: "#25d366", color: "#fff", textDecoration: "none",
+                  fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13.5,
+                }}
+              >
+                💬 Purchase via WhatsApp
+              </a>
+            </div>
+
+            {/* Panel 2 — Additional Devices */}
+            <div style={{ background: "rgba(0,0,0,0.3)", borderTop: `3px solid ${SCQ.gold}`, borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: "0.12em", color: SCQ.gold, textTransform: "uppercase" }}>EXTEND</span>
+              <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 20, color: "#fff", margin: 0 }}>Additional Devices</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontFamily: "'Inter', sans-serif", fontSize: 13 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", color: "rgba(255,255,255,0.85)" }}>
+                  <span>2nd device</span><span style={{ color: SCQ.goldBright, fontWeight: 600 }}>+5,000 JMD</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", color: "rgba(255,255,255,0.85)" }}>
+                  <span>3rd device</span><span style={{ color: SCQ.goldBright, fontWeight: 600 }}>+5,000 JMD</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", color: "rgba(255,255,255,0.85)" }}>
+                  <span>4th device+</span><span style={{ color: SCQ.goldBright, fontWeight: 600 }}>+2,000 JMD each</span>
+                </div>
+              </div>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: SCQ.muted, margin: 0 }}>
+                Same license key activates across all devices
+              </p>
+              <a
+                href={SCQ_WHATSAPP}
+                target="_blank" rel="noopener noreferrer"
+                style={{
+                  marginTop: "auto", textAlign: "center", padding: "12px 16px", borderRadius: 8,
+                  background: "#25d366", color: "#fff", textDecoration: "none",
+                  fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13.5,
+                }}
+              >
+                💬 Add a Device via WhatsApp
+              </a>
+            </div>
+
+            {/* Panel 3 — Rally Pass */}
+            <div style={{ background: "rgba(0,0,0,0.3)", borderTop: `3px solid ${SCQ.gold}`, borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: "0.12em", color: SCQ.gold, textTransform: "uppercase" }}>EVENT</span>
+              <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 20, color: "#fff", margin: 0 }}>Rally Pass</h3>
+              <div>
+                <span style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: 34, color: SCQ.goldBright }}>5,000</span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: SCQ.muted, marginLeft: 6 }}>JMD</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <ScqPricingFeature>Unlimited devices</ScqPricingFeature>
+                <ScqPricingFeature>3-day access</ScqPricingFeature>
+                <ScqPricingFeature>Must activate within 7 days</ScqPricingFeature>
+                <ScqPricingFeature>Ideal for large rally events</ScqPricingFeature>
+              </div>
+              <a
+                href={SCQ_WHATSAPP}
+                target="_blank" rel="noopener noreferrer"
+                style={{
+                  marginTop: "auto", textAlign: "center", padding: "12px 16px", borderRadius: 8,
+                  background: "#25d366", color: "#fff", textDecoration: "none",
+                  fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13.5,
+                }}
+              >
+                💬 Purchase via WhatsApp
+              </a>
+            </div>
+          </div>
+          <p style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 12, color: SCQ.muted,
+            textAlign: "center", marginTop: 28, maxWidth: 700, marginLeft: "auto", marginRight: "auto", lineHeight: 1.7,
+          }}>
+            All payments via bank transfer. License key sent after payment confirmed. All sales are final after activation. Contact support before purchasing a new license if you have activation issues.
+          </p>
+        </section>
+
+        {/* SECTION 8 — STATUS */}
+        <ScoreboardDivider label="FINAL WHISTLE" />
+        <section style={{ padding: "70px 24px 90px", textAlign: "center" }}>
+          <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(26px, 4vw, 38px)", color: SCQ.gold, margin: 0 }}>
+            Live and selling.
+          </h2>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14.5, color: SCQ.muted, marginTop: 14, maxWidth: 560, marginLeft: "auto", marginRight: "auto", lineHeight: 1.7 }}>
+            Used in real School's Challenge Quiz competitions in Jamaica. Free mode available. Premium license sold separately.
+          </p>
+          <div style={{ marginTop: 30, display: "flex", justifyContent: "center" }}>
+            <ScqDownloadButtons stacked />
+          </div>
+        </section>
+
+        {/* SECTION 9 — NEXT PROJECT */}
+        <div
+          onClick={onNextProject}
+          style={{
+            width: "100%", background: SCQ.maroonDeep,
+            padding: "26px 32px", display: "flex", justifyContent: "flex-end",
+            alignItems: "center", cursor: "pointer",
+          }}
+        >
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: SCQ.gold, fontWeight: 500 }}>
+            Next · Uno Calculator →
+          </span>
         </div>
       </div>
     </>

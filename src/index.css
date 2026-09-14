@@ -103,6 +103,66 @@ body {
   transition: opacity 0.5s ease;
 }
 
+/* --- SCQ Scoreboard case study --- */
+@keyframes scoreFlash {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+@keyframes audioBars {
+  0%, 100% { height: 5px; }
+  50%       { height: 20px; }
+}
+
+@keyframes ambientGlow {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes broadcastGlow {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+@keyframes pulseLive {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(52,211,153,0); }
+}
+
+.scq-score-flash {
+  animation: scoreFlash 0.35s ease;
+}
+
+.scq-audio-bar {
+  width: 4px;
+  background: #f0c84a;
+  border-radius: 2px;
+  animation: audioBars 0.6s ease-in-out infinite;
+}
+
+.scq-ambient-glow {
+  animation: ambientGlow 4s ease-in-out infinite;
+}
+
+.scq-broadcast-glow {
+  animation: broadcastGlow 4s ease-in-out infinite;
+}
+
+.scq-pulse-live {
+  animation: pulseLive 1.8s ease-in-out infinite;
+}
+
+.scq-cp-btn {
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.scq-cp-btn:hover {
+  filter: brightness(1.12);
+}
+.scq-cp-btn:active {
+  transform: scale(0.96);
+}
+
 .rv-fade-up-section {
   opacity: 0;
   transform: translateY(28px);
@@ -114,13 +174,11 @@ body {
 }
 
 @keyframes rvPulseTravel {
-  0%   { left: 0%; opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { left: 100%; opacity: 0; }
+  0%, 100% { left: 0%; }
+  50%      { left: 100%; }
 }
 .rv-sync-pulse {
-  animation: rvPulseTravel 2.2s ease-in-out infinite;
+  animation: rvPulseTravel 2.6s ease-in-out infinite;
 }
 
 @media (max-width: 700px) {
