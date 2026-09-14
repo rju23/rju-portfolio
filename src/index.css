@@ -17,6 +17,30 @@ body {
 }
 .pulse-dot { animation: pulseDot 2.6s ease-in-out infinite; }
 
+@keyframes pulseDotAmber {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(217,138,76,0.5); }
+  50%      { opacity: 0.7; box-shadow: 0 0 0 5px rgba(217,138,76,0); }
+}
+.pulse-dot-amber { animation: pulseDotAmber 2.6s ease-in-out infinite; }
+
+.about-skill-pill {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(217,138,76,0.3);
+  color: rgba(244,239,231,0.6);
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  transform: rotate(var(--rotate));
+  margin: 4px;
+  background: rgba(217,138,76,0.05);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.about-skill-pill:hover {
+  border-color: rgba(217,138,76,0.6);
+  color: #F4EFE7;
+}
+
 @keyframes breathe {
   0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06); }
   50%       { box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 2px rgba(217,138,76,0.20), 0 0 18px rgba(217,138,76,0.08); }
@@ -35,6 +59,34 @@ body {
   0%, 100% { opacity: 0.5; }
   50%      { opacity: 1; }
 }
+.medvis-pulse-text { animation: unoPulseText 2s ease-in-out infinite; }
+
+@keyframes cellBounce {
+  0%   { left: 40px; top: 0; }
+  12%  { left: calc(100% - 28px); top: calc(20% - 14px); }
+  25%  { left: calc(75% - 14px); top: calc(100% - 28px); }
+  37%  { left: 0; top: calc(70% - 14px); }
+  50%  { left: calc(75% - 14px); top: 0; }
+  62%  { left: calc(100% - 28px); top: calc(65% - 14px); }
+  75%  { left: calc(25% - 14px); top: calc(100% - 28px); }
+  87%  { left: 0; top: calc(30% - 14px); }
+  100% { left: 40px; top: 0; }
+}
+.medvis-cell { animation: cellBounce 90s linear infinite; }
+@keyframes audioBarsCard {
+  0%, 100% { height: 6px; }
+  50%       { height: 18px; }
+}
+@keyframes musicvisBarSplash {
+  0%, 100% { height: 10px; }
+  50%       { height: 36px; }
+}
+.musicvis-bar { animation: musicvisBarSplash 1s ease-in-out infinite; }
+@keyframes cubeFaceSpin {
+  0%   { transform: rotate(var(--r, 0deg)); }
+  100% { transform: rotate(calc(var(--r, 0deg) + 360deg)); }
+}
+.cube-face-card { animation: cubeFaceSpin 12s linear infinite; }
 @keyframes throwRight {
   0%   { transform: translateX(0) rotate(0deg); opacity: 1; }
   100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }

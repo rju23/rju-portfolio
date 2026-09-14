@@ -56,7 +56,7 @@ function Particles() {
       posAttr.array[i * 3 + 1] = y;
       posAttr.array[i * 3 + 2] = p.zJitter;
 
-      // warm amber — upper waves brighter, lower cooler
+      // warm amber - upper waves brighter, lower cooler
       const warm = p.waveIndex < 3 ? 1 : 0.75;
       colAttr.array[i * 3]     = 0.92 * alpha * warm;
       colAttr.array[i * 3 + 1] = 0.60 * alpha * warm;

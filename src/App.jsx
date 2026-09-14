@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import emailjs from "@emailjs/browser";
 import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive, Trophy, Timer, RotateCcw, Image, Music } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
@@ -316,7 +317,7 @@ function InputBar({ onNavigate }) {
   // exit animation never plays on first paint.
   const showChips = () => { setEverShown(true); setVisible(true); };
 
-  // Nudge the bar and bounce the chips in — the input is a prop, not a real field.
+  // Nudge the bar and bounce the chips in - the input is a prop, not a real field.
   const rejectTyping = () => {
     showChips();
     if (shaking) return;              // let the current nudge finish
@@ -563,7 +564,7 @@ function HeroText() {
           fontFamily: "'Inter', sans-serif", fontWeight: 300,
           marginBottom: 20, letterSpacing: "0.01em",
         }}>
-          Meet PK-1 — Prakash's personal AI portfolio assistant.
+          Meet PK-1 - Prakash's personal AI portfolio assistant.
         </p>
 
         {/* Main headline with light effect */}
@@ -620,7 +621,7 @@ function HeroText() {
             <span style={{ fontSize: 12 }}>⌨</span>
             software developer
           </span>
-          {" "}— I build apps, websites and other useful tools with clean interfaces to solve real problems.
+          {" "}- I build apps, websites and other useful tools with clean interfaces to solve real problems.
         </p>
         <p style={{
           fontSize: 15.5, lineHeight: 1.75,
@@ -643,7 +644,7 @@ function TopBar() {
       display: "flex", alignItems: "center", justifyContent: "space-between",
       padding: "18px 28px 0",
     }}>
-      {/* Left — PK-1 chip */}
+      {/* Left - PK-1 chip */}
       <div style={{
         display: "flex", alignItems: "center", gap: 10,
         fontSize: 12, fontFamily: "'Inter', sans-serif",
@@ -662,7 +663,7 @@ function TopBar() {
         <span>Always building</span>
       </div>
 
-      {/* Right — weather + location + icon */}
+      {/* Right - weather + location + icon */}
       <div style={{
         display: "flex", alignItems: "center", gap: 18,
         fontSize: 12.5, color: "rgba(244,239,231,0.55)",
@@ -752,7 +753,7 @@ const COMING_SOON_TABS = [
       {
         tag: "Three.js · Medical",
         title: "Medical Visualizer",
-        description: "Interactive visual representations of medical processes — SA node firing sequence, T1DM beta cell destruction, and more as I study.",
+        description: "Interactive visual representations of medical processes - SA node firing sequence, T1DM beta cell destruction, and more as I study.",
         status: "In progress",
       },
       {
@@ -764,7 +765,7 @@ const COMING_SOON_TABS = [
       {
         tag: "Desktop · Electron",
         title: "Media Sync",
-        description: "Sync two media players — pause one and the other immediately plays, and vice versa.",
+        description: "Sync two media players - pause one and the other immediately plays, and vice versa.",
         status: "Built",
       },
     ],
@@ -778,7 +779,7 @@ const COMING_SOON_TABS = [
       {
         tag: "Coming soon",
         title: "Short entries. Real process.",
-        description: "Build notes, decisions, what worked, what didn't — written as things happen, not after the fact.",
+        description: "Build notes, decisions, what worked, what didn't - written as things happen, not after the fact.",
         status: "Coming soon",
       },
     ],
@@ -896,15 +897,15 @@ function ComingSoonView() {
 }
 
 const PROJECTS = [
-  { id: "876-revive",          title: "876 Revive & Drive",         tag: "Client Work",       description: "A Flutter car wash booking app with a full admin dashboard for managing bookings in real time.", platform: "Android" },
-  { id: "scq-scoreboard",      title: "SCQ Scoreboard",             tag: "Personal · Selling", description: "A Windows desktop scoring app built for School's Challenge Quiz competitions. My first shipped product.", platform: "Windows" },
-  { id: "uno-calculator",      title: "Uno Calculator",             tag: "Personal",           description: "A Flutter app that tracks and calculates Uno scores across multiple players and rounds.", platform: "Android" },
+  { id: "876-revive",          title: "876 Revive & Drive",         tag: "Client Work",       description: "A Flutter car wash booking app with a full admin dashboard for managing bookings in real time.", platform: "Mobile" },
+  { id: "scq-scoreboard",      title: "SCQ Scoreboard",             tag: "Personal · Selling", description: "A PC/Laptop desktop scoring app built for School's Challenge Quiz competitions. My first shipped product.", platform: "PC/Laptop" },
+  { id: "uno-calculator",      title: "Uno Calculator",             tag: "Personal",           description: "A Flutter app that tracks and calculates Uno scores across multiple players and rounds.", platform: "Mobile" },
   { id: "client-management",   title: "Client Management System",   tag: "Personal Tool",      description: "A system I built for myself to manage clients, projects, contracts and follow-ups.", platform: "Web" },
-  { id: "pk1-portfolio",       title: "PK-1 Portfolio",             tag: "Personal",           description: "This portfolio — an AI platform aesthetic built in React/Vite with a prompt-driven navigation system.", platform: "Web" },
-  { id: "medical-visualizer",  title: "Medical Visualizer",         tag: "Experiment",         description: "Interactive Three.js visual representations of medical processes — SA node firing sequence, T1DM beta cell destruction.", platform: "Web" },
+  { id: "pk1-portfolio",       title: "PK-1 Portfolio",             tag: "Personal",           description: "This portfolio - an AI platform aesthetic built in React/Vite with a prompt-driven navigation system.", platform: "Web" },
+  { id: "medical-visualizer",  title: "Medical Visualizer",         tag: "Experiment",         description: "Interactive Three.js visual representations of medical processes - SA node firing sequence, T1DM beta cell destruction.", platform: "Web" },
   { id: "music-visualizer",    title: "Music Visualizer",           tag: "Experiment",         description: "A real-time visualizer that reacts to music being played.", platform: "Web" },
-  { id: "media-sync",          title: "Media Sync",                 tag: "Experiment",         description: "A desktop app that syncs two media players — pause one and the other immediately plays.", platform: "Desktop" },
-  { id: "interactive-3d-cube", title: "Interactive 3D Cube",        tag: "Playground",         description: "A Three.js experiment — orbit, move and customise a 3D cube across different environments.", platform: "Web" },
+  { id: "media-sync",          title: "Media Sync",                 tag: "Experiment",         description: "A desktop app that syncs two media players - pause one and the other immediately plays.", platform: "Desktop" },
+  { id: "interactive-3d-cube", title: "Interactive 3D Cube",        tag: "Playground",         description: "A Three.js experiment - orbit, move and customise a 3D cube across different weather atmospheres.", platform: "Web" },
 ];
 
 function ProjectsView({ onNavigate }) {
@@ -935,6 +936,11 @@ function ProjectsView({ onNavigate }) {
           const isScq = project.id === "scq-scoreboard";
           const isUno = project.id === "uno-calculator";
           const isPk1 = project.id === "pk1-portfolio";
+          const isCm = project.id === "client-management";
+          const isMed = project.id === "medical-visualizer";
+          const isMusic = project.id === "music-visualizer";
+          const isCube = project.id === "interactive-3d-cube";
+          const isSync = project.id === "media-sync";
 
           const reviveDefaultBorder = "rgba(0,122,47,0.35)";
           const reviveHoverBorder = "rgba(0,122,47,0.7)";
@@ -946,9 +952,10 @@ function ProjectsView({ onNavigate }) {
           return (
             <div
               key={project.id}
-              onClick={() => handleSelect(project)}
+              onClick={() => isCube ? onNavigate("playground") : handleSelect(project)}
               style={{
                 position: "relative",
+                overflow: (isMed || isMusic || isCube || isSync) ? "hidden" : "visible",
                 padding: "20px 20px 18px",
                 borderRadius: 12,
                 background: isRevive
@@ -957,6 +964,16 @@ function ProjectsView({ onNavigate }) {
                   ? "radial-gradient(220px 140px at 30% -10%, rgba(240,200,74,0.22), transparent 65%), linear-gradient(160deg, #8a1420 0%, #5c0e18 55%, #2a0709 100%)"
                   : isUno
                   ? "radial-gradient(220px 140px at 80% -10%, rgba(245,196,0,0.25), transparent 60%), radial-gradient(200px 160px at 5% 115%, rgba(0,87,168,0.2), transparent 60%), linear-gradient(160deg, #4a0d14 0%, #29070b 55%, #170406 100%)"
+                  : isCm
+                  ? "#008080"
+                  : isMed
+                  ? "linear-gradient(135deg, #0a1628, #1a3a5c)"
+                  : isMusic
+                  ? "linear-gradient(135deg, #0b0b10, #1a0a2e)"
+                  : isCube
+                  ? "linear-gradient(135deg, #0a0908, #1a1510)"
+                  : isSync
+                  ? "linear-gradient(135deg, #0d0d1a, #1a1a2e)"
                   : "rgba(255,255,255,0.035)",
                 ...(isRevive ? {
                   backgroundImage: "url('/images/grid.png')",
@@ -969,7 +986,20 @@ function ProjectsView({ onNavigate }) {
                   ? `1px solid ${scqDefaultBorder}`
                   : isUno
                   ? `1px solid ${unoDefaultBorder}`
+                  : isCm
+                  ? "2px solid #ffffff"
+                  : isPk1
+                  ? "1px solid rgba(217,138,76,0.2)"
+                  : isMed
+                  ? "1px solid rgba(100,160,255,0.25)"
+                  : isMusic
+                  ? "1px solid rgba(168,85,247,0.25)"
+                  : isCube
+                  ? "1px solid rgba(217,138,76,0.25)"
+                  : isSync
+                  ? "1px solid rgba(99,102,241,0.25)"
                   : (isActive ? "1px solid rgba(255,255,255,0.14)" : `1px solid ${BORDER}`),
+                ...(isCm ? { borderRightColor: "#808080", borderBottomColor: "#808080" } : null),
                 boxShadow: "none",
                 display: "flex", flexDirection: "column", gap: 8,
                 cursor: "pointer",
@@ -986,11 +1016,32 @@ function ProjectsView({ onNavigate }) {
                 } else if (isUno) {
                   e.currentTarget.style.borderColor = unoHoverBorder;
                   e.currentTarget.style.boxShadow = "0 4px 24px rgba(227,38,58,0.22)";
+                } else if (isCm) {
+                  e.currentTarget.style.borderTopColor = "#808080";
+                  e.currentTarget.style.borderLeftColor = "#808080";
+                  e.currentTarget.style.borderRightColor = "#ffffff";
+                  e.currentTarget.style.borderBottomColor = "#ffffff";
+                  e.currentTarget.style.boxShadow = "inset 1px 1px 0 #808080";
+                } else if (isPk1) {
+                  e.currentTarget.style.borderColor = "rgba(217,138,76,0.5)";
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(217,138,76,0.1)";
+                } else if (isMed) {
+                  e.currentTarget.style.borderColor = "rgba(100,160,255,0.5)";
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(100,160,255,0.15)";
+                } else if (isMusic) {
+                  e.currentTarget.style.borderColor = "rgba(168,85,247,0.5)";
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(168,85,247,0.15)";
+                } else if (isCube) {
+                  e.currentTarget.style.borderColor = "rgba(217,138,76,0.5)";
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(217,138,76,0.15)";
+                } else if (isSync) {
+                  e.currentTarget.style.borderColor = "rgba(99,102,241,0.5)";
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(99,102,241,0.15)";
                 } else {
                   e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)";
                 }
                 const link = e.currentTarget.querySelector("[data-view-link]");
-                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#f0c84a" : isUno ? "#F5C400" : TEXT;
+                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#f0c84a" : isUno ? "#F5C400" : isCm ? "#ffffff" : isPk1 ? ACCENT : isMed ? "rgba(100,160,255,0.8)" : isMusic ? "rgba(168,85,247,0.8)" : isCube ? "rgba(217,138,76,0.8)" : isSync ? "rgba(99,102,241,0.8)" : TEXT;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
@@ -1003,19 +1054,40 @@ function ProjectsView({ onNavigate }) {
                 } else if (isUno) {
                   e.currentTarget.style.borderColor = unoDefaultBorder;
                   e.currentTarget.style.boxShadow = "none";
+                } else if (isCm) {
+                  e.currentTarget.style.borderTopColor = "#ffffff";
+                  e.currentTarget.style.borderLeftColor = "#ffffff";
+                  e.currentTarget.style.borderRightColor = "#808080";
+                  e.currentTarget.style.borderBottomColor = "#808080";
+                  e.currentTarget.style.boxShadow = "none";
+                } else if (isPk1) {
+                  e.currentTarget.style.borderColor = "rgba(217,138,76,0.2)";
+                  e.currentTarget.style.boxShadow = "none";
+                } else if (isMed) {
+                  e.currentTarget.style.borderColor = "rgba(100,160,255,0.25)";
+                  e.currentTarget.style.boxShadow = "none";
+                } else if (isMusic) {
+                  e.currentTarget.style.borderColor = "rgba(168,85,247,0.25)";
+                  e.currentTarget.style.boxShadow = "none";
+                } else if (isCube) {
+                  e.currentTarget.style.borderColor = "rgba(217,138,76,0.25)";
+                  e.currentTarget.style.boxShadow = "none";
+                } else if (isSync) {
+                  e.currentTarget.style.borderColor = "rgba(99,102,241,0.25)";
+                  e.currentTarget.style.boxShadow = "none";
                 } else {
                   e.currentTarget.style.borderColor = BORDER;
                 }
                 const link = e.currentTarget.querySelector("[data-view-link]");
-                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "#F5C400" : TEXT_MUTE;
+                if (link) link.style.color = isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "#F5C400" : isCm ? "#ffffff" : isPk1 ? ACCENT : isMed ? "rgba(100,160,255,0.8)" : isMusic ? "rgba(168,85,247,0.8)" : isCube ? "rgba(217,138,76,0.8)" : isSync ? "rgba(99,102,241,0.8)" : TEXT_MUTE;
               }}
             >
               <div style={{
                 position: "absolute", top: 14, right: 16,
-                fontSize: 10, padding: "3px 8px", borderRadius: 999,
-                color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "#F5C400" : TEXT_MUTE,
-                background: isRevive ? "rgba(0,122,47,0.1)" : isScq ? "rgba(200,162,74,0.12)" : isUno ? "rgba(245,196,0,0.12)" : "rgba(255,255,255,0.06)",
-                border: isRevive ? "1px solid rgba(0,122,47,0.5)" : isScq ? "1px solid rgba(200,162,74,0.5)" : isUno ? "1px solid rgba(245,196,0,0.4)" : "none",
+                fontSize: 10, padding: "3px 8px", borderRadius: isCm ? 0 : 999,
+                color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "#F5C400" : isCm ? "#ffffff" : isMed ? "rgba(100,160,255,0.8)" : isMusic ? "rgba(168,85,247,0.8)" : isCube ? "rgba(217,138,76,0.8)" : isSync ? "rgba(99,102,241,0.8)" : TEXT_MUTE,
+                background: isRevive ? "rgba(0,122,47,0.1)" : isScq ? "rgba(200,162,74,0.12)" : isUno ? "rgba(245,196,0,0.12)" : isCm ? "rgba(255,255,255,0.1)" : isMed ? "rgba(100,160,255,0.1)" : isMusic ? "rgba(168,85,247,0.1)" : isCube ? "rgba(217,138,76,0.1)" : isSync ? "rgba(99,102,241,0.1)" : "rgba(255,255,255,0.06)",
+                border: isRevive ? "1px solid rgba(0,122,47,0.5)" : isScq ? "1px solid rgba(200,162,74,0.5)" : isUno ? "1px solid rgba(245,196,0,0.4)" : isCm ? "1px solid #ffffff" : isMed ? "1px solid rgba(100,160,255,0.35)" : isMusic ? "1px solid rgba(168,85,247,0.35)" : isCube ? "1px solid rgba(217,138,76,0.35)" : isSync ? "1px solid rgba(99,102,241,0.35)" : "none",
                 fontFamily: "'Inter', sans-serif", fontWeight: 500,
                 letterSpacing: "0.02em",
               }}>
@@ -1024,27 +1096,27 @@ function ProjectsView({ onNavigate }) {
 
               <div style={{
                 fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em",
-                color: isRevive ? "#D4A017" : isScq ? "#2dd4bf" : isUno ? "#F5C400" : ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+                color: isRevive ? "#D4A017" : isScq ? "#2dd4bf" : isUno ? "#F5C400" : isCm ? "#ffffff" : isMed ? "rgba(100,160,255,0.8)" : isMusic ? "rgba(168,85,247,0.8)" : isCube ? "rgba(217,138,76,0.8)" : isSync ? "rgba(99,102,241,0.8)" : ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
                 paddingRight: 60,
               }}>
                 {project.tag}
               </div>
 
               <h3 style={{
-                fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
-                fontSize: 18, color: isRevive ? "#0A1F0D" : isScq ? "#f0c84a" : isUno ? "#fff" : TEXT, margin: 0,
+                fontFamily: isCm ? "'VT323', 'Fraunces', serif" : "'Fraunces', serif", fontStyle: isCm ? "normal" : "italic", fontWeight: isCm ? 700 : 400,
+                fontSize: isCm ? 22 : 18, color: isRevive ? "#0A1F0D" : isScq ? "#f0c84a" : isUno ? "#fff" : isCm ? "#ffffff" : (isMed || isMusic || isCube || isSync) ? "#ffffff" : TEXT, margin: 0,
               }}>
                 {project.title}
               </h3>
 
-              <p style={{ fontSize: 13, lineHeight: 1.6, color: isRevive ? "rgba(10,31,13,0.68)" : isScq ? "rgba(255,255,255,0.6)" : isUno ? "rgba(255,255,255,0.62)" : TEXT_DIM, margin: "0 0 6px", flex: 1 }}>
+              <p style={{ fontSize: 13, lineHeight: 1.6, color: isRevive ? "rgba(10,31,13,0.68)" : isScq ? "rgba(255,255,255,0.6)" : isUno ? "rgba(255,255,255,0.62)" : isCm ? "rgba(255,255,255,0.75)" : isMed ? "rgba(255,255,255,0.65)" : isMusic ? "rgba(255,255,255,0.65)" : isCube ? "rgba(255,255,255,0.65)" : isSync ? "rgba(255,255,255,0.65)" : TEXT_DIM, margin: "0 0 6px", flex: 1 }}>
                 {project.description}
               </p>
 
               <span
                 data-view-link
                 style={{
-                  fontSize: 12, color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "rgba(245,196,0,0.75)" : TEXT_MUTE,
+                  fontSize: 12, color: isRevive ? "#007A2F" : isScq ? "#c8a24a" : isUno ? "rgba(245,196,0,0.75)" : isCm ? "#ffffff" : isPk1 ? ACCENT : isMed ? "rgba(100,160,255,0.8)" : isMusic ? "rgba(168,85,247,0.8)" : isCube ? "rgba(217,138,76,0.8)" : isSync ? "rgba(99,102,241,0.8)" : TEXT_MUTE,
                   fontFamily: "'Inter', sans-serif", fontWeight: 500,
                   transition: "color 0.18s ease",
                 }}
@@ -1052,19 +1124,113 @@ function ProjectsView({ onNavigate }) {
                 View project →
               </span>
 
-              {isPk1 && (
-                <img
-                  src="/images/prakash.jpg"
-                  alt="Prakash Sejwani"
+              {isMed && (
+                <div
+                  className="medvis-cell"
                   style={{
-                    position: "absolute", bottom: -10, right: -10,
-                    width: 36, height: 36, borderRadius: "50%",
-                    objectFit: "cover",
-                    border: `2px solid ${ACCENT}`,
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                    position: "absolute", top: 0, left: 0,
+                    width: 28, height: 28,
+                    pointerEvents: "none",
                   }}
-                />
+                >
+                  <svg
+                    width="40" height="40" viewBox="0 0 40 40"
+                    style={{ position: "absolute", top: -6, left: -6, overflow: "visible" }}
+                  >
+                    <g stroke="rgba(100,160,255,0.5)" strokeWidth="1.5" strokeLinecap="round" fill="none">
+                      <path d="M29.9,29.9 L33.43,33.43 L31.31,35.55 M33.43,33.43 L35.55,31.31" />
+                      <path d="M10.1,29.9 L6.57,33.43 L4.45,31.31 M6.57,33.43 L8.69,35.55" />
+                      <path d="M10.1,10.1 L6.57,6.57 L8.69,4.45 M6.57,6.57 L4.45,8.69" />
+                      <path d="M29.9,10.1 L33.43,6.57 L35.55,8.69 M33.43,6.57 L31.31,4.45" />
+                    </g>
+                  </svg>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: "50%",
+                    border: "2px solid rgba(100,160,255,0.5)",
+                    background: "rgba(100,160,255,0.08)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: "rgba(100,160,255,0.35)" }} />
+                  </div>
+                </div>
               )}
+
+              {isMusic && (
+                <div
+                  style={{
+                    position: "absolute", bottom: 14, right: 16,
+                    display: "flex", alignItems: "flex-end", gap: 3,
+                    height: 18, pointerEvents: "none",
+                  }}
+                >
+                  {[0, 1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: 4, borderRadius: 2, background: "#a855f7", opacity: 0.15,
+                        animation: "audioBarsCard 1.2s ease-in-out infinite",
+                        animationDelay: `${i * 0.15}s`,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {isSync && (
+                <div
+                  style={{
+                    position: "absolute", bottom: 14, right: 16,
+                    width: 36, height: 30, pointerEvents: "none",
+                  }}
+                >
+                  <div style={{
+                    position: "absolute", top: 0, left: 8,
+                    width: 0, height: 0,
+                    borderTop: "9px solid transparent",
+                    borderBottom: "9px solid transparent",
+                    borderLeft: "14px solid #6366f1",
+                    opacity: 0.12,
+                  }} />
+                  <div style={{
+                    position: "absolute", top: 10, left: 0,
+                    width: 0, height: 0,
+                    borderTop: "9px solid transparent",
+                    borderBottom: "9px solid transparent",
+                    borderLeft: "14px solid #6366f1",
+                    opacity: 0.12,
+                  }} />
+                </div>
+              )}
+
+              {isCube && (
+                <div
+                  style={{
+                    position: "absolute", bottom: 10, right: 14,
+                    width: 44, height: 44, pointerEvents: "none",
+                  }}
+                >
+                  {[
+                    { size: 22, top: 10, left: 12, rotate: 12, delay: "0s" },
+                    { size: 18, top: 0, left: 0, rotate: -18, delay: "0.4s" },
+                    { size: 16, top: 18, left: -4, rotate: 32, delay: "0.8s" },
+                  ].map((f, i) => (
+                    <div
+                      key={i}
+                      className="cube-face-card"
+                      style={{
+                        position: "absolute",
+                        top: f.top, left: f.left,
+                        width: f.size, height: f.size,
+                        border: "1px solid #D98A4C",
+                        opacity: 0.12,
+                        "--r": `${f.rotate}deg`,
+                        animationDelay: f.delay,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
             </div>
           );
         })}
@@ -1082,11 +1248,17 @@ function ProjectsView({ onNavigate }) {
             <ScoreboardProject onNextProject={() => setActiveProject("uno-calculator")} />
           ) : activeProject === "uno-calculator" ? (
             <UnoProject onNextProject={() => setActiveProject("client-management")} />
+          ) : activeProject === "client-management" ? (
+            <ClientManagerProject onNextProject={() => setActiveProject("pk1-portfolio")} />
           ) : activeProject === "pk1-portfolio" ? (
             <PortfolioProject
               onNextProject={() => setActiveProject("medical-visualizer")}
               onViewLiveSite={() => { setActiveProject(null); onNavigate("chat"); }}
             />
+          ) : activeProject === "medical-visualizer" ? (
+            <MedicalVisualizerProject />
+          ) : activeProject === "music-visualizer" ? (
+            <MusicVisualizerProject />
           ) : (
             <div style={{ color: "#F4EFE7", padding: 40 }}>
               Project experience coming soon for: {activeProject}
@@ -1119,7 +1291,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
   const theme = PROJECT_THEMES[projectId] ?? { color: ACCENT, label: projectId };
   const rgb = hexToRgb(theme.color);
 
-  const hasOwnSplash = projectId === "876-revive" || projectId === "scq-scoreboard" || projectId === "uno-calculator" || projectId === "pk1-portfolio";
+  const hasOwnSplash = projectId === "876-revive" || projectId === "scq-scoreboard" || projectId === "uno-calculator" || projectId === "pk1-portfolio" || projectId === "client-management" || projectId === "medical-visualizer" || projectId === "music-visualizer";
 
   const [splashing, setSplashing] = useState(!hasOwnSplash);
   const [fading, setFading]       = useState(false);
@@ -1149,9 +1321,9 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
     transition: "background 0.15s ease, border-color 0.15s ease",
   };
 
-  return (
+  return createPortal(
     <>
-      {/* Layer 2 — project content */}
+      {/* Layer 2 - project content */}
       <div style={{
         position: "fixed", inset: 0, zIndex: 50,
         background: "#0A0908",
@@ -1161,7 +1333,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
         {children}
       </div>
 
-      {/* Layer 1 — splash */}
+      {/* Layer 1 - splash */}
       {splashing && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 100,
@@ -1188,7 +1360,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
         </div>
       )}
 
-      {/* Layer 3 — floating orb */}
+      {/* Layer 3 - floating orb */}
       {!splashing && (
         <button
           onClick={() => setNavOpen(true)}
@@ -1304,7 +1476,8 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
           </div>
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
 }
 
@@ -1400,7 +1573,7 @@ function PortfolioProject({ onNextProject, onViewLiveSite }) {
           </h2>
 
           <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.75, color: TEXT_DIM, margin: "0 0 14px" }}>
-            This portfolio was designed and built entirely by me — from the atmospheric background and the floating sidebar, to the prompt-based navigation and every project page inside it.
+            This portfolio was designed and built entirely by me - from the atmospheric background and the floating sidebar, to the prompt-based navigation and every project page inside it.
           </p>
           <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.75, color: TEXT_DIM, margin: "0 0 24px" }}>
             It is built with React and Vite, deployed on Vercel, and uses a real AI assistant (EmailJS for contact, iframe embeds for demos). No templates. No themes. Just ideas turned into code.
@@ -1708,9 +1881,9 @@ const RV_GATES = [
 ];
 
 const RV_RACE_CONDITIONS = [
-  { title: "Two people tap Confirm at the exact same moment", problem: "Both see the slot as free.", solution: "A unique lock document means only one can write it — Firestore won't let both succeed." },
+  { title: "Two people tap Confirm at the exact same moment", problem: "Both see the slot as free.", solution: "A unique lock document means only one can write it - Firestore won't let both succeed." },
   { title: "The first attempt fails", problem: "The customer just gets an error.", solution: "The system quietly retries up to 3 times and suggests the next open slot if all fail." },
-  { title: "All bookings pile onto one driver", problem: "One driver is overloaded while another sits idle.", solution: "The system counts each driver's bookings and always picks the one with the least — updated in the same transaction." },
+  { title: "All bookings pile onto one driver", problem: "One driver is overloaded while another sits idle.", solution: "The system counts each driver's bookings and always picks the one with the least - updated in the same transaction." },
   { title: "The admin needs to override the system", problem: "A driver finishing early can't be scheduled because the algorithm says occupied.", solution: "The admin can force a window open. Business rules like blackout dates and operating hours still apply." },
   { title: "A customer sits on the time picker for 10 minutes", problem: "The slot they chose may be gone by the time they confirm.", solution: "A quiet re-check runs in the background and flags the slot as stale before they submit." },
 ];
@@ -1844,7 +2017,7 @@ function ReviveProject({ onNextProject }) {
                 <span style={{ color: RV.green }}>system that works.</span>
               </h1>
               <p style={{ fontSize: 15, lineHeight: 1.55, color: RV.inkDim, marginTop: 20, maxWidth: 480 }}>
-                Built for 876 Revive & Drive — a mobile car wash business in Jamaica. One app for customers, one dashboard for the admin, connected in real time.
+                Built for 876 Revive & Drive - a mobile car wash business in Jamaica. One app for customers, one dashboard for the admin, connected in real time.
               </p>
               <div style={{ display: "flex", gap: 14, marginTop: 30, flexWrap: "wrap" }}>
                 <a
@@ -1884,16 +2057,16 @@ function ReviveProject({ onNextProject }) {
                   Demo Disclaimers
                 </div>
                 <p style={{ fontSize: 12.5, lineHeight: 1.55, color: RV.inkDim, margin: 0 }}>
-                  This is a snapshot of the client's actual app and dashboard, not the live version — it won't receive updates as their real product evolves. Since this demo was copied over from the client's project, a few things may be broken, but I did my best to keep the main features working.
+                  This is a snapshot of the client's actual app and dashboard, not the live version - it won't receive updates as their real product evolves. Since this demo was copied over from the client's project, a few things may be broken, but I did my best to keep the main features working.
                 </p>
                 <p style={{ fontSize: 12.5, lineHeight: 1.55, color: RV.inkDim, margin: 0 }}>
-                  <span style={{ color: RV.ink, fontWeight: 600 }}>Dashboard login</span> — akashiedits100@gmail.com / kingboss1234
+                  <span style={{ color: RV.ink, fontWeight: 600 }}>Dashboard login</span> - akashiedits100@gmail.com / kingboss1234
                 </p>
                 <p style={{ fontSize: 12.5, lineHeight: 1.55, color: RV.inkDim, margin: 0 }}>
-                  <span style={{ color: RV.ink, fontWeight: 600 }}>Installing the APK</span> — since it's not on the Play Store, Android will show a warning ("Unknown app" / "Play Protect"). That's expected — tap "Install anyway" (or "More details" → "Install anyway") to proceed.
+                  <span style={{ color: RV.ink, fontWeight: 600 }}>Installing the APK</span> - since it's not on the Play Store, Mobile will show a warning ("Unknown app" / "Play Protect"). That's expected - tap "Install anyway" (or "More details" → "Install anyway") to proceed.
                 </p>
                 <p style={{ fontSize: 12.5, lineHeight: 1.55, color: RV.ink, fontWeight: 700, margin: 0 }}>
-                  Heads up: on the booking screen's "select address" step, the map won't load properly — this replica wasn't set up with a Google Maps API key.
+                  Heads up: on the booking screen's "select address" step, the map won't load properly - this replica wasn't set up with a Google Maps API key.
                 </p>
               </div>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 26 }}>
@@ -2003,7 +2176,7 @@ function ReviveProject({ onNextProject }) {
                 Two layers of protection against double-bookings.
               </h2>
               <p style={{ fontSize: 14.5, lineHeight: 1.55, color: RV.inkDim, marginBottom: 36 }}>
-                When a booking comes in, the system temporarily blocks out a window around that slot while it waits for admin approval. Once the admin confirms and sets the real service time, the schedule adjusts to the exact duration. The longer that approval takes, the wider the temporary block sits — which is why fast approvals keep the schedule tight. The algorithm handles instant collisions automatically. The admin keeps the calendar accurate.
+                When a booking comes in, the system temporarily blocks out a window around that slot while it waits for admin approval. Once the admin confirms and sets the real service time, the schedule adjusts to the exact duration. The longer that approval takes, the wider the temporary block sits - which is why fast approvals keep the schedule tight. The algorithm handles instant collisions automatically. The admin keeps the calendar accurate.
               </p>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -2078,7 +2251,7 @@ function ReviveProject({ onNextProject }) {
                 The system normally blocks a driver if their schedule shows a conflict. But sometimes a driver finishes early, or two stops can be back-to-back. The override lets the administrator force a window open.
               </p>
               <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "rgba(255,255,255,0.75)", marginBottom: 28 }}>
-                It only bypasses the occupancy check. Operating hours, blackout dates, lead time, and driver roster rules still apply. It is a narrow, auditable exception — not a way to break the system.
+                It only bypasses the occupancy check. Operating hours, blackout dates, lead time, and driver roster rules still apply. It is a narrow, auditable exception - not a way to break the system.
               </p>
 
               <div style={{
@@ -2331,7 +2504,7 @@ function ScqDownloadButtons({ stacked }) {
             display: "inline-flex", alignItems: "center",
           }}
         >
-          Download for Windows
+          Download for PC/Laptop
         </a>
         <a
           href={SCQ_MAC_DOWNLOAD}
@@ -2349,7 +2522,7 @@ function ScqDownloadButtons({ stacked }) {
         fontFamily: "'Inter', sans-serif", fontSize: 12, color: SCQ.muted,
         marginTop: 12, textAlign: stacked ? "center" : "left",
       }}>
-        Windows includes automatic in-app updates · macOS updates via website download
+        PC/Laptop includes automatic in-app updates · macOS updates via website download
       </p>
     </div>
   );
@@ -2537,7 +2710,7 @@ function ScqDemo() {
         gap: 0, flexWrap: "wrap", padding: "20px 12px 60px",
         overflowX: "auto", maxWidth: "100%",
       }}>
-        {/* LEFT — Control Panel */}
+        {/* LEFT - Control Panel */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, flexShrink: 0 }}>
           <span style={{
             fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 600,
@@ -2708,7 +2881,7 @@ function ScqDemo() {
           </span>
         </div>
 
-        {/* RIGHT — Main Scoreboard */}
+        {/* RIGHT - Main Scoreboard */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, flexShrink: 0 }}>
           <span style={{
             fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 600,
@@ -2808,14 +2981,14 @@ function ScqDemo() {
 }
 
 const SCQ_FEATURE_ROWS = [
-  { name: "Three Round Types", desc: "Alternate, Speed, Buzzer — each with correct timers and point values" },
+  { name: "Three Round Types", desc: "Alternate, Speed, Buzzer - each with correct timers and point values" },
   { name: "Dual Screen Sync", desc: "Control Panel + Main Scoreboard update instantly together" },
   { name: "Main Timer", desc: "Per-round countdown with start, pause, reset and hold-to-confirm" },
   { name: "Question Timer", desc: "Separate per-question countdown controllable from the panel" },
   { name: "Score Undo", desc: "Double-tap Shift to reverse the last scoring action" },
   { name: "Visual Questions", desc: "Push image questions to the audience screen from the control panel" },
   { name: "Audio Clips", desc: "Upload and play audio with hotkey support" },
-  { name: "Junior and Senior Modes", desc: "Speed round adapts — 3 minutes for senior, 4 subjects for junior" },
+  { name: "Junior and Senior Modes", desc: "Speed round adapts - 3 minutes for senior, 4 subjects for junior" },
   { name: "Query Adjustments", desc: "Retroactive point corrections with confirm modal" },
   { name: "Presenting Mode", desc: "Dedicated second-monitor layout for large venues" },
 ];
@@ -2857,7 +3030,7 @@ function ScoreboardProject({ onNextProject }) {
           fontFamily: "'Inter', sans-serif", color: "#fff",
         }}
       >
-        {/* SECTION 1 — HERO */}
+        {/* SECTION 1 - HERO */}
         <section style={{
           minHeight: "100vh", display: "grid", gridTemplateColumns: "1.05fr 0.95fr",
           gap: 40, alignItems: "center", padding: "90px 48px 60px", maxWidth: 1200, margin: "0 auto",
@@ -2884,7 +3057,7 @@ function ScoreboardProject({ onNextProject }) {
               Built for Jamaican coaches training for TVJ's School's Challenge Quiz competition.
             </p>
             <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: "rgba(255,255,255,0.7)", marginTop: 12, maxWidth: 480, lineHeight: 1.7 }}>
-              Most teams train with a tally on a whiteboard. SCQ Scoreboard gives coaches a full match simulation — the same rounds, timing, and scoring format used in official TVJ matches, with a broadcast-quality audience display and a separate control panel for the scorer. The scorer sees the full tally breakdown. The audience sees only the scores. Visuals and audio work exactly as they do on the real TVJ broadcast.
+              Most teams train with a tally on a whiteboard. SCQ Scoreboard gives coaches a full match simulation - the same rounds, timing, and scoring format used in official TVJ matches, with a broadcast-quality audience display and a separate control panel for the scorer. The scorer sees the full tally breakdown. The audience sees only the scores. Visuals and audio work exactly as they do on the real TVJ broadcast.
             </p>
 
             <div style={{ marginTop: 28 }}>
@@ -2925,7 +3098,7 @@ function ScoreboardProject({ onNextProject }) {
                   fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(3rem, 6vw, 4.4rem)",
                   color: SCQ.goldBright, textShadow: "0 0 24px rgba(240,200,74,0.6)",
                 }}>
-                  —
+                  -
                 </div>
               </div>
               <div style={{ textAlign: "center" }}>
@@ -2934,7 +3107,7 @@ function ScoreboardProject({ onNextProject }) {
                   fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(3rem, 6vw, 4.4rem)",
                   color: SCQ.goldBright, textShadow: "0 0 24px rgba(240,200,74,0.6)",
                 }}>
-                  —
+                  -
                 </div>
               </div>
             </div>
@@ -2949,8 +3122,8 @@ function ScoreboardProject({ onNextProject }) {
           </div>
         </section>
 
-        {/* SECTION 1.5 — WHY I BUILT IT */}
-        <ScoreboardDivider label="PRE-MATCH — WHY THIS EXISTS" />
+        {/* SECTION 1.5 - WHY I BUILT IT */}
+        <ScoreboardDivider label="PRE-MATCH - WHY THIS EXISTS" />
         <section style={{ padding: "60px 24px 70px", maxWidth: 900, margin: "0 auto" }}>
           <h2 style={{
             fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(22px, 3.2vw, 32px)",
@@ -2962,12 +3135,12 @@ function ScoreboardProject({ onNextProject }) {
             fontFamily: "'Inter', sans-serif", fontSize: 15, lineHeight: 1.8,
             color: "rgba(255,255,255,0.78)", margin: 0, textAlign: "center",
           }}>
-            Schools competing in TVJ's School's Challenge Quiz train the way they always have — drawing tallies on whiteboards. I built SCQ Scoreboard to change that. Coaches now run full match simulations with real timing, real scoring rules, and a display that looks like the actual broadcast. The app is not officially endorsed by TVJ, but it is being used by coaches who have purchased it.
+            Schools competing in TVJ's School's Challenge Quiz train the way they always have - drawing tallies on whiteboards. I built SCQ Scoreboard to change that. Coaches now run full match simulations with real timing, real scoring rules, and a display that looks like the actual broadcast. The app is not officially endorsed by TVJ, but it is being used by coaches who have purchased it.
           </p>
         </section>
 
-        {/* SECTION 2 — DUAL WINDOW SHOWCASE */}
-        <ScoreboardDivider label="ROUND 1 — DUAL WINDOW SETUP" />
+        {/* SECTION 2 - DUAL WINDOW SHOWCASE */}
+        <ScoreboardDivider label="ROUND 1 - DUAL WINDOW SETUP" />
         <section style={{ padding: "60px 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
           <ScqSectionHeading
             title="Two screens. One match."
@@ -3016,8 +3189,8 @@ function ScoreboardProject({ onNextProject }) {
           </div>
         </section>
 
-        {/* SECTION 3 — LIVE STATS SCOREBOARD */}
-        <ScoreboardDivider label="ROUND 2 — BY THE NUMBERS" />
+        {/* SECTION 3 - LIVE STATS SCOREBOARD */}
+        <ScoreboardDivider label="ROUND 2 - BY THE NUMBERS" />
         <section style={{
           position: "relative", overflow: "hidden", padding: "60px 24px",
           background: `radial-gradient(900px 320px at 50% 0%, rgba(200,162,74,0.22), transparent 60%), linear-gradient(180deg, ${SCQ.maroonLight}, ${SCQ.maroonDeep})`,
@@ -3055,8 +3228,8 @@ function ScoreboardProject({ onNextProject }) {
           </div>
         </section>
 
-        {/* SECTION 4 — INTERACTIVE DEMO */}
-        <ScoreboardDivider label="ROUND 3 — TRY IT YOURSELF" />
+        {/* SECTION 4 - INTERACTIVE DEMO */}
+        <ScoreboardDivider label="ROUND 3 - TRY IT YOURSELF" />
         <section style={{ padding: "60px 16px 80px" }}>
           <ScqSectionHeading
             title="Try it yourself"
@@ -3065,8 +3238,8 @@ function ScoreboardProject({ onNextProject }) {
           <ScqDemo />
         </section>
 
-        {/* SECTION 5 — FEATURES AS LEADERBOARD */}
-        <ScoreboardDivider label="ROUND 4 — FEATURES" />
+        {/* SECTION 5 - FEATURES AS LEADERBOARD */}
+        <ScoreboardDivider label="ROUND 4 - FEATURES" />
         <section style={{ padding: "60px 24px 80px", maxWidth: 1000, margin: "0 auto" }}>
           <ScqSectionHeading title="What's in the match" />
           <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)" }}>
@@ -3094,11 +3267,11 @@ function ScoreboardProject({ onNextProject }) {
           </div>
         </section>
 
-        {/* SECTION 6 — INSTALLATION GUIDE */}
-        <ScoreboardDivider label="ROUND 5 — INSTALLATION" />
+        {/* SECTION 6 - INSTALLATION GUIDE */}
+        <ScoreboardDivider label="ROUND 5 - INSTALLATION" />
         <section style={{ padding: "60px 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
           <ScqSectionHeading
-            title="First-time install on Windows"
+            title="First-time install on PC/Laptop"
             subtitle="You may see a SmartScreen warning. This is expected for new software. The app is malware-checked and code-certified by SSL.com."
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
@@ -3128,15 +3301,15 @@ function ScoreboardProject({ onNextProject }) {
           </div>
         </section>
 
-        {/* SECTION 7 — PRICING AS MATCH ENTRY */}
-        <ScoreboardDivider label="ROUND 6 — LICENSING" />
+        {/* SECTION 7 - PRICING AS MATCH ENTRY */}
+        <ScoreboardDivider label="ROUND 6 - LICENSING" />
         <section style={{ padding: "60px 24px 40px", maxWidth: 1100, margin: "0 auto" }}>
           <ScqSectionHeading
             title="Pick your plan"
             subtitle="One-time payment · License key delivered to your email · Payment via bank transfer"
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
-            {/* Panel 1 — Individual */}
+            {/* Panel 1 - Individual */}
             <div style={{ background: "rgba(0,0,0,0.3)", borderTop: `3px solid ${SCQ.gold}`, borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
               <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: "0.12em", color: SCQ.gold, textTransform: "uppercase" }}>STANDARD</span>
               <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 20, color: "#fff", margin: 0 }}>Individual</h3>
@@ -3164,7 +3337,7 @@ function ScoreboardProject({ onNextProject }) {
               </a>
             </div>
 
-            {/* Panel 2 — Additional Devices */}
+            {/* Panel 2 - Additional Devices */}
             <div style={{ background: "rgba(0,0,0,0.3)", borderTop: `3px solid ${SCQ.gold}`, borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
               <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: "0.12em", color: SCQ.gold, textTransform: "uppercase" }}>EXTEND</span>
               <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 20, color: "#fff", margin: 0 }}>Additional Devices</h3>
@@ -3195,7 +3368,7 @@ function ScoreboardProject({ onNextProject }) {
               </a>
             </div>
 
-            {/* Panel 3 — Rally Pass */}
+            {/* Panel 3 - Rally Pass */}
             <div style={{ background: "rgba(0,0,0,0.3)", borderTop: `3px solid ${SCQ.gold}`, borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
               <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: "0.12em", color: SCQ.gold, textTransform: "uppercase" }}>EVENT</span>
               <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 20, color: "#fff", margin: 0 }}>Rally Pass</h3>
@@ -3230,7 +3403,7 @@ function ScoreboardProject({ onNextProject }) {
           </p>
         </section>
 
-        {/* SECTION 8 — STATUS */}
+        {/* SECTION 8 - STATUS */}
         <ScoreboardDivider label="FINAL WHISTLE" />
         <section style={{ padding: "70px 24px 90px", textAlign: "center" }}>
           <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(26px, 4vw, 38px)", color: SCQ.gold, margin: 0 }}>
@@ -3244,7 +3417,7 @@ function ScoreboardProject({ onNextProject }) {
           </div>
         </section>
 
-        {/* SECTION 9 — NEXT PROJECT */}
+        {/* SECTION 9 - NEXT PROJECT */}
         <div
           onClick={onNextProject}
           style={{
@@ -3761,7 +3934,7 @@ function UnoProject({ onNextProject }) {
                   </p>
                   <div style={{ display: "flex", gap: 8, marginBottom: 22 }}>
                     <UnoPillBadge color={UNO_COLORS.red}>Flutter</UnoPillBadge>
-                    <UnoPillBadge color={UNO_COLORS.red}>Android</UnoPillBadge>
+                    <UnoPillBadge color={UNO_COLORS.red}>Mobile</UnoPillBadge>
                     <UnoPillBadge color={UNO_COLORS.red}>iOS</UnoPillBadge>
                   </div>
                   <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(0,0,0,0.4)", margin: 0 }}>
@@ -3791,7 +3964,7 @@ function UnoProject({ onNextProject }) {
                       I built UNO Scorekeeper so nobody has to keep score in their head or on a napkin. You tap the cards you played, it calculates the points.
                     </p>
                     <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "rgba(0,0,0,0.65)", lineHeight: 1.6, margin: 0, textAlign: "left" }}>
-                      It even has a "PK House Rules" preset — because every group eventually invents their own rules, and mine deserved to be saved.
+                      It even has a "PK House Rules" preset - because every group eventually invents their own rules, and mine deserved to be saved.
                     </p>
                   </div>
                 </div>
@@ -3875,7 +4048,7 @@ function UnoProject({ onNextProject }) {
                     <span style={{ color: UNO_COLORS.green }}>Rules</span>
                   </h2>
                   <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13.5, color: "rgba(0,0,0,0.6)", lineHeight: 1.6, margin: "0 0 16px" }}>
-                    Every group eventually makes up their own rules. UNO Scorekeeper lets you save yours — and comes with a built-in PK House Rules preset so you can play the right way from the start.
+                    Every group eventually makes up their own rules. UNO Scorekeeper lets you save yours - and comes with a built-in PK House Rules preset so you can play the right way from the start.
                   </p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
                     <UnoPillBadge color={UNO_COLORS.red}>Stack +2s and +4s</UnoPillBadge>
@@ -3895,7 +4068,7 @@ function UnoProject({ onNextProject }) {
                     UNO Scorekeeper
                   </h2>
                   <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "rgba(0,0,0,0.5)", margin: "0 0 22px" }}>
-                    Free. Available on Android.
+                    Free. Available on Mobile.
                   </p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", marginBottom: 16 }}>
                     <a href="https://github.com/rju23/uno-calculator-app/releases/download/v1.0/Uno.Calculator.apk" style={{
@@ -3903,7 +4076,7 @@ function UnoProject({ onNextProject }) {
                       color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13.5,
                       textDecoration: "none", textAlign: "center",
                     }}>
-                      Download for Android
+                      Download for Mobile
                     </a>
                   </div>
                   <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, color: "rgba(0,0,0,0.4)", margin: "0 0 24px" }}>
@@ -3992,55 +4165,206 @@ const aboutParagraphStyle = {
   margin: 0,
 };
 
+const ABOUT_TIMELINE = [
+  { year: "2025", title: "Built first app", subtitle: "SCQ Scoreboard" },
+  { year: "2025", title: "First paying", subtitle: "client" },
+  { year: "2026", title: "Completing MD", subtitle: "University" },
+  { year: "Now",  title: "Building", subtitle: "everything" },
+];
+
+const ABOUT_STATS = [
+  { number: "5+", line1: "Apps", line2: "Shipped" },
+  { number: "2",  line1: "Paying", line2: "Clients" },
+  { number: "1",  line1: "Degree", line2: "(almost)", italic: true },
+];
+
+const ABOUT_SKILLS = [
+  { label: "Flutter", rotate: "-1.5deg" },
+  { label: "Firebase", rotate: "1deg" },
+  { label: "React", rotate: "-0.5deg" },
+  { label: "Electron", rotate: "1.5deg" },
+  { label: "Three.js", rotate: "-1deg" },
+  { label: "Next.js", rotate: "0.8deg" },
+  { label: "Dart", rotate: "-1.2deg" },
+  { label: "Vite", rotate: "1.3deg" },
+];
+
 function AboutView() {
   return (
     <div style={{ padding: "0 48px", maxWidth: 780, margin: "0 auto", width: "100%" }}>
       <div className="rv-two-col" style={{
         display: "grid", gridTemplateColumns: "320px 1fr", gap: 40,
-        marginBottom: 36, alignItems: "start",
+        marginBottom: 20, alignItems: "start",
       }}>
-        <img
-          src="/images/prakash.jpg"
-          alt="Prakash Sejwani"
-          onClick={() => openLightbox("/images/prakash.jpg")}
-          style={{
-            width: "100%", maxWidth: 320, height: 400, borderRadius: 16,
-            objectFit: "cover",
-            border: `1px solid ${BORDER}`,
-            flexShrink: 0,
-            cursor: "zoom-in",
-          }}
-        />
+        <div style={{
+          position: "relative", overflow: "hidden",
+          borderRadius: 12,
+          border: "1px solid rgba(217,138,76,0.2)",
+          boxShadow: "0 8px 32px rgba(217,138,76,0.12)",
+          maxWidth: 320,
+        }}>
+          <img
+            src="/images/prakash.jpg"
+            alt="Prakash Sejwani"
+            onClick={() => openLightbox("/images/prakash.jpg")}
+            style={{
+              width: "100%", height: 400,
+              objectFit: "cover",
+              display: "block",
+              cursor: "zoom-in",
+            }}
+          />
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(196,98,45,0.35) 0%, transparent 50%)",
+            pointerEvents: "none",
+          }} />
+        </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{
-            fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em",
-            color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 500,
+            fontSize: 11, textTransform: "uppercase", letterSpacing: "0.12em",
+            color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 600,
           }}>
             A builder at heart.
           </div>
-          <p style={aboutParagraphStyle}>
+          <p style={{ ...aboutParagraphStyle, fontSize: 17, color: "rgba(244,239,231,0.72)" }}>
             From a young age, technology was the thing I couldn't stay away from. Not in the "future programmer" sense. I wasn't writing code in my bedroom. I was the person who knew the tricks nobody else knew, the one people called when something needed fixing, formatting, or figuring out. I rooted phones when that was still a thing. I spent hours on computers just because computers were interesting.
           </p>
         </div>
       </div>
 
+      {/* Timeline strip */}
+      <div style={{ display: "flex", alignItems: "flex-start", margin: "32px 0" }}>
+        {ABOUT_TIMELINE.map((m, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", flex: i === ABOUT_TIMELINE.length - 1 ? "0 0 auto" : 1 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 90 }}>
+              <div style={{
+                fontFamily: "'Fraunces', serif", fontStyle: "italic",
+                fontSize: 16, color: "#D98A4C", marginBottom: 8,
+              }}>
+                {m.year}
+              </div>
+              <div
+                className={m.year === "Now" ? "pulse-dot-amber" : undefined}
+                style={{
+                  width: 8, height: 8, borderRadius: "50%",
+                  background: "#D98A4C", flexShrink: 0,
+                }}
+              />
+              <div style={{
+                fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: 12,
+                color: "rgba(244,239,231,0.8)", marginTop: 10, textAlign: "center",
+              }}>
+                {m.title}
+              </div>
+              <div style={{
+                fontFamily: "'Inter', sans-serif", fontSize: 11,
+                color: "rgba(244,239,231,0.4)", marginTop: 2, textAlign: "center",
+              }}>
+                {m.subtitle}
+              </div>
+            </div>
+            {i !== ABOUT_TIMELINE.length - 1 && (
+              <div style={{
+                flex: 1, height: 1, marginTop: 12,
+                background: "linear-gradient(90deg, rgba(217,138,76,0.4), rgba(217,138,76,0.1))",
+              }} />
+            )}
+          </div>
+        ))}
+      </div>
+
       <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-        <p style={aboutParagraphStyle}>
+        <p style={{
+          borderLeft: "3px solid #D98A4C", paddingLeft: 20,
+          fontFamily: "'Fraunces', serif", fontStyle: "italic",
+          fontSize: 17, color: "rgba(244,239,231,0.82)",
+          lineHeight: 1.8, marginTop: 28, marginBottom: 28,
+        }}>
           That same instinct shows up everywhere. When water went out and I only had jugs, I didn't just deal with it. I built a gravity-fed system out of a metal straw and a large bottle so I'd have controlled running water. That's just how my brain works. If there's a problem, I'm already thinking about the system that solves it.
         </p>
-        <p style={aboutParagraphStyle}>
+        <p style={{ ...aboutParagraphStyle, color: "rgba(244,239,231,0.58)" }}>
           I'm a final-year medical student at the University of the West Indies, and somewhere between studying and the chaos of COVID, I discovered I could build software. December 2025 was when it clicked. I built a scoring app for School's Challenge Quiz because the problem was right in front of me and no good solution existed. Watching it work, watching people use it, watching it actually sell, that opened something. I saw the intersection of everything I loved: technology, problem-solving, and now healthcare.
         </p>
-        <p style={aboutParagraphStyle}>
+        <p style={{ ...aboutParagraphStyle, color: "rgba(244,239,231,0.58)" }}>
           Since then I've shipped a Flutter car wash booking app for a paying client, built an interactive admin dashboard, created medical tools including a drug learning platform, and kept building, most recently a Three.js model of SA node electrical activity. I work with AI as a core part of my development process, not as a shortcut, but as the tool that makes it possible for someone who thinks in systems rather than syntax to build things that actually work.
         </p>
-        <p style={aboutParagraphStyle}>
+        <p style={{ ...aboutParagraphStyle, color: "rgba(244,239,231,0.58)" }}>
           The direction I'm heading is clear. AI and healthcare are going to collide in ways that most people in tech don't fully understand yet, because they've never been in a ward. I have. That combination is where I want to be.
         </p>
-        <p style={aboutParagraphStyle}>
-          When I'm not building: cooking, badminton, ATLA rewatches, and whatever game currently has my attention. I also want an Arduino kit. One day.
-        </p>
+
+        {/* Stat row */}
+        <div style={{
+          display: "flex", gap: 0, margin: "32px 0", padding: "24px 0",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}>
+          {ABOUT_STATS.map((s, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "stretch" }}>
+              <div style={{ flex: 1, textAlign: "center", padding: "0 12px" }}>
+                <div style={{
+                  fontFamily: "'Fraunces', serif", fontStyle: "italic",
+                  fontSize: 42, color: "#D98A4C", lineHeight: 1,
+                }}>
+                  {s.number}
+                </div>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: 11,
+                  color: "rgba(244,239,231,0.45)", textTransform: "uppercase",
+                  letterSpacing: "0.08em", marginTop: 10,
+                }}>
+                  {s.line1}
+                </div>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: s.italic ? 10 : 11,
+                  color: s.italic ? "rgba(244,239,231,0.3)" : "rgba(244,239,231,0.45)",
+                  fontStyle: s.italic ? "italic" : "normal",
+                  textTransform: s.italic ? "none" : "uppercase",
+                  letterSpacing: s.italic ? "normal" : "0.08em",
+                }}>
+                  {s.line2}
+                </div>
+              </div>
+              {i !== ABOUT_STATS.length - 1 && (
+                <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Skill tags */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "28px 0" }}>
+          {ABOUT_SKILLS.map((skill, i) => (
+            <span
+              key={i}
+              className="about-skill-pill"
+              style={{ "--rotate": skill.rotate }}
+            >
+              {skill.label}
+            </span>
+          ))}
+        </div>
+
+        <div>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginBottom: 20 }} />
+          <p style={{
+            margin: 0,
+            fontFamily: "'Inter', sans-serif", fontWeight: 300, fontStyle: "italic",
+            fontSize: 14, color: "rgba(244,239,231,0.42)", lineHeight: 1.8,
+          }}>
+            Outside of building: cooking, badminton, rewatching ATLA for what is genuinely an{" "}
+            <span style={{
+              position: "relative", display: "inline",
+              borderBottom: "2px solid rgba(217,138,76,0.6)",
+              paddingBottom: 1,
+              color: "rgba(244,239,231,0.55)",
+            }}>
+              uncountable number of times
+            </span>
+            , and whatever game has my attention this week. I also really want an Arduino kit. That one's coming.
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -4071,7 +4395,7 @@ function readStoredCooldown() {
     const remaining = Math.ceil((until - Date.now()) / 1000);
     return remaining > 0 ? remaining : 0;
   } catch {
-    return 0; // storage unavailable (private mode, etc.) — fail open
+    return 0; // storage unavailable (private mode, etc.) - fail open
   }
 }
 
@@ -4267,7 +4591,7 @@ function ContactView() {
               </div>
             </fieldset>
 
-            {/* Honeypot — hidden from real users, bots fill it */}
+            {/* Honeypot - hidden from real users, bots fill it */}
             <input
               type="text"
               name="honeypot"
@@ -4322,23 +4646,23 @@ const SERVICES = [
   {
     Icon: Smartphone,
     title: "Mobile App Development",
-    tag: "Flutter · Android",
+    tag: "Flutter · Mobile",
     description:
-      "Android apps built on Flutter — a single codebase that's cross-platform by design, so an iOS release is a natural next step rather than a rebuild.",
+      "Mobile apps built on Flutter - a single codebase that's cross-platform by design, so an iOS release is a natural next step rather than a rebuild.",
   },
   {
     Icon: Globe,
     title: "Web App Development",
     tag: "React / Vite · Dashboards · Supabase",
     description:
-      "Fast, responsive web apps and dashboards backed by real infrastructure — the kind of tool your team actually keeps open all day.",
+      "Fast, responsive web apps and dashboards backed by real infrastructure - the kind of tool your team actually keeps open all day.",
   },
   {
     Icon: Monitor,
     title: "Desktop App Development",
-    tag: "Electron · Windows",
+    tag: "Electron · PC/Laptop",
     description:
-      "Native-feeling desktop software for workflows that live on a screen, not a browser tab — built for reliability over novelty.",
+      "Native-feeling desktop software for workflows that live on a screen, not a browser tab - built for reliability over novelty.",
   },
   {
     Icon: Stethoscope,
@@ -4353,14 +4677,14 @@ const SERVICES = [
     title: "Portfolio & Personal Brand Sites",
     tag: "For professionals & creatives",
     description:
-      "A site that makes the case for you before anyone reads a resume — clean, fast, and built around how you actually want to be seen.",
+      "A site that makes the case for you before anyone reads a resume - clean, fast, and built around how you actually want to be seen.",
   },
   {
     Icon: Wrench,
     title: "Maintenance & Support",
     tag: "Ongoing care for what's already live",
     description:
-      "Bugs fixed, dependencies kept current, small improvements shipped — so the thing you launched keeps working long after launch day.",
+      "Bugs fixed, dependencies kept current, small improvements shipped - so the thing you launched keeps working long after launch day.",
   },
 ];
 
@@ -4473,7 +4797,7 @@ function PlaygroundView({ onBack }) {
       id: "3d-cube",
       label: "PLAYGROUND",
       title: "Interactive 3D Cube",
-      description: "A Three.js experiment — orbit, move and customise a 3D cube in different environments.",
+      description: "A Three.js experiment - orbit, move and customise a 3D cube in different weather atmospheres.",
       src: "/playground/3d-cube/index.html",
     },
   ];
@@ -4582,6 +4906,966 @@ function PlaygroundView({ onBack }) {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   CLIENT MANAGER PROJECT - Win95 desktop experience
+   ============================================================ */
+
+const CM_COLORS = {
+  desktop: "#008080",
+  gray: "#c0c0c0",
+  dark: "#808080",
+  white: "#ffffff",
+  navy: "#000080",
+  black: "#000000",
+  red: "#800000",
+  yellow: "#ffffcc",
+  blue: "#e8f4fd",
+};
+
+const CM_RAISED_BORDER = {
+  borderTop: "2px solid #ffffff",
+  borderLeft: "2px solid #ffffff",
+  borderRight: "2px solid #808080",
+  borderBottom: "2px solid #808080",
+};
+
+const CM_INSET_BORDER = {
+  borderTop: "2px solid #808080",
+  borderLeft: "2px solid #808080",
+  borderRight: "2px solid #ffffff",
+  borderBottom: "2px solid #ffffff",
+};
+
+function CmInset({ children, style }) {
+  return (
+    <div style={{ background: "#ffffff", ...CM_INSET_BORDER, padding: 6, ...style }}>
+      {children}
+    </div>
+  );
+}
+
+function CmButton({ children, style, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="cm-win-btn-generic"
+      style={{
+        background: "#c0c0c0",
+        ...CM_RAISED_BORDER,
+        padding: "3px 10px",
+        cursor: "pointer",
+        fontFamily: "'Share Tech Mono', monospace",
+        fontSize: 11,
+        color: "#000",
+        ...style,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function CmStatBox({ value, label, color }) {
+  return (
+    <div style={{ background: "#c0c0c0", ...CM_INSET_BORDER, padding: "8px 12px", textAlign: "center", flex: 1 }}>
+      <div style={{ fontSize: 16, fontWeight: 700, color: color || CM_COLORS.black }}>{value}</div>
+      <div style={{ fontSize: 9, color: "#333" }}>{label}</div>
+    </div>
+  );
+}
+
+function Win95Window({ title, icon, children, style, onFocus, zIndex, defaultPos, isMobile, maximized, onMinimize, onToggleMaximize, onClose }) {
+  const dragRef = useRef(null);
+  const posRef = useRef(defaultPos);
+  const [pos, setPos] = useState(defaultPos);
+
+  const onMouseDown = (e) => {
+    if (isMobile) return;
+    if (maximized) return;
+    if (e.target.closest(".cm-win-btn")) return;
+    const startX = e.clientX - posRef.current.left;
+    const startY = e.clientY - posRef.current.top;
+    const onMove = (e) => {
+      const newPos = { left: e.clientX - startX, top: e.clientY - startY };
+      posRef.current = newPos;
+      setPos(newPos);
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    onFocus();
+  };
+
+  return (
+    <div
+      ref={dragRef}
+      onMouseDown={() => !isMobile && onFocus()}
+      style={{
+        position: isMobile ? "static" : "absolute",
+        top: isMobile ? undefined : (maximized ? 10 : pos.top),
+        left: isMobile ? undefined : (maximized ? 10 : pos.left),
+        right: !isMobile && maximized ? 10 : undefined,
+        background: "#c0c0c0",
+        ...CM_RAISED_BORDER,
+        boxShadow: "2px 2px 0 #000000",
+        minWidth: isMobile ? undefined : 240,
+        width: isMobile ? "100%" : (maximized ? "auto" : undefined),
+        zIndex: isMobile ? undefined : zIndex,
+        marginBottom: isMobile ? 12 : undefined,
+        ...style,
+        ...(maximized ? { width: undefined } : null),
+      }}
+    >
+      <div
+        onMouseDown={onMouseDown}
+        style={{
+          background: style?.titlebarBg || "linear-gradient(90deg, #000080, #1084d0)",
+          color: "white",
+          padding: "3px 6px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          cursor: isMobile || maximized ? "default" : "grab",
+          userSelect: "none",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <span style={{ fontSize: 14 }}>{icon}</span>
+          <span style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 11, fontWeight: 700, color: "#fff" }}>
+            {title}
+          </span>
+        </div>
+        <div style={{ display: "flex", gap: 2 }}>
+          {[
+            { sym: "_", action: onMinimize },
+            { sym: "□", action: onToggleMaximize },
+            { sym: "✕", action: onClose },
+          ].map(({ sym, action }) => (
+            <div
+              key={sym}
+              className="cm-win-btn"
+              onClick={(e) => { e.stopPropagation(); action && action(); }}
+              style={{
+                width: 16, height: 14,
+                background: "#c0c0c0",
+                borderTop: "1px solid #ffffff",
+                borderLeft: "1px solid #ffffff",
+                borderRight: "1px solid #808080",
+                borderBottom: "1px solid #808080",
+                fontSize: 9, cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "#000",
+              }}
+            >
+              {sym}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ padding: 10 }}>{children}</div>
+    </div>
+  );
+}
+
+function CmBootScreen({ onDone }) {
+  const lines = [
+    "CLIENT MANAGER v1.0",
+    "Prakash Sejwani Development Systems",
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    "Initializing Firebase........... OK",
+    "Loading client records........... OK",
+    "Checking contract status......... OK",
+    "Starting notification service.... OK",
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    "System ready.",
+  ];
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    if (visibleCount < lines.length) {
+      const t = setTimeout(() => setVisibleCount((c) => c + 1), 300);
+      return () => clearTimeout(t);
+    } else {
+      const t1 = setTimeout(() => setFading(true), 800);
+      const t2 = setTimeout(() => onDone(), 1300);
+      return () => { clearTimeout(t1); clearTimeout(t2); };
+    }
+  }, [visibleCount]);
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 500,
+      background: "#000080",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      opacity: fading ? 0 : 1,
+      transition: "opacity 0.5s ease",
+    }}>
+      <div style={{ fontFamily: "'VT323', monospace", fontSize: 16, color: "#00ff00" }}>
+        {lines.slice(0, visibleCount).map((line, i) => (
+          <div key={i}>
+            {line}
+            {i === visibleCount - 1 && <CmCursor />}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CmCursor() {
+  const [on, setOn] = useState(true);
+  useEffect(() => {
+    const t = setInterval(() => setOn((o) => !o), 400);
+    return () => clearInterval(t);
+  }, []);
+  return <span style={{ opacity: on ? 1 : 0 }}>█</span>;
+}
+
+const CM_SLIDES = [
+  { src: "/images/cm-login.png", caption: "Login - Clients and developer sign in here" },
+  { src: "/images/adminside.png", caption: "Admin Dashboard - Project overview and status tracking" },
+  { src: "/images/adminclientsview.png", caption: "Clients List - All clients with contact details" },
+  { src: "/images/clientcalenderview.png", caption: "Calendar - Key deadlines color-coded by urgency" },
+  { src: "/images/clientside.png", caption: "Client Portal - What your client sees" },
+  { src: "/images/adminsettingspage.png", caption: "Settings - Bank accounts for invoice generation" },
+];
+
+function CmSlideshow() {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % CM_SLIDES.length);
+        setVisible(true);
+      }, 300);
+    }, 4000);
+    return () => clearInterval(t);
+  }, [paused]);
+
+  const goTo = (next) => {
+    setVisible(false);
+    setTimeout(() => {
+      setIndex(next);
+      setVisible(true);
+    }, 300);
+  };
+
+  const prev = () => goTo((index - 1 + CM_SLIDES.length) % CM_SLIDES.length);
+  const next = () => goTo((index + 1) % CM_SLIDES.length);
+
+  return (
+    <div
+      style={{ ...CM_RAISED_BORDER, background: "#c0c0c0", boxShadow: "2px 2px 0 #000000" }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div style={{
+        background: "linear-gradient(90deg, #000080, #1084d0)",
+        color: "white", padding: "3px 6px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <span style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 11, fontWeight: 700 }}>
+          🖼 Image Viewer - Client Manager Screenshots
+        </span>
+        <div style={{ display: "flex", gap: 2 }}>
+          {["_", "□", "✕"].map((sym) => (
+            <div key={sym} style={{
+              width: 16, height: 14, background: "#c0c0c0",
+              borderTop: "1px solid #ffffff", borderLeft: "1px solid #ffffff",
+              borderRight: "1px solid #808080", borderBottom: "1px solid #808080",
+              fontSize: 9, display: "flex", alignItems: "center", justifyContent: "center", color: "#000",
+            }}>
+              {sym}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ padding: 10 }}>
+        <CmInset style={{ height: 380, background: "#000", padding: 4, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+          <img
+            src={CM_SLIDES[index].src}
+            alt={CM_SLIDES[index].caption}
+            style={{
+              maxWidth: "100%", maxHeight: "100%", objectFit: "contain",
+              opacity: visible ? 1 : 0, transition: "opacity 0.3s ease",
+            }}
+          />
+        </CmInset>
+        <div style={{ background: "#c0c0c0", padding: "6px 4px", textAlign: "center", fontFamily: "'Share Tech Mono', monospace", fontSize: 10, color: "#333" }}>
+          {CM_SLIDES[index].caption}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6 }}>
+          <CmButton onClick={prev}>◄ Prev</CmButton>
+          <span style={{ fontSize: 10.5 }}>({index + 1} / {CM_SLIDES.length})</span>
+          <CmButton onClick={next}>Next ►</CmButton>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MedicalVisualizerProject() {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const [splashing, setSplashing] = useState(true);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMinTimeElapsed(true), 2800);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!(iframeLoaded && minTimeElapsed) || fading) return;
+    setFading(true);
+    const t = setTimeout(() => setSplashing(false), 500);
+    return () => clearTimeout(t);
+  }, [iframeLoaded, minTimeElapsed, fading]);
+
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 100, background: "#0a1628" }}>
+      {splashing && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 10,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          background: "#0a1628",
+          opacity: fading ? 0 : 1,
+          transition: "opacity 0.5s ease",
+        }}>
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="20" y="6" width="8" height="36" rx="2" fill="#ffffff" />
+            <rect x="6" y="20" width="36" height="8" rx="2" fill="#ffffff" />
+          </svg>
+          <h2 style={{
+            fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+            fontSize: 22, color: "#ffffff", margin: "18px 0 8px",
+          }}>
+            Medical Visualizer
+          </h2>
+          <p className="medvis-pulse-text" style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 12,
+            color: "rgba(255,255,255,0.45)", letterSpacing: "0.04em",
+          }}>
+            Loading visualization...
+          </p>
+        </div>
+      )}
+
+      <iframe
+        src="/medical-visualizer/index.html"
+        onLoad={() => setIframeLoaded(true)}
+        style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+        title="Medical Visualizer"
+      />
+    </div>
+  );
+}
+
+function MusicVisualizerProject() {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const [splashing, setSplashing] = useState(true);
+  const [fading, setFading] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(true);
+  const iframeRef = useRef(null);
+
+  const dismissInstructions = () => {
+    setShowInstructions(false);
+    iframeRef.current?.focus();
+    iframeRef.current?.contentWindow?.focus();
+  };
+
+  useEffect(() => {
+    const t = setTimeout(() => setMinTimeElapsed(true), 4500);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!(iframeLoaded && minTimeElapsed) || fading) return;
+    setFading(true);
+    const t = setTimeout(() => setSplashing(false), 500);
+    return () => clearTimeout(t);
+  }, [iframeLoaded, minTimeElapsed, fading]);
+
+  const bars = [0, 1, 2, 3];
+
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 100, background: "#0b0b10" }}>
+      {/* splash */}
+      {splashing && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 10,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          background: "#0b0b10",
+          opacity: fading ? 0 : 1,
+          transition: "opacity 0.5s ease",
+        }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: 36 }}>
+            {bars.map((i) => (
+              <div
+                key={i}
+                className="musicvis-bar"
+                style={{
+                  width: 6, borderRadius: 3, background: "#a855f7",
+                  animationDelay: `${i * 0.15}s`,
+                }}
+              />
+            ))}
+          </div>
+          <h2 style={{
+            fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+            fontSize: 22, color: "#ffffff", margin: "18px 0 8px",
+          }}>
+            Music Visualizer
+          </h2>
+          <p className="medvis-pulse-text" style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 12,
+            color: "rgba(255,255,255,0.45)", letterSpacing: "0.04em",
+          }}>
+            Loading...
+          </p>
+        </div>
+      )}
+
+      {/* iframe */}
+      <iframe
+        ref={iframeRef}
+        tabIndex={0}
+        src="/music-visualizer/index.html"
+        allow="microphone"
+        onLoad={() => setIframeLoaded(true)}
+        style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+        title="Music Visualizer"
+      />
+
+      {/* instruction overlay - renders on top of iframe */}
+      {iframeLoaded && showInstructions && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 20,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)",
+        }}>
+          <div style={{
+            background: "#15121c", borderRadius: 14, padding: 32, maxWidth: 360,
+            border: "1px solid rgba(168,85,247,0.25)",
+          }}>
+            <h3 style={{
+              fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+              fontSize: 22, color: "#ffffff", margin: "0 0 14px",
+            }}>
+              How to use
+            </h3>
+            <div style={{
+              fontFamily: "'Inter', sans-serif", fontSize: 13,
+              color: "rgba(255,255,255,0.75)", lineHeight: 1.8, marginBottom: 22,
+            }}>
+              1. Play music on your device<br />
+              2. Click "Start mic" to activate<br />
+              3. Allow microphone access when prompted
+              <br /><br />
+              Keyboard shortcuts:<br />
+              [1] Radial mode<br />
+              [2] Waveform mode<br />
+              [3] Both modes
+              <br /><br />
+              Use the Sensitivity slider to adjust reactivity.
+            </div>
+            <button
+              onClick={dismissInstructions}
+              style={{
+                width: "100%", padding: "12px 0", borderRadius: 8,
+                background: "#a855f7", color: "#ffffff", border: "none",
+                fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Got it, let's go
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ClientManagerProject({ onNextProject }) {
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap";
+    document.head.appendChild(link);
+    return () => { document.head.removeChild(link); };
+  }, []);
+
+  const [booted, setBooted] = useState(false);
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
+  const [windowOrder, setWindowOrder] = useState(["cm", "portal", "notify", "contract"]);
+  const [clock, setClock] = useState(new Date().toLocaleTimeString("en-JM", { hour: "2-digit", minute: "2-digit" }));
+  const [windowState, setWindowState] = useState({ cm: "open", portal: "open", notify: "open", contract: "open" });
+  const [maximized, setMaximized] = useState({ cm: false, portal: false, notify: false, contract: false });
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setClock(new Date().toLocaleTimeString("en-JM", { hour: "2-digit", minute: "2-digit" }));
+    }, 30000);
+    return () => clearInterval(t);
+  }, []);
+
+  const bringToFront = (id) => {
+    setWindowOrder((prev) => [...prev.filter((w) => w !== id), id]);
+  };
+
+  const zOf = (id) => 100 + windowOrder.indexOf(id);
+
+  const closeWindow = (id) => setWindowState((s) => ({ ...s, [id]: "closed" }));
+  const minimizeWindow = (id) => setWindowState((s) => ({ ...s, [id]: "minimized" }));
+  const restoreWindow = (id) => {
+    setWindowState((s) => ({ ...s, [id]: "open" }));
+    bringToFront(id);
+  };
+  const toggleMaximize = (id) => setMaximized((m) => ({ ...m, [id]: !m[id] }));
+
+  const handleTaskbarClick = (id) => {
+    if (windowState[id] !== "open") restoreWindow(id);
+    else bringToFront(id);
+  };
+
+  const windowMeta = {
+    cm: { icon: "🖥", label: "Client Manager" },
+    portal: { icon: "👤", label: "Client Portal" },
+    notify: { icon: "📬", label: "Notifications" },
+    contract: { icon: "📄", label: "Contract Viewer" },
+  };
+
+  const desktopIcons = [
+    { icon: "🖥", label: "Client Manager.exe", id: "cm" },
+    { icon: "👤", label: "Client Portal.exe", id: "portal" },
+    { icon: "📬", label: "Notifications.exe", id: "notify" },
+    { icon: "📄", label: "Contract Viewer.exe", id: "contract" },
+  ];
+
+  const featureListStyle = { fontSize: 10, lineHeight: 1.8, color: "#333", margin: "8px 0 0", paddingLeft: 0, listStyle: "none" };
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 100,
+      background: "#008080",
+      overflowY: "auto",
+      overflowX: "hidden",
+      fontFamily: "'Share Tech Mono', monospace",
+      fontSize: 11,
+      color: "#000000",
+      display: "flex",
+      flexDirection: "column",
+    }}>
+      {!booted && <CmBootScreen onDone={() => setBooted(true)} />}
+
+      {booted && (
+        <>
+          {/* ============ TOP SECTION - intro + slideshow ============ */}
+          <div style={{
+            background: "#d4d0c8",
+            flexShrink: 0,
+          }}>
+            <div style={{
+              background: "linear-gradient(90deg, #000080, #1084d0)",
+              color: "white", padding: "8px 16px",
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+            }}>
+              <span style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 14, fontWeight: 700 }}>
+                🖥 Client Manager
+              </span>
+              <div style={{ display: "flex", gap: 2 }}>
+                {["_", "□", "✕"].map((sym) => (
+                  <div key={sym} className="cm-win-btn" style={{
+                    width: 16, height: 14, background: "#c0c0c0",
+                    borderTop: "1px solid #ffffff", borderLeft: "1px solid #ffffff",
+                    borderRight: "1px solid #808080", borderBottom: "1px solid #808080",
+                    fontSize: 9, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center", color: "#000",
+                  }}>
+                    {sym}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ padding: "20px 24px 12px" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: 22, color: "#000080" }}>
+                "A bespoke client and project management system - built for running a freelance software business."
+              </div>
+              <p style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 11, color: "#333", lineHeight: 1.7, marginTop: 12 }}>
+                This is the internal system I use to manage every client and project. It tracks projects through a fixed delivery pipeline, generates contracts and invoices, handles e-signatures, and sends automated email notifications at every stage.
+              </p>
+              <p style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 11, color: "#333", lineHeight: 1.7 }}>
+                If you start a project with me, you will receive login credentials to the Client Portal - where you can view your project status, sign documents, and track deadlines. All communication about your build happens here.
+              </p>
+
+              <CmInset style={{ borderLeft: `3px solid ${CM_COLORS.navy}`, marginBottom: 16 }}>
+                <div style={{ fontSize: 10.5, lineHeight: 1.7 }}>
+                  📋 Access is private. No public demo is available.<br />
+                  &nbsp;&nbsp;&nbsp;This page exists to show what the system does.
+                </div>
+              </CmInset>
+
+              <div style={{ display: "flex", gap: 6, marginBottom: 18 }}>
+                <CmStatBox value="13" label="Email Templates" />
+                <CmStatBox value="2-sided" label="Portal Roles" />
+                <CmStatBox value="6" label="Doc Types" />
+                <CmStatBox value="JMD" label="Currency" />
+              </div>
+
+              <CmSlideshow />
+            </div>
+          </div>
+
+          {/* ============ BOTTOM SECTION - desktop ============ */}
+          <div style={{
+            position: "relative",
+            overflow: "visible",
+            background: "#008080",
+            minHeight: isMobile ? undefined : 780,
+            paddingBottom: isMobile ? undefined : 40,
+          }}>
+            {!isMobile && (
+              <div style={{
+                position: "absolute", top: 12, left: 12,
+                display: "flex", flexDirection: "column", gap: 16,
+                padding: 12, zIndex: 1,
+              }}>
+                {desktopIcons.map((d) => (
+                  <div
+                    key={d.id}
+                    onDoubleClick={() => handleTaskbarClick(d.id)}
+                    style={{
+                      width: 72, display: "flex", flexDirection: "column",
+                      alignItems: "center", gap: 4, cursor: "pointer",
+                    }}
+                  >
+                    <div style={{ fontSize: 24 }}>{d.icon}</div>
+                    <div style={{
+                      fontFamily: "'VT323', monospace", fontSize: 11, color: "#fff",
+                      textAlign: "center", textShadow: "1px 1px 1px rgba(0,0,0,0.6)",
+                    }}>
+                      {d.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{
+              display: isMobile ? "flex" : "block",
+              flexDirection: "column",
+              gap: isMobile ? 12 : 0,
+              padding: isMobile ? 12 : 0,
+              position: isMobile ? undefined : "relative",
+              minHeight: isMobile ? undefined : 700,
+              minWidth: isMobile ? undefined : 900,
+            }}>
+              {/* WINDOW 1 - Client Manager.exe */}
+              {windowState.cm !== "closed" && windowState.cm !== "minimized" && (
+              <Win95Window
+                title="Client Manager.exe" icon="🖥"
+                onFocus={() => bringToFront("cm")}
+                zIndex={zOf("cm")}
+                defaultPos={{ top: 20, left: 100 }}
+                isMobile={isMobile}
+                maximized={maximized.cm}
+                onMinimize={() => minimizeWindow("cm")}
+                onToggleMaximize={() => toggleMaximize("cm")}
+                onClose={() => closeWindow("cm")}
+                style={{ width: isMobile ? "100%" : 400 }}
+              >
+                <div style={{ background: "#c0c0c0", borderBottom: "1px solid #808080", padding: "2px 6px", display: "flex", gap: 14, fontSize: 11, marginTop: -10, marginLeft: -10, marginRight: -10, marginBottom: 10 }}>
+                  {["File", "View", "Clients", "Calendar", "Settings"].map((m) => <span key={m}>{m}</span>)}
+                </div>
+
+                <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+                  <CmStatBox value="3" label="Active" />
+                  <CmStatBox value="1" label="Attention" color={CM_COLORS.red} />
+                  <CmStatBox value="2" label="On Track" color="#008000" />
+                  <CmStatBox value="0" label="Late Fees" />
+                </div>
+
+                <CmInset>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ fontWeight: 700 }}><span style={{ color: "#008000" }}>✅ ON TRACK</span> - Ellis Rogers</span>
+                    <span style={{ color: "#666", fontSize: 10 }}>Large · Deposit</span>
+                  </div>
+                  <div style={{
+                    display: "inline-block", background: CM_COLORS.yellow,
+                    padding: "2px 6px", fontSize: 10, margin: "6px 0", border: "1px solid #808080",
+                  }}>
+                    ⚡ Next: Deposit pending confirmation
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, margin: "6px 0" }}>
+                    <span>Fee: JMD $23,456,234</span>
+                    <span>Update: Every other Friday</span>
+                  </div>
+                  <div style={{ height: 16, background: "#c0c0c0", ...CM_INSET_BORDER, position: "relative", display: "flex", alignItems: "center" }}>
+                    <div style={{
+                      height: "100%", width: "40%", background: CM_COLORS.navy,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <span style={{ color: "#fff", fontSize: 9, whiteSpace: "nowrap" }}>Contract Stage</span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 9.5, color: "#333", marginTop: 8 }}>
+                    🚀 Stage 1: Oct 2 · 🔧 Stage 2: Oct 12 · 🔍 Review: Oct 7
+                  </div>
+                </CmInset>
+
+                <ul style={featureListStyle}>
+                  <li>✦ Brief → Contract → Deposit → Dev → Stage 1/2 → Complete</li>
+                  <li>✦ Maintenance: Active / Paused / Cancelled</li>
+                  <li>✦ Late review tracking + automatic deadline extension</li>
+                  <li>✦ Escalating late fees + tiered unarchiving calculator</li>
+                  <li>✦ Contract amendment versioning system</li>
+                </ul>
+
+                <CmInset style={{ marginTop: 10, borderLeft: `3px solid ${CM_COLORS.navy}` }}>
+                  <div style={{ fontSize: 10, lineHeight: 1.6 }}>
+                    📋 If you start a project, you get login credentials
+                    to the Client Portal. All project updates,
+                    documents, and notifications flow through here.
+                  </div>
+                </CmInset>
+              </Win95Window>
+              )}
+
+              {/* WINDOW 2 - Client Portal.exe */}
+              {windowState.portal !== "closed" && windowState.portal !== "minimized" && (
+              <Win95Window
+                title="Client Portal.exe" icon="👤"
+                onFocus={() => bringToFront("portal")}
+                zIndex={zOf("portal")}
+                defaultPos={{ top: 40, left: 520 }}
+                isMobile={isMobile}
+                maximized={maximized.portal}
+                onMinimize={() => minimizeWindow("portal")}
+                onToggleMaximize={() => toggleMaximize("portal")}
+                onClose={() => closeWindow("portal")}
+                style={{ width: isMobile ? "100%" : 320, titlebarBg: "linear-gradient(90deg, #1a4a1a, #2d8a2d)" }}
+              >
+                <div style={{ fontFamily: "'VT323', monospace", fontSize: 16, color: "#000080" }}>Welcome, Ellis Rogers</div>
+                <div style={{ fontSize: 10, color: "#555", marginBottom: 8 }}>Here's an overview of your project(s).</div>
+
+                <CmInset>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ fontWeight: 700 }}>Test Project</span>
+                    <span style={{ fontSize: 9, color: "#666" }}>Large · Deposit</span>
+                  </div>
+                  <CmInset style={{ background: CM_COLORS.blue, margin: "6px 0", fontSize: 10 }}>
+                    Your deposit invoice is ready.
+                  </CmInset>
+                  <CmInset style={{ background: "#ffe0e0", color: CM_COLORS.red, fontSize: 10, marginBottom: 6 }}>
+                    ⚠ Deposit outstanding - Blocking: developer cannot proceed.
+                  </CmInset>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, fontSize: 10 }}>
+                    <div>Fee: JMD $23,456,234</div>
+                    <div>Update day: Friday</div>
+                    <div>Deposit: Unpaid</div>
+                    <div>Midpoint: N/A</div>
+                  </div>
+                  <div style={{ fontSize: 10, marginTop: 8, textDecoration: "underline", color: "#000080" }}>
+                    View Contract · Deposit Invoice · Final Invoice · Maintenance
+                  </div>
+                </CmInset>
+
+                <ul style={featureListStyle}>
+                  <li>✦ Clients see only their own project(s)</li>
+                  <li>✦ Plain-language alerts with countdowns</li>
+                  <li>✦ E-signature on all documents</li>
+                  <li>✦ Shared calendar with all key deadlines</li>
+                  <li>✦ Focus-based refetch - alerts always current</li>
+                </ul>
+              </Win95Window>
+              )}
+
+              {/* WINDOW 3 - Notifications.exe */}
+              {windowState.notify !== "closed" && windowState.notify !== "minimized" && (
+              <Win95Window
+                title="Notifications.exe" icon="📬"
+                onFocus={() => bringToFront("notify")}
+                zIndex={zOf("notify")}
+                defaultPos={{ top: 280, left: 100 }}
+                isMobile={isMobile}
+                maximized={maximized.notify}
+                onMinimize={() => minimizeWindow("notify")}
+                onToggleMaximize={() => toggleMaximize("notify")}
+                onClose={() => closeWindow("notify")}
+                style={{ width: isMobile ? "100%" : 360, titlebarBg: "linear-gradient(90deg, #800000, #c04040)" }}
+              >
+                <CmInset style={{ background: "#0a0a0a", fontSize: 10, lineHeight: 1.9 }}>
+                  <div style={{ color: "#00ff00" }}>[09:41:22] CONTRACT_SIGNED     Ellis Rogers → Test Project</div>
+                  <div style={{ color: "#4488ff" }}>[09:38:10] DEPOSIT_INVOICE     Generated - Ellis Rogers</div>
+                  <div style={{ color: "#ffff00" }}>[09:15:04] STATUS_CHANGE       Brief → Contract</div>
+                  <div style={{ color: "#ffffff" }}>[08:52:11] CLIENT_REGISTERED   Ellis Rogers joined portal</div>
+                  <div style={{ color: "#4488ff" }}>[08:30:00] PROJECT_CREATED     Test Project (Large)</div>
+                </CmInset>
+
+                <CmInset style={{ marginTop: 10, display: "flex", gap: 10, alignItems: "flex-start" }}>
+                  <div style={{ fontSize: 28 }}>📨</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 10.5, marginBottom: 8 }}>
+                      Ellis Rogers signed the contract for "Test Project". Next: Generate deposit invoice.
+                    </div>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <CmButton>OK</CmButton>
+                      <CmButton>View Project</CmButton>
+                    </div>
+                  </div>
+                </CmInset>
+
+                <ul style={featureListStyle}>
+                  <li>✦ 13 lifecycle email templates</li>
+                  <li>✦ Emails sent on every status change automatically</li>
+                  <li>✦ Developer notified instantly on document signing</li>
+                  <li>✦ Server-side Gmail SMTP - origin-locked for security</li>
+                </ul>
+              </Win95Window>
+              )}
+
+              {/* WINDOW 4 - Contract Viewer.exe */}
+              {windowState.contract !== "closed" && windowState.contract !== "minimized" && (
+              <Win95Window
+                title="Contract Viewer.exe" icon="📄"
+                onFocus={() => bringToFront("contract")}
+                zIndex={zOf("contract")}
+                defaultPos={{ top: 280, left: 480 }}
+                isMobile={isMobile}
+                maximized={maximized.contract}
+                onMinimize={() => minimizeWindow("contract")}
+                onToggleMaximize={() => toggleMaximize("contract")}
+                onClose={() => closeWindow("contract")}
+                style={{ width: isMobile ? "100%" : 320 }}
+              >
+                <div style={{ background: "#fff", ...CM_INSET_BORDER }}>
+                  {[
+                    ["📄", "Contract", "Scope, timeline, terms"],
+                    ["💰", "Deposit Invoice", "Upfront payment"],
+                    ["💰", "Midpoint Invoice", "Medium/Large only"],
+                    ["💰", "Final Invoice", "On completion"],
+                    ["📝", "Amendment", "Scope changes, versioned"],
+                    ["🔧", "Maintenance", "Ongoing support agreement"],
+                  ].map(([icon, name, desc], i) => (
+                    <div key={name} style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "5px 8px", fontSize: 10,
+                      borderBottom: i < 5 ? "1px solid #c0c0c0" : "none",
+                    }}>
+                      <span>{icon} {name} - {desc}</span>
+                      <CmButton style={{ fontSize: 9, padding: "1px 6px" }}>View</CmButton>
+                    </div>
+                  ))}
+                </div>
+
+                <CmInset style={{ marginTop: 10, fontSize: 10, lineHeight: 1.7 }}>
+                  ✍ SIGNATURE BLOCK<br />
+                  ━━━━━━━━━━━━━━━━━━━━━━━━━━<br />
+                  Client types name + confirms<br />
+                  → Timestamp written to Firestore<br />
+                  → Developer notified by email<br />
+                  ━━━━━━━━━━━━━━━━━━━━━━━━━━<br />
+                  Status: ⏳ Awaiting signature
+                </CmInset>
+
+                <ul style={featureListStyle}>
+                  <li>✦ All documents generated from live project data</li>
+                  <li>✦ Sequential invoice numbering</li>
+                  <li>✦ Amendment versioning (v1, v2, v3...)</li>
+                  <li>✦ Signature stored in Firestore with timestamp</li>
+                </ul>
+              </Win95Window>
+              )}
+            </div>
+
+            {!isMobile && (
+              <div style={{
+                position: "fixed", bottom: 0, left: 0, right: 0,
+                background: "#c0c0c0",
+                borderTop: "2px solid #ffffff",
+                padding: "2px 4px",
+                display: "flex", alignItems: "center", gap: 4,
+                height: 30, zIndex: 9999,
+              }}>
+                <div style={{ ...CM_RAISED_BORDER, background: "#c0c0c0", padding: "3px 10px", fontWeight: 700, fontSize: 11, cursor: "pointer" }}>
+                  ⊞ Start
+                </div>
+                <div style={{ width: 1, height: 20, background: "#808080", margin: "0 2px" }} />
+                {Object.keys(windowMeta).map((id) => {
+                  const active = windowState[id] === "open" && windowOrder[windowOrder.length - 1] === id;
+                  return (
+                    <div
+                      key={id}
+                      onClick={() => handleTaskbarClick(id)}
+                      style={{
+                        ...(active ? CM_INSET_BORDER : CM_RAISED_BORDER),
+                        background: "#c0c0c0",
+                        padding: "3px 10px", fontSize: 10.5, cursor: "pointer",
+                        display: "flex", alignItems: "center", gap: 4,
+                        opacity: windowState[id] === "open" ? 1 : 0.6,
+                        fontStyle: windowState[id] === "closed" ? "italic" : "normal",
+                      }}
+                    >
+                      {windowMeta[id].icon} {windowMeta[id].label}
+                    </div>
+                  );
+                })}
+                <div
+                  onClick={onNextProject}
+                  style={{
+                    marginLeft: "auto", ...CM_RAISED_BORDER, background: "#c0c0c0",
+                    padding: "3px 10px", fontSize: 10.5, fontWeight: 700, cursor: "pointer",
+                  }}
+                >
+                  Next Project →
+                </div>
+                <div style={{ ...CM_INSET_BORDER, background: "#c0c0c0", padding: "3px 10px", fontSize: 10.5 }}>
+                  {clock}
+                </div>
+              </div>
+            )}
+
+            {isMobile && (
+              <div style={{ padding: "0 12px 20px" }}>
+                <button
+                  onClick={onNextProject}
+                  style={{
+                    width: "100%", background: "#c0c0c0", ...CM_RAISED_BORDER,
+                    padding: "10px", fontSize: 12, fontWeight: 700,
+                    fontFamily: "'Share Tech Mono', monospace", cursor: "pointer",
+                  }}
+                >
+                  Next Project →
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
