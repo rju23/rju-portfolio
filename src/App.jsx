@@ -554,7 +554,7 @@ function HeroText() {
           marginBottom: 10, fontFamily: "'Inter', sans-serif",
         }}>
           <Sparkles size={13} color="#D98A4C" />
-          Welcome to prakash.dev/chat
+          Welcome to prakashsejwani.dev/chat
         </div>
 
         {/* PK-1 subtitle */}
