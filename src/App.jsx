@@ -287,7 +287,7 @@ export default function App() {
           display: "flex", flexDirection: "column",
           alignItems: "stretch",
           justifyContent: section === "chat" ? "center" : "flex-start",
-          paddingBottom: section === "chat" ? 90 : 190,
+          paddingBottom: section === "chat" ? 90 : section === "about" ? 90 : 190,
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
           {section === "chat"        && <HeroText />}
