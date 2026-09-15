@@ -270,6 +270,11 @@ body {
 @media (max-width: 700px) {
   .rv-step-line { display: none; }
   .rv-two-col { grid-template-columns: 1fr !important; }
+  .rv-auto-grid { grid-template-columns: 1fr !important; }
+  .rv-h2 { font-size: 26px !important; }
+  .rv-sync-row { flex-direction: column !important; gap: 14px !important; }
+  .rv-sync-connector { display: none !important; }
+  .rv-next-project { flex-wrap: wrap !important; gap: 6px !important; font-size: 12.5px !important; }
 }
 
 @media (max-width: 768px) {

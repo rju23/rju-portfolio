@@ -1514,6 +1514,55 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
   const [fading, setFading]       = useState(false);
   const [navOpen, setNavOpen]     = useState(false);
 
+  const ORB_SIZE = 44;
+  const orbRef = useRef(null);
+  const [orbPos, setOrbPos] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("pk1_orb_pos"));
+      if (saved && typeof saved.x === "number" && typeof saved.y === "number") return saved;
+    } catch {}
+    return null;
+  });
+  const dragState = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0 });
+
+  const clampOrbPos = (x, y) => ({
+    x: Math.min(Math.max(x, 8), window.innerWidth - ORB_SIZE - 8),
+    y: Math.min(Math.max(y, 8), window.innerHeight - ORB_SIZE - 8),
+  });
+
+  const handleOrbPointerDown = (e) => {
+    const rect = orbRef.current.getBoundingClientRect();
+    dragState.current = {
+      dragging: true, moved: false,
+      startX: e.clientX, startY: e.clientY,
+      origX: rect.left, origY: rect.top,
+    };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handleOrbPointerMove = (e) => {
+    const drag = dragState.current;
+    if (!drag.dragging) return;
+    const dx = e.clientX - drag.startX;
+    const dy = e.clientY - drag.startY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) drag.moved = true;
+    if (drag.moved) setOrbPos(clampOrbPos(drag.origX + dx, drag.origY + dy));
+  };
+
+  const handleOrbPointerUp = () => {
+    const drag = dragState.current;
+    if (!drag.dragging) return;
+    drag.dragging = false;
+    if (drag.moved) {
+      setOrbPos((pos) => {
+        try { localStorage.setItem("pk1_orb_pos", JSON.stringify(pos)); } catch {}
+        return pos;
+      });
+    } else {
+      setNavOpen(true);
+    }
+  };
+
   useEffect(() => {
     if (hasOwnSplash) return;
     const fadeTimer = setTimeout(() => setFading(true), 1800);
@@ -1577,26 +1626,31 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
         </div>
       )}
 
-      {/* Layer 3 - floating orb */}
+      {/* Layer 3 - floating orb (draggable) */}
       {!splashing && (
         <button
-          onClick={() => setNavOpen(true)}
+          ref={orbRef}
+          onPointerDown={handleOrbPointerDown}
+          onPointerMove={handleOrbPointerMove}
+          onPointerUp={handleOrbPointerUp}
+          onPointerCancel={handleOrbPointerUp}
           style={{
-            position: "fixed", bottom: 28, right: 28, zIndex: 200,
+            position: "fixed",
+            ...(orbPos ? { top: orbPos.y, left: orbPos.x } : { bottom: 28, right: 28 }),
+            zIndex: 200,
             width: 44, height: 44, borderRadius: "50%",
             background: `${theme.color}E6`,
-            border: "none", cursor: "pointer",
+            border: "none", cursor: "grab",
+            touchAction: "none",
             display: "flex", alignItems: "center", justifyContent: "center",
             "--orb-color": rgb,
             animation: "orbPulse 3s ease-in-out infinite",
-            transition: "transform 0.15s ease, box-shadow 0.15s ease",
+            transition: "box-shadow 0.15s ease",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "scale(1.08)";
             e.currentTarget.style.boxShadow = `0 0 20px 4px rgba(${rgb}, 0.5)`;
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "scale(1)";
             e.currentTarget.style.boxShadow = "none";
           }}
         >
@@ -2376,7 +2430,7 @@ function ReviveProject({ onNextProject }) {
         {/* FEATURE SPOTLIGHT */}
         <section style={{ padding: "28px 24px 70px", maxWidth: 1100, margin: "0 auto" }}>
           <RvSectionHeading title="What makes it stand out" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+          <div className="rv-auto-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
             {RV_FEATURES.map(({ Icon, title, desc }) => (
               <div key={title} style={cardStyle}>
                 <Icon size={24} color={RV.green} strokeWidth={1.8} style={{ marginBottom: 14 }} />
@@ -2391,7 +2445,7 @@ function ReviveProject({ onNextProject }) {
         <section style={{ padding: "28px 24px 77px", maxWidth: 1160, margin: "0 auto" }}>
           <div className="rv-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "start" }}>
             <div>
-              <h2 style={{ fontWeight: 900, fontSize: 36, lineHeight: 1.3, margin: "0 0 18px" }}>
+              <h2 className="rv-h2" style={{ fontWeight: 900, fontSize: 36, lineHeight: 1.3, margin: "0 0 18px" }}>
                 Two layers of protection against double-bookings.
               </h2>
               <p style={{ fontSize: 14.5, lineHeight: 1.55, color: RV.inkDim, marginBottom: 36 }}>
@@ -2445,7 +2499,7 @@ function ReviveProject({ onNextProject }) {
             Live driver grid, booking stats, and override controls on one screen.
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+          <div className="rv-auto-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
             {RV_SETTINGS_TABS.map(({ Icon, title, desc }) => (
               <div key={title} style={{ ...cardStyle, display: "flex", gap: 16, alignItems: "flex-start" }}>
                 <Icon size={20} color={RV.green} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 2 }} />
@@ -2462,7 +2516,7 @@ function ReviveProject({ onNextProject }) {
         <section style={{ background: RV.darkGreen, padding: "63px 24px" }}>
           <div className="rv-two-col" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.15fr", gap: 48, alignItems: "start" }}>
             <div>
-              <h2 style={{ fontWeight: 900, fontSize: 36, color: "#fff", margin: "0 0 10px" }}>The Override</h2>
+              <h2 className="rv-h2" style={{ fontWeight: 900, fontSize: 36, color: "#fff", margin: "0 0 10px" }}>The Override</h2>
               <div style={{ fontWeight: 500, fontSize: 15, color: RV.gold, marginBottom: 24 }}>
                 When the algorithm says no, but administrator knows better.
               </div>
@@ -2507,12 +2561,12 @@ function ReviveProject({ onNextProject }) {
         {/* REAL-TIME SYNC */}
         <section style={{ padding: "70px 24px 30px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
           <RvSectionHeading title="App and dashboard, always in sync." />
-          <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28 }}>
+          <div className="rv-sync-row" style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28 }}>
             <div style={{ ...cardStyle, flex: 1, textAlign: "center" }}>
               <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>Customer App</div>
               <div style={{ fontSize: 12.5, color: RV.inkDim }}>Booking confirmed</div>
             </div>
-            <div style={{ position: "relative", flex: "0 0 100px", height: 4, background: RV.border, borderRadius: 2 }}>
+            <div className="rv-sync-connector" style={{ position: "relative", flex: "0 0 100px", height: 4, background: RV.border, borderRadius: 2 }}>
               <div className="rv-sync-pulse" style={{
                 position: "absolute", top: -3, width: 10, height: 10, borderRadius: "50%",
                 background: RV.gold, boxShadow: `0 0 10px ${RV.gold}`,
@@ -2547,6 +2601,7 @@ function ReviveProject({ onNextProject }) {
 
         {/* NEXT PROJECT */}
         <div
+          className="rv-next-project"
           onClick={onNextProject}
           style={{
             background: RV.darkGreen,
