@@ -693,3 +693,17 @@ body {
     flex-direction: column !important;
   }
 }
+
+/* ── Page crossfade ──
+   Wraps the active section's content; keyed by section so it remounts
+   (and re-plays the fade) on every navigation. */
+@keyframes pk1PageFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.pk1-page-fade {
+  animation: pk1PageFade 0.24s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pk1-page-fade { animation: none; }
+}

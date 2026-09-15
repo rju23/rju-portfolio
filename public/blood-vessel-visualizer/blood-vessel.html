@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Vessel Visualizer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+  #canvas { display: block; }
+
+  #ui {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+  }
+
+  #disease-label {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  #pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(8px);
+  }
+
+  .pill:hover {
+    border-color: rgba(255,255,255,0.4);
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .pill.active {
+    background: rgba(220, 50, 50, 0.25);
+    border-color: rgba(220, 50, 50, 0.7);
+    color: #ff8888;
+  }
+
+  #legend {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    z-index: 10;
+    line-height: 1.8;
+  }
+
+  #legend h4 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 6px;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  #top-left {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 220px;
+  }
+
+  #project-info {
+    pointer-events: none;
+  }
+
+  #project-info .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 6px;
+  }
+
+  #project-info h1 {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin: 0 0 6px;
+  }
+
+  #project-info p {
+    font-size: 11px;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.55);
+    margin: 0;
+  }
+
+  #info {
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  #info h4 {
+    font-size: 12px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  #info p {
+    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+  }
+
+  #controls-info {
+    font-size: 10.5px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.45);
+    pointer-events: none;
+  }
+
+  #controls-info strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+  }
+
+  @media (max-width: 640px) {
+    #top-left {
+      max-width: 46vw;
+      gap: 8px;
+    }
+    #project-info .eyebrow { font-size: 9px; }
+    #project-info h1 { font-size: 13px; }
+    #project-info p { font-size: 9.5px; line-height: 1.45; }
+
+    #info {
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+    #info h4 { font-size: 11px; }
+    #info p { font-size: 9px; }
+
+    #controls-info { font-size: 9px; }
+    #controls-info strong { font-size: 9px; }
+
+    #legend {
+      max-width: 42vw;
+      padding: 8px 10px;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+    #legend h4 { font-size: 9px; margin-bottom: 4px; }
+    .legend-row { font-size: 10px; gap: 6px; }
+    .dot { width: 8px; height: 8px; }
+
+    #ui {
+      max-width: 94vw;
+      bottom: 14px;
+      gap: 8px;
+    }
+    #disease-label { font-size: 9.5px; }
+    #pills { gap: 6px; }
+    .pill { padding: 5px 10px; font-size: 10.5px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="top-left">
+  <div id="project-info">
+    <div class="eyebrow">PLAYGROUND / 002</div>
+    <h1>Blood Vessel Visualizer</h1>
+    <p>A Three.js cutaway of a blood vessel — switch conditions below to see how cell shape, plaque and clots change the flow.</p>
+  </div>
+
+  <div id="info">
+    <h4 id="mode-title">Normal</h4>
+    <p id="mode-desc">Healthy RBCs flowing freely through the lumen.</p>
+  </div>
+
+  <div id="controls-info">
+    <strong>Controls</strong>
+    <div>Drag · Rotate</div>
+    <div>Scroll / Pinch · Zoom</div>
+  </div>
+</div>
+
+<div id="legend">
+  <h4>Cell Types</h4>
+  <div class="legend-row"><div class="dot" style="background:#cc2222"></div> Red Blood Cell</div>
+  <div class="legend-row"><div class="dot" style="background:#e8e0c8"></div> White Blood Cell</div>
+  <div class="legend-row"><div class="dot" style="background:#f0d080"></div> Platelet</div>
+</div>
+
+<div id="ui">
+  <div id="disease-label">Select condition</div>
+  <div id="pills">
+    <div class="pill active" data-mode="normal">Normal</div>
+    <div class="pill" data-mode="microcytic">Microcytic Anaemia</div>
+    <div class="pill" data-mode="macrocytic">Macrocytic Anaemia</div>
+    <div class="pill" data-mode="sickle">Sickle Cell</div>
+    <div class="pill" data-mode="thrombosis">Thrombosis</div>
+    <div class="pill" data-mode="atherosclerosis">Atherosclerosis</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── Scene setup ──────────────────────────────────────────────
+const canvas = document.getElementById('canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x06060f);
+scene.fog = new THREE.FogExp2(0x06060f, 0.035);
+
+const BASE_FOV = 60;
+const TARGET_HORIZONTAL_FOV = 78; // kept roughly constant on narrow/portrait screens
+
+const camera = new THREE.PerspectiveCamera(BASE_FOV, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 6, 18);
+camera.lookAt(0, 0, 0);
+
+// On portrait/narrow screens a fixed vertical FOV crops the (horizontally
+// long) vessel badly, since horizontal FOV shrinks with aspect. Widen the
+// vertical FOV there to keep the horizontal FOV roughly constant instead.
+function updateCameraFov() {
+  const aspect = window.innerWidth / window.innerHeight;
+  camera.aspect = aspect;
+  if (aspect < 1) {
+    const hFovRad = THREE.MathUtils.degToRad(TARGET_HORIZONTAL_FOV);
+    const vFovRad = 2 * Math.atan(Math.tan(hFovRad / 2) / aspect);
+    camera.fov = Math.min(100, THREE.MathUtils.radToDeg(vFovRad));
+  } else {
+    camera.fov = BASE_FOV;
+  }
+  camera.updateProjectionMatrix();
+}
+updateCameraFov();
+
+// ── Lighting ─────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+scene.add(ambient);
+
+const keyLight = new THREE.DirectionalLight(0xffd0d0, 1.2);
+keyLight.position.set(5, 10, 5);
+scene.add(keyLight);
+
+const fillLight = new THREE.PointLight(0x4040ff, 0.8, 40);
+fillLight.position.set(-8, 0, 0);
+scene.add(fillLight);
+
+const rimLight = new THREE.PointLight(0xff6060, 0.6, 30);
+rimLight.position.set(0, -5, -5);
+scene.add(rimLight);
+
+// ── Orbit Controls (manual) ────────────────────────────────
+let isDragging = false, prevMouse = { x: 0, y: 0 };
+// Positioned just outside the cut-open end, elevated slightly, looking down
+// the length of the vessel toward the intact far end.
+let spherical = { theta: -1.4, phi: 1.15, radius: 20 };
+
+canvas.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+canvas.addEventListener('mouseup', () => isDragging = false);
+canvas.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const dx = e.clientX - prevMouse.x;
+  const dy = e.clientY - prevMouse.y;
+  spherical.theta -= dx * 0.005;
+  spherical.phi = Math.max(0.2, Math.min(Math.PI - 0.2, spherical.phi + dy * 0.005));
+  prevMouse = { x: e.clientX, y: e.clientY };
+});
+canvas.addEventListener('wheel', e => {
+  spherical.radius = Math.max(8, Math.min(40, spherical.radius + e.deltaY * 0.02));
+});
+
+// Touch support — one finger rotates, two fingers pinch-zoom
+let lastTouch = null;
+let pinchStartDist = null;
+let pinchStartRadius = null;
+
+function touchDist(a, b) {
+  const dx = a.clientX - b.clientX;
+  const dy = a.clientY - b.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    pinchStartDist = touchDist(e.touches[0], e.touches[1]);
+    pinchStartRadius = spherical.radius;
+    lastTouch = null;
+  } else {
+    lastTouch = e.touches[0];
+    pinchStartDist = null;
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    if (!pinchStartDist) return;
+    const dist = touchDist(e.touches[0], e.touches[1]);
+    spherical.radius = Math.max(8, Math.min(40, pinchStartRadius * (pinchStartDist / dist)));
+    e.preventDefault();
+    return;
+  }
+  if (!lastTouch) return;
+  const t = e.touches[0];
+  const dx = t.clientX - lastTouch.clientX;
+  const dy = t.clientY - lastTouch.clientY;
+  spherical.theta -= dx * 0.005;
+  spherical.phi = Math.max(0.2, Math.min(Math.PI - 0.2, spherical.phi + dy * 0.005));
+  lastTouch = t;
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  if (e.touches.length < 2) pinchStartDist = null;
+  if (e.touches.length === 0) lastTouch = null;
+});
+
+// ── Vessel geometry ───────────────────────────────────────────
+const VESSEL_LENGTH = 28;
+const VESSEL_RADIUS = 2.2;
+
+const vesselGroup = new THREE.Group();
+scene.add(vesselGroup);
+
+// Layers from outside in — glossy, opaque, matching a cutaway anatomical model
+const layers = [
+  { name: 'Outer wall', r: VESSEL_RADIUS + 0.55, color: 0xc1281f, opacity: 1, shininess: 55, side: THREE.DoubleSide },
+  { name: 'Media',      r: VESSEL_RADIUS + 0.30, color: 0xe8873c, opacity: 1, shininess: 45, side: THREE.BackSide },
+  { name: 'Intima',     r: VESSEL_RADIUS + 0.10, color: 0xf0e2c8, opacity: 1, shininess: 60, side: THREE.BackSide },
+];
+
+const layerMeshes = [];
+
+layers.forEach(layer => {
+  // Full tube
+  const geo = new THREE.CylinderGeometry(layer.r, layer.r, VESSEL_LENGTH, 48, 1, true);
+  const mat = new THREE.MeshPhongMaterial({
+    color: layer.color,
+    transparent: false,
+    opacity: layer.opacity,
+    side: layer.side,
+    shininess: layer.shininess,
+    specular: 0x552222,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.rotation.z = Math.PI / 2;
+  vesselGroup.add(mesh);
+  layerMeshes.push({ mesh, mat, baseOpacity: layer.opacity });
+
+  // Cut-away front half (open face) — clip using a clipping plane
+});
+
+// Endothelium inner lining — dark maroon interior wall of the lumen
+const innerGeo = new THREE.CylinderGeometry(VESSEL_RADIUS, VESSEL_RADIUS, VESSEL_LENGTH, 48, 1, true);
+const innerMat = new THREE.MeshPhongMaterial({
+  color: 0x5a1014,
+  transparent: false,
+  opacity: 1,
+  side: THREE.BackSide,
+  shininess: 70,
+  specular: 0x331010,
+});
+const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+innerMesh.rotation.z = Math.PI / 2;
+vesselGroup.add(innerMesh);
+
+// Cross-section end caps (rings to show layers)
+[-VESSEL_LENGTH / 2, VESSEL_LENGTH / 2].forEach(xPos => {
+  layers.forEach((layer, i) => {
+    const inner = i < layers.length - 1 ? layers[i + 1].r : VESSEL_RADIUS;
+    const ringGeo = new THREE.RingGeometry(inner, layer.r, 48);
+    const ringMat = new THREE.MeshPhongMaterial({
+      color: layer.color,
+      side: THREE.DoubleSide,
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.y = Math.PI / 2;
+    ring.position.x = xPos;
+    vesselGroup.add(ring);
+  });
+  // inner lumen cap
+  const lumGeo = new THREE.CircleGeometry(VESSEL_RADIUS, 48);
+  const lumMat = new THREE.MeshPhongMaterial({ color: 0x1a0505, transparent: true, opacity: 0.6, side: THREE.DoubleSide });
+  const lum = new THREE.Mesh(lumGeo, lumMat);
+  lum.rotation.y = Math.PI / 2;
+  lum.position.x = xPos;
+  vesselGroup.add(lum);
+});
+
+// Clipping planes — remove front half so we see inside
+renderer.clippingPlanes = [];
+renderer.localClippingEnabled = true;
+const clipPlane = new THREE.Plane(new THREE.Vector3(0.22, -0.92, 0.32).normalize(), 0.1);
+layerMeshes.forEach(({ mat }) => { mat.clippingPlanes = [clipPlane]; });
+innerMat.clippingPlanes = [clipPlane];
+
+// ── Plaque (atherosclerosis) ──────────────────────────────────
+const plaqueGroup = new THREE.Group();
+vesselGroup.add(plaqueGroup);
+let plaqueMeshes = [];
+
+function buildPlaque() {
+  plaqueMeshes.forEach(m => plaqueGroup.remove(m));
+  plaqueMeshes = [];
+  for (let i = 0; i < 6; i++) {
+    const xPos = (Math.random() - 0.5) * VESSEL_LENGTH * 0.7;
+    const angle = Math.random() * Math.PI * 2;
+    const thickness = 0.4 + Math.random() * 0.5;
+    const geo = new THREE.SphereGeometry(0.5 + Math.random() * 0.4, 12, 8);
+    geo.scale(2.5, thickness, 1.2);
+    const mat = new THREE.MeshPhongMaterial({ color: 0xd4c070, transparent: true, opacity: 0 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(xPos, Math.cos(angle) * (VESSEL_RADIUS - 0.3), Math.sin(angle) * (VESSEL_RADIUS - 0.3));
+    mesh.rotation.x = angle;
+    plaqueGroup.add(mesh);
+    plaqueMeshes.push(mesh);
+  }
+}
+buildPlaque();
+
+// ── Clot (thrombosis) ────────────────────────────────────────
+const clotGroup = new THREE.Group();
+vesselGroup.add(clotGroup);
+let clotMesh = null;
+
+function buildClot() {
+  if (clotMesh) clotGroup.remove(clotMesh);
+  const geo = new THREE.SphereGeometry(VESSEL_RADIUS * 0.85, 16, 12);
+  geo.scale(1.8, 1, 1);
+  const mat = new THREE.MeshPhongMaterial({ color: 0x8b1a1a, transparent: true, opacity: 0 });
+  clotMesh = new THREE.Mesh(geo, mat);
+  clotMesh.position.set(2, 0, 0);
+  clotGroup.add(clotMesh);
+}
+buildClot();
+
+// ── Cells ─────────────────────────────────────────────────────
+const cellGroup = new THREE.Group();
+scene.add(cellGroup);
+
+const CELL_COUNT = 110;
+const cells = [];
+
+// RBC biconcave disc geometry
+function makeBiconcaveGeo(radius, segments) {
+  const geo = new THREE.SphereGeometry(radius, segments, segments);
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const y = pos.getY(i);
+    const x = pos.getX(i);
+    const z = pos.getZ(i);
+    const r = Math.sqrt(x * x + z * z) / radius;
+    const indent = 0.35 * Math.exp(-r * r * 2);
+    pos.setY(i, y * 0.38 - Math.sign(y) * indent * radius);
+  }
+  pos.needsUpdate = true;
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Sickle cell geometry
+function makeSickleGeo() {
+  const curve = new THREE.QuadraticBezierCurve3(
+    new THREE.Vector3(-0.5, 0, 0),
+    new THREE.Vector3(0, 0.6, 0),
+    new THREE.Vector3(0.5, 0, 0)
+  );
+  const pts = curve.getPoints(20);
+  const shape = new THREE.Shape();
+  shape.moveTo(pts[0].x, pts[0].y);
+  pts.forEach(p => shape.lineTo(p.x, p.y));
+  for (let i = pts.length - 1; i >= 0; i--) shape.lineTo(pts[i].x, pts[i].y - 0.12);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.08, bevelEnabled: false });
+  geo.center();
+  return geo;
+}
+
+const rbcNormalGeo = makeBiconcaveGeo(0.38, 16);
+const rbcMicroGeo = makeBiconcaveGeo(0.22, 12);
+const rbcMacroGeo = makeBiconcaveGeo(0.55, 16);
+const sickleGeo = makeSickleGeo();
+const wbcGeo = new THREE.SphereGeometry(0.28, 12, 10);
+const plateletGeo = new THREE.SphereGeometry(0.09, 8, 6);
+plateletGeo.scale(1.5, 0.5, 1);
+
+function makeRBCMat(color) {
+  return new THREE.MeshPhongMaterial({ color, shininess: 60 });
+}
+
+function spawnCells(mode) {
+  // clear
+  while (cellGroup.children.length) cellGroup.remove(cellGroup.children[0]);
+  cells.length = 0;
+
+  const cfg = modeConfig[mode];
+
+  for (let i = 0; i < CELL_COUNT; i++) {
+    const rand = Math.random();
+    let type, geo, mat;
+
+    if (rand < cfg.rbcFraction) {
+      type = 'rbc';
+      geo = cfg.rbcGeo;
+      mat = makeRBCMat(cfg.rbcColor);
+    } else if (rand < cfg.rbcFraction + 0.02) {
+      type = 'wbc';
+      geo = wbcGeo;
+      mat = new THREE.MeshPhongMaterial({ color: 0xe8e0c8, shininess: 20 });
+    } else {
+      type = 'platelet';
+      geo = plateletGeo;
+      mat = new THREE.MeshPhongMaterial({ color: 0xf0d080, shininess: 40 });
+    }
+
+    const mesh = new THREE.Mesh(geo, mat);
+
+    // Random position in lumen
+    const angle = Math.random() * Math.PI * 2;
+    const maxR = VESSEL_RADIUS * cfg.lumFraction * (type === 'wbc' ? 0.7 : 0.85);
+    const r = Math.sqrt(Math.random()) * maxR;
+    const xStart = (Math.random() - 0.5) * VESSEL_LENGTH;
+
+    mesh.position.set(xStart, Math.cos(angle) * r, Math.sin(angle) * r);
+    mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+
+    cellGroup.add(mesh);
+    cells.push({
+      mesh,
+      type,
+      speed: (0.03 + Math.random() * 0.04) * cfg.speedMult,
+      tumbleX: (Math.random() - 0.5) * 0.02,
+      tumbleZ: (Math.random() - 0.5) * 0.02,
+      radialAngle: angle,
+      radialR: r,
+      mode,
+      stickyWall: cfg.sticky && Math.random() < 0.3,
+    });
+
+    // Sticky sickle cells cling to wall
+    if (cells[cells.length - 1].stickyWall) {
+      const sAngle = Math.random() * Math.PI * 2;
+      mesh.position.set(
+        (Math.random() - 0.5) * VESSEL_LENGTH * 0.5,
+        Math.cos(sAngle) * (VESSEL_RADIUS - 0.25),
+        Math.sin(sAngle) * (VESSEL_RADIUS - 0.25)
+      );
+    }
+  }
+}
+
+// ── Mode configs ──────────────────────────────────────────────
+const modeConfig = {
+  normal:        { rbcFraction: 0.90, rbcGeo: rbcNormalGeo, rbcColor: 0xc4241c, lumFraction: 1,    speedMult: 1,    sticky: false },
+  microcytic:    { rbcFraction: 0.55, rbcGeo: rbcMicroGeo,  rbcColor: 0xc86060, lumFraction: 1,    speedMult: 0.85, sticky: false },
+  macrocytic:    { rbcFraction: 0.60, rbcGeo: rbcMacroGeo,  rbcColor: 0xbb1818, lumFraction: 1,    speedMult: 0.75, sticky: false },
+  sickle:        { rbcFraction: 0.80, rbcGeo: sickleGeo,    rbcColor: 0x991111, lumFraction: 1,    speedMult: 0.6,  sticky: true  },
+  thrombosis:    { rbcFraction: 0.88, rbcGeo: rbcNormalGeo, rbcColor: 0xcc2222, lumFraction: 0.45, speedMult: 0.3,  sticky: false },
+  atherosclerosis:{ rbcFraction: 0.85, rbcGeo: rbcNormalGeo, rbcColor: 0xcc2222, lumFraction: 0.55, speedMult: 0.55, sticky: false },
+};
+
+const modeInfo = {
+  normal:         { title: 'Normal', desc: 'Healthy RBCs flowing freely through the lumen.' },
+  microcytic:     { title: 'Microcytic Anaemia', desc: 'RBCs are smaller and paler — often due to iron deficiency. Reduced O₂ capacity.' },
+  macrocytic:     { title: 'Macrocytic Anaemia', desc: 'RBCs are abnormally large — often B12 or folate deficiency. Fewer cells overall.' },
+  sickle:         { title: 'Sickle Cell Disease', desc: 'RBCs deform into a sickle shape, clumping and adhering to vessel walls, obstructing flow.' },
+  thrombosis:     { title: 'Thrombosis', desc: 'A clot blocks the lumen. Flow is severely restricted upstream.' },
+  atherosclerosis:{ title: 'Atherosclerosis', desc: 'Plaque builds up on the vessel intima, narrowing the lumen and reducing blood flow.' },
+};
+
+let currentMode = 'normal';
+spawnCells('normal');
+
+// ── Mode switching ────────────────────────────────────────────
+function setMode(mode) {
+  currentMode = mode;
+  spawnCells(mode);
+
+  // Plaque visibility
+  const showPlaque = mode === 'atherosclerosis';
+  plaqueMeshes.forEach(m => {
+    m.material.opacity = showPlaque ? 0.85 : 0;
+  });
+
+  // Clot visibility
+  clotMesh.material.opacity = mode === 'thrombosis' ? 0.92 : 0;
+
+  // Info panel
+  document.getElementById('mode-title').textContent = modeInfo[mode].title;
+  document.getElementById('mode-desc').textContent = modeInfo[mode].desc;
+
+  // Pills
+  document.querySelectorAll('.pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.mode === mode);
+  });
+}
+
+document.querySelectorAll('.pill').forEach(pill => {
+  pill.addEventListener('click', () => setMode(pill.dataset.mode));
+});
+
+// ── Animation ─────────────────────────────────────────────────
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  // Orbit camera
+  camera.position.x = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+  camera.position.y = spherical.radius * Math.cos(spherical.phi);
+  camera.position.z = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+  camera.lookAt(0, 0, 0);
+
+  // Animate cells
+  cells.forEach((cell, i) => {
+    if (cell.stickyWall) return; // stuck cells don't move
+
+    cell.mesh.position.x -= cell.speed;
+    if (cell.mesh.position.x < -VESSEL_LENGTH / 2) {
+      cell.mesh.position.x = VESSEL_LENGTH / 2;
+    }
+
+    // Block behind clot for thrombosis
+    if (currentMode === 'thrombosis' && cell.mesh.position.x > 0.5 && cell.mesh.position.x < 3.5) {
+      cell.mesh.position.x = 0.5;
+    }
+
+    // Tumble
+    cell.mesh.rotation.x += cell.tumbleX;
+    cell.mesh.rotation.z += cell.tumbleZ;
+
+    // Slight radial drift
+    cell.radialAngle += 0.003 * (i % 2 === 0 ? 1 : -1);
+    if (!cell.stickyWall) {
+      const cfg = modeConfig[currentMode];
+      const maxR = VESSEL_RADIUS * cfg.lumFraction * 0.82;
+      cell.mesh.position.y = Math.cos(cell.radialAngle) * cell.radialR * Math.min(1, maxR / (cell.radialR + 0.001));
+      cell.mesh.position.z = Math.sin(cell.radialAngle) * cell.radialR * Math.min(1, maxR / (cell.radialR + 0.001));
+    }
+  });
+
+  // Pulse vessel walls slightly
+  layerMeshes.forEach(({ mesh }, i) => {
+    const pulse = 1 + Math.sin(t * 1.1 + i * 0.3) * 0.008;
+    mesh.scale.set(pulse, 1, pulse);
+  });
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+// ── Resize ────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  updateCameraFov();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+window.addEventListener('orientationchange', updateCameraFov);
+</script>
+</body>
+</html>

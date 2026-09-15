@@ -324,16 +324,18 @@ export default function App() {
           paddingBottom: section === "chat" ? 90 : section === "about" ? 90 : 190,
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
-          {section === "chat"        && <HeroText />}
-          {section === "projects"    && <ProjectsView onNavigate={navigateTo} activeProjectId={activeProjectId} onSelectProject={navigateToProject} />}
-          {section === "about"       && <AboutView />}
-          {section === "services"    && <ServicesView onNavigate={navigateTo} />}
-          {section === "contact"     && <ContactView />}
-          {section === "comingsoon" && <ComingSoonView />}
+          <div key={section} className="pk1-page-fade" style={{ display: "flex", flexDirection: "column", flex: 1, width: "100%" }}>
+            {section === "chat"        && <HeroText />}
+            {section === "projects"    && <ProjectsView onNavigate={navigateTo} activeProjectId={activeProjectId} onSelectProject={navigateToProject} />}
+            {section === "about"       && <AboutView />}
+            {section === "services"    && <ServicesView onNavigate={navigateTo} />}
+            {section === "contact"     && <ContactView />}
+            {section === "comingsoon" && <ComingSoonView />}
+          </div>
         </div>
 
         <div className="pk1-inputbar-outer" style={{ position: "absolute", bottom: -10, left: 0, right: 12, zIndex: 4 }}>
-          <InputBar onNavigate={setSection} />
+          <InputBar onNavigate={navigateTo} />
         </div>
       </main>
 
@@ -413,14 +415,23 @@ function InputBar({ onNavigate }) {
   }, []);
 
   const PROMPTS = [
-    { label: "What have you built?",        Icon: Code2        },
-    { label: "Tell me about Prakash",        Icon: User         },
-    { label: "What can he build for me?",    Icon: Grid3x3      },
-    { label: "What is Prakash working on?",  Icon: Code2        },
-    { label: "What's coming to PK-1?",       Icon: Sparkles     },
-    { label: "Take me to the playground",    Icon: Gamepad2     },
-    { label: "How can I contact Prakash?",   Icon: Mail         },
+    { label: "What have you built?",        Icon: Code2,     target: "projects"   },
+    { label: "Tell me about Prakash",        Icon: User,      target: "about"      },
+    { label: "What can he build for me?",    Icon: Grid3x3,   target: "services"   },
+    { label: "What is Prakash working on?",  Icon: Code2,     target: "projects"   },
+    { label: "What's coming to PK-1?",       Icon: Sparkles,  target: "comingsoon" },
+    { label: "Take me to the playground",    Icon: Gamepad2,  target: "playground" },
+    { label: "How can I contact Prakash?",   Icon: Mail,      target: "contact"    },
   ];
+
+  const matchedPrompt = PROMPTS.find((p) => p.label === input);
+
+  const handleSend = () => {
+    if (!matchedPrompt) return;
+    onNavigate && onNavigate(matchedPrompt.target);
+    setInput("");
+    setVisible(false);
+  };
 
   const handleZoneEnter = () => {
     clearTimeout(hideTimer.current);
@@ -572,9 +583,11 @@ function InputBar({ onNavigate }) {
 
         const sendBtn = (
           <button
+            onClick={handleSend}
+            disabled={!matchedPrompt}
             style={{
               width: 36, height: 36, borderRadius: "50%",
-              border: "none", cursor: "pointer", flexShrink: 0, zIndex: 2,
+              border: "none", cursor: matchedPrompt ? "pointer" : "default", flexShrink: 0, zIndex: 2,
               background: input ? "#D98A4C" : "rgba(255,255,255,0.07)",
               display: "flex", alignItems: "center", justifyContent: "center",
               transition: "background 0.15s ease, transform 0.12s ease",
@@ -5277,6 +5290,13 @@ function PlaygroundView({ onBack }) {
       title: "Interactive 3D Cube",
       description: "A Three.js experiment - orbit, move and customise a 3D cube in different weather atmospheres.",
       src: "/playground/3d-cube/index.html",
+    },
+    {
+      id: "blood-vessel",
+      label: "PLAYGROUND",
+      title: "Blood Vessel Visualizer",
+      description: "An interactive visualization of blood flow through a vessel.",
+      src: "/blood-vessel-visualizer/blood-vessel.html",
     },
   ];
 
