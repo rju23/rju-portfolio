@@ -336,4 +336,17 @@ body {
     opacity: 1;
     pointer-events: auto;
   }
+
+  .pk1-topbar-wrap {
+    display: none !important;
+  }
+
+  .hero-headline {
+    font-size: 38px !important;
+  }
+
+  .pk1-hero-input {
+    overflow: hidden;
+    white-space: nowrap;
+  }
 }

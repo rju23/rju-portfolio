@@ -276,7 +276,7 @@ export default function App() {
         flex: 1, position: "relative", zIndex: 10,
         padding: "12px 12px 12px 0",
       }}>
-        <div style={{ position: "absolute", top: 12, left: 0, right: 12, zIndex: 3 }}>
+        <div className="pk1-topbar-wrap" style={{ position: "absolute", top: 12, left: 0, right: 12, zIndex: 3 }}>
           <TopBar />
         </div>
 
@@ -516,6 +516,7 @@ function InputBar({ onNavigate }) {
         transition: "box-shadow 0.4s ease, border-color 0.4s ease",
       }}>
         <input
+          className="pk1-hero-input"
           value={input || ""}
           placeholder="Ask PK-1 what it knows about my work…"
           onChange={(e) => {
@@ -539,11 +540,12 @@ function InputBar({ onNavigate }) {
             rejectTyping();
           }}
           style={{
-            flex: 1, fontSize: 15, zIndex: 2,
+            flex: 1, minWidth: 0, fontSize: 15, zIndex: 2,
             color: input ? "#F4EFE7" : "rgba(244,239,231,0.32)",
             fontFamily: "'Inter', sans-serif",
             background: "transparent", border: "none", outline: "none",
             cursor: "text", caretColor: "rgba(217,138,76,0.8)",
+            textOverflow: "ellipsis",
           }}
         />
 
@@ -583,6 +585,44 @@ function InputBar({ onNavigate }) {
 }
 
 function HeroText() {
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const medChip = (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 5,
+      background: "rgba(74,222,128,0.08)",
+      border: "1px solid rgba(74,222,128,0.2)",
+      borderRadius: 6, padding: "1px 8px",
+      color: "rgba(134,239,172,0.9)",
+      fontSize: 14.5,
+    }}>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2v20" />
+        <path d="M9 5c0-1.5 6-1.5 6 0s-6 3-6 4.5 6 1.5 6 3-6 3-6 4.5 6 1.5 6 3" />
+      </svg>
+      final-year medical student
+    </span>
+  );
+
+  const devChip = (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 5,
+      background: "rgba(99,102,241,0.08)",
+      border: "1px solid rgba(99,102,241,0.25)",
+      borderRadius: 6, padding: "1px 8px",
+      color: "rgba(165,180,252,0.9)",
+      fontSize: 14.5,
+    }}>
+      <span style={{ fontSize: 12 }}>⌨</span>
+      software developer
+    </span>
+  );
+
   return (
     <div style={{
       flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
@@ -611,7 +651,7 @@ function HeroText() {
         </p>
 
         {/* Main headline with light effect */}
-        <h1 style={{
+        <h1 className="hero-headline" style={{
           fontFamily: "'Fraunces', serif",
           fontStyle: "italic", fontWeight: 400,
           fontSize: 68, lineHeight: 1.04,
@@ -631,41 +671,35 @@ function HeroText() {
         </h1>
 
         {/* Bio */}
-        <p style={{
-          fontSize: 15.5, lineHeight: 2,
-          color: "rgba(244,239,231,0.58)",
-          fontFamily: "'Inter', sans-serif", fontWeight: 300,
-          marginBottom: 10, maxWidth: 520,
-        }}>
-          I'm a{" "}
-          <span style={{
-            display: "inline-flex", alignItems: "center", gap: 5,
-            background: "rgba(74,222,128,0.08)",
-            border: "1px solid rgba(74,222,128,0.2)",
-            borderRadius: 6, padding: "1px 8px",
-            color: "rgba(134,239,172,0.9)",
-            fontSize: 14.5,
+        {isMobile ? (
+          <>
+            <p style={{
+              fontSize: 15.5, lineHeight: 2,
+              color: "rgba(244,239,231,0.58)",
+              fontFamily: "'Inter', sans-serif", fontWeight: 300,
+              marginBottom: 10, maxWidth: 520,
+            }}>
+              I'm a final-year medical student and software developer - I build apps, websites and other useful tools with clean interfaces to solve real problems.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+              {medChip}
+              {devChip}
+            </div>
+          </>
+        ) : (
+          <p style={{
+            fontSize: 15.5, lineHeight: 2,
+            color: "rgba(244,239,231,0.58)",
+            fontFamily: "'Inter', sans-serif", fontWeight: 300,
+            marginBottom: 10, maxWidth: 520,
           }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2v20" />
-              <path d="M9 5c0-1.5 6-1.5 6 0s-6 3-6 4.5 6 1.5 6 3-6 3-6 4.5 6 1.5 6 3" />
-            </svg>
-            final-year medical student
-          </span>
-          {" "}and{" "}
-          <span style={{
-            display: "inline-flex", alignItems: "center", gap: 5,
-            background: "rgba(99,102,241,0.08)",
-            border: "1px solid rgba(99,102,241,0.25)",
-            borderRadius: 6, padding: "1px 8px",
-            color: "rgba(165,180,252,0.9)",
-            fontSize: 14.5,
-          }}>
-            <span style={{ fontSize: 12 }}>⌨</span>
-            software developer
-          </span>
-          {" "}- I build apps, websites and other useful tools with clean interfaces to solve real problems.
-        </p>
+            I'm a{" "}
+            {medChip}
+            {" "}and{" "}
+            {devChip}
+            {" "}- I build apps, websites and other useful tools with clean interfaces to solve real problems.
+          </p>
+        )}
         <p style={{
           fontSize: 15.5, lineHeight: 1.75,
           color: "rgba(244,239,231,0.45)",
