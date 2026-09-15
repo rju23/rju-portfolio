@@ -6,6 +6,11 @@ html, body, #root {
   overflow: hidden;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background: #0D0C0B;
   -webkit-font-smoothing: antialiased;
