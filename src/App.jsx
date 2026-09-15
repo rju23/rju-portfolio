@@ -571,6 +571,7 @@ function InputBar({ onNavigate }) {
                   : "1px solid rgba(255,255,255,0.09)",
                 borderRadius: 20, padding: "14px 16px",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+                animation: shaking ? "shake 0.36s cubic-bezier(0.36,0.07,0.19,0.97)" : "none",
                 transition: "box-shadow 0.4s ease, border-color 0.4s ease",
               }}
             >
@@ -714,7 +715,8 @@ function HeroText() {
         padding: "0 60px", position: "relative", zIndex: 10, marginTop: "0px",
       }}>
         <div className="hero-welcome-top" style={{
-          position: "absolute", top: 18, left: 0, right: 0,
+          position: "absolute", top: 22, left: 0, right: 0, height: 22,
+          display: "flex", alignItems: "center", justifyContent: "center",
           textAlign: "center",
           fontSize: 11, color: "rgba(244,239,231,0.5)",
           letterSpacing: "0.06em", textTransform: "uppercase",
@@ -723,7 +725,7 @@ function HeroText() {
           Welcome to prakashsejwani.dev/chat
         </div>
 
-        <div className="hero-inner" style={{ maxWidth: 620, textAlign: "center" }}>
+        <div className="hero-inner" style={{ maxWidth: 620, textAlign: "center", marginTop: 32 }}>
 
           <img
             src="/favicon.svg"
@@ -732,7 +734,7 @@ function HeroText() {
           />
 
           {/* Main headline with light effect */}
-          <h1 className="hero-headline" style={headlineStyle}>
+          <h1 className="hero-headline" style={{ ...headlineStyle, fontSize: 56 }}>
             Hey, I'm Prakash.
           </h1>
 
