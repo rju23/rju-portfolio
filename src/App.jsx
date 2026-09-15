@@ -4434,9 +4434,10 @@ function AboutView() {
             A<br />
             <span style={{ color: "#D98A4C" }}>Builder</span><br />
             at<br />
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 0, lineHeight: 1, letterSpacing: "-0.08em", margin: "0 -4px" }}>
-              <span style={{ color: "#D98A4C", marginRight: "-14px" }}>He</span>
+            <span className="about-heart-wrap" style={{ display: "inline-flex", alignItems: "center", gap: 0, lineHeight: 1, letterSpacing: "-0.08em", margin: "0 -4px" }}>
+              <span className="about-heart-pre" style={{ color: "#D98A4C", marginRight: "-14px" }}>He</span>
               <img
+                className="about-heart-img"
                 src="/images/heart.png"
                 alt="heart"
                 style={{
@@ -4448,7 +4449,7 @@ function AboutView() {
                   filter: "drop-shadow(0 0 8px rgba(217,138,76,0.4))",
                 }}
               />
-              <span style={{ color: "#D98A4C", marginLeft: "-18px" }}>rt.</span>
+              <span className="about-heart-post" style={{ color: "#D98A4C", marginLeft: "-18px" }}>rt.</span>
             </span>
           </h1>
 
@@ -4499,7 +4500,7 @@ function AboutView() {
           { year: "Now", label: "Building", sub: "everything", pulse: true },
         ].map((item, i, arr) => (
           <Fragment key={i}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 0 }}>
+            <div className="about-timeline-item" style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 0 }}>
               <div style={{
                 fontFamily: "'Fraunces', serif",
                 fontStyle: "italic",
@@ -4516,14 +4517,14 @@ function AboutView() {
               <div style={{ fontSize: 10, color: "rgba(244,239,231,0.35)", textAlign: "center", marginTop: 2 }}>{item.sub}</div>
             </div>
             {i < arr.length - 1 ? (
-              <div style={{
+              <div className="about-timeline-link" style={{
                 flex: 1,
                 height: 1,
                 background: "linear-gradient(90deg, rgba(217,138,76,0.4), rgba(217,138,76,0.1))",
                 marginTop: 29,
               }} />
             ) : (
-              <div style={{
+              <div className="about-timeline-link-end" style={{
                 flex: "0 0 260px",
                 height: 1,
                 background: "rgba(217,138,76,0.35)",

@@ -405,18 +405,19 @@ body {
   .about-hero {
     grid-template-columns: 42% 58% !important;
     min-height: unset !important;
+    align-items: stretch !important;
     padding: 16px 16px 0 16px !important;
     gap: 12px !important;
   }
 
   .about-photo {
-    height: 150px !important;
+    height: auto !important;
     border-radius: 12px !important;
   }
 
   .about-hero-right {
     padding: 4px 4px 20px !important;
-    justify-content: flex-start !important;
+    justify-content: center !important;
   }
 
   .about-dotgrid-top,
@@ -444,6 +445,27 @@ body {
     font-size: 12px !important;
     line-height: 1.5 !important;
     max-width: 100% !important;
+  }
+
+  .about-heart-pre {
+    margin-right: -5px !important;
+  }
+
+  .about-heart-post {
+    margin-left: -6px !important;
+  }
+
+  .about-timeline-item {
+    flex: 0 0 auto !important;
+    padding: 0 14px !important;
+  }
+
+  .about-timeline-link {
+    flex: 0 0 40px !important;
+  }
+
+  .about-timeline-link-end {
+    flex: 0 0 40px !important;
   }
 
   .about-timeline {
