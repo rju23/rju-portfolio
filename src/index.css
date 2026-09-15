@@ -386,4 +386,18 @@ body {
   .pk1-scroll-chat {
     padding-bottom: 170px !important;
   }
+
+  .proj-page {
+    padding: 0 16px !important;
+  }
+
+  .proj-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .proj-card {
+    width: 100% !important;
+    padding: 18px 16px 16px !important;
+  }
 }

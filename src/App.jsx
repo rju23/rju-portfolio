@@ -1099,7 +1099,7 @@ function ProjectsView({ onNavigate }) {
   };
 
   return (
-    <div style={{ padding: "0 48px", maxWidth: 980, margin: "0 auto", width: "100%" }}>
+    <div className="proj-page" style={{ padding: "0 48px", maxWidth: 980, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
         <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
@@ -1108,7 +1108,7 @@ function ProjectsView({ onNavigate }) {
       </div>
       <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}>Things I've built.</p>
 
-      <div style={{
+      <div className="proj-grid" style={{
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
         gap: 14,
@@ -1135,6 +1135,7 @@ function ProjectsView({ onNavigate }) {
           return (
             <div
               key={project.id}
+              className="proj-card"
               onClick={() => isCube ? onNavigate("playground") : handleSelect(project)}
               style={{
                 position: "relative",
