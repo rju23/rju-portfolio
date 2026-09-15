@@ -4,6 +4,11 @@ import { createOrbitControls, setupCubeDrag } from './controls.js';
 import { createGrid, createAxes, EnvironmentManager } from './environment.js';
 import { ParticleManager } from './particles.js';
 import { getRotationSpeed, setupControlPanel, updateEnvUI, setupEnvSelector } from './ui.js';
+import { WeatherChangeText } from './weather-text.js';
+
+// Matches the layout breakpoint in style.css. On mobile the 3D scene text
+// is skipped entirely in favour of a simple HTML overlay under the intro copy.
+const IS_MOBILE = window.innerWidth <= 700;
 
 const canvas = document.querySelector('#bg');
 
@@ -23,6 +28,23 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const particles = new ParticleManager(scene);
 const em = new EnvironmentManager(scene, particles);
 const clock = new THREE.Clock();
+
+const weatherText = IS_MOBILE ? null : new WeatherChangeText(scene);
+
+const weatherOverlayEl = document.getElementById('weather-changing-overlay');
+let weatherOverlayTimer = null;
+
+function triggerWeatherOverlay(durationMs) {
+  if (!weatherOverlayEl) return;
+  clearTimeout(weatherOverlayTimer);
+  weatherOverlayEl.classList.add('visible');
+  weatherOverlayTimer = setTimeout(() => weatherOverlayEl.classList.remove('visible'), durationMs * 0.8);
+}
+
+em.onTransitionStart = (durationMs) => {
+  if (IS_MOBILE) triggerWeatherOverlay(durationMs);
+  else weatherText.trigger(durationMs);
+};
 
 // --- Static background (Phase 4 replaces this with EnvironmentManager) ---
 const grid = createGrid();
@@ -71,6 +93,7 @@ function animate() {
 
   em.tick(delta);
   particles.tick(delta);
+  weatherText?.tick(delta);
   updateEnvUI(em.getStatus());
   updateCubePulse(cube, hitBox);
   renderer.render(scene, camera);
@@ -97,6 +120,8 @@ window.addEventListener('resize', onResize);
 window.__pk1PlaygroundCleanup = () => {
   animating = false;
   renderer.dispose();
+  weatherText?.dispose();
+  clearTimeout(weatherOverlayTimer);
   window.removeEventListener('resize', onResize);
   document.removeEventListener('keydown', onKeyDown);
 };

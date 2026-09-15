@@ -178,11 +178,15 @@ export class EnvironmentManager {
     shadowFloor.receiveShadow = true;
     scene.add(shadowFloor);
 
-    this._transitioning  = false;
-    this._transitionT    = 0;
-    this._fromDef        = null;
-    this._nextKey        = null;
-    this._rainToStorm    = false;
+    this._transitioning     = false;
+    this._transitionT       = 0;
+    this._fromDef           = null;
+    this._nextKey           = null;
+    this._rainToStorm       = false;
+    this._TRANSITION_DURATION = 15000;
+
+    // Set by main.js — fires once whenever a transition begins (timer or manual pick).
+    this.onTransitionStart = null;
 
     this._lightning = new LightningController();
     this._restore();
@@ -215,6 +219,8 @@ export class EnvironmentManager {
     this._transitioning = true;
     this._transitionT   = 0;
 
+    this.onTransitionStart?.(this._TRANSITION_DURATION);
+
     const fromP = this._fromDef.particles;
     const toP   = DEFS[toKey].particles;
 
@@ -238,8 +244,7 @@ export class EnvironmentManager {
   }
 
   _tickTransition(deltaMs) {
-    const DURATION = 15000;
-    this._transitionT += deltaMs / DURATION;
+    this._transitionT += deltaMs / this._TRANSITION_DURATION;
 
     if (this._transitionT >= 1) {
       this._transitioning  = false;

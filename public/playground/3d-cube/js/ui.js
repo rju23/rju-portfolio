@@ -50,6 +50,16 @@ function resetPanelUI({ cube, hitBox, solidEdges, grid, axes }) {
 
 export function setupControlPanel({ cube, hitBox, solidEdges, grid, axes, onReset }) {
 
+  // --- Collapsible panel (mobile only — CSS keeps it expanded on desktop) ---
+  const panel = document.querySelector('.cube-controls');
+  const toggleBtn = document.getElementById('cube-controls-toggle');
+  if (panel && toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const collapsed = panel.classList.toggle('collapsed');
+      toggleBtn.setAttribute('aria-expanded', String(!collapsed));
+    });
+  }
+
   // --- Color swatches ---
   document.querySelectorAll('[data-color]').forEach(swatch => {
     swatch.addEventListener('click', () => {

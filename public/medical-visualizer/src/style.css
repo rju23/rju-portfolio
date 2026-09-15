@@ -408,6 +408,12 @@ button {
   overflow: hidden;
 }
 
+.sa-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .t1dm-canvas {
   display: block;
   width: 100%;

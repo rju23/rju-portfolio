@@ -130,6 +130,10 @@ canvas {
   opacity: 0.6;
 }
 
+.weather-changing-overlay {
+  display: none; /* mobile only — desktop gets the 3D scene text instead */
+}
+
 /* -------------------------
    Environment information
 ------------------------- */
@@ -275,6 +279,22 @@ canvas {
   margin-bottom: 10px;
 }
 
+.panel-label-btn {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-family: inherit;
+  cursor: default;
+  text-align: left;
+}
+
+.panel-label-chevron {
+  display: none;
+}
+
 .control-row {
   display: flex;
   align-items: center;
@@ -367,9 +387,132 @@ canvas {
   opacity: 1;
 }
 
-@media (max-width: 600px) {
+/* -------------------------
+   Mobile layout
+------------------------- */
+
+@media (max-width: 700px) {
+  .experiment-info {
+    top: 16px;
+    left: 16px;
+    width: 60vw;
+  }
+
+  .experiment-info h1 {
+    font-size: 17px;
+  }
+
+  .experiment-info p {
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+
+  .weather-changing-overlay {
+    display: block;
+    margin-top: 8px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #f4faff;
+
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .weather-changing-overlay.visible {
+    opacity: 1;
+  }
+
+  .environment-info {
+    top: 16px;
+    right: 16px;
+  }
+
+  .env-selector {
+    top: 78px;
+    right: 16px;
+  }
+
+  .env-selector-btns {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .controls-info {
+    display: none; /* mouse-oriented hints don't apply on touch */
+  }
+
   .cube-controls {
-    bottom: 20px;
-    right: 20px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+
+    background: rgba(8, 8, 8, 0.6);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(242, 242, 242, 0.08);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .panel-label-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 4px 0;
+    margin-bottom: 0;
+  }
+
+  .panel-label-chevron {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  .cube-controls-body {
+    max-height: 40vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 10px;
+  }
+
+  .cube-controls.collapsed .panel-label-chevron {
+    transform: rotate(-90deg);
+  }
+
+  .cube-controls.collapsed .cube-controls-body {
+    display: none;
+  }
+
+  .control-row {
+    flex-wrap: wrap;
+  }
+
+  .swatch {
+    width: 22px;
+    height: 22px;
+  }
+
+  .toggle {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .reset-btn {
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .experiment-info {
+    width: 52vw;
+  }
+
+  .env-btn {
+    padding: 3px 8px;
+    font-size: 9.5px;
   }
 }

@@ -633,4 +633,63 @@ body {
     width: 100% !important;
     padding: 18px 16px !important;
   }
+
+  /* SCQ Scoreboard page */
+  .scq-hero-grid {
+    grid-template-columns: 1fr !important;
+    padding: 70px 20px 50px !important;
+    gap: 28px !important;
+  }
+
+  .scq-dual-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+
+  .scq-feature-row {
+    grid-template-columns: 1fr !important;
+    row-gap: 4px !important;
+    text-align: left !important;
+  }
+
+  .scq-feature-row > span:last-child {
+    text-align: left !important;
+  }
+
+  .scq-install-grid,
+  .scq-pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .scq-stat-item {
+    padding: 0 16px !important;
+  }
+
+  /* Client Manager page */
+  .cm-intro-pad {
+    padding: 16px 14px 10px !important;
+  }
+
+  .cm-stat-row {
+    flex-wrap: wrap !important;
+  }
+
+  .cm-stat-row > * {
+    flex: 1 1 calc(50% - 6px) !important;
+    min-width: 120px !important;
+  }
+
+  .cm-slideshow-inset {
+    height: 220px !important;
+  }
+
+  /* PK-1 Portfolio (self-referential) project page */
+  .pf-card {
+    padding: 32px 22px !important;
+  }
+
+  .pf-btn-row {
+    flex-direction: column !important;
+  }
 }

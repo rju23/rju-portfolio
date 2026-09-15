@@ -63,6 +63,8 @@
       A small Three.js experiment exploring 3D interaction,
       camera controls and object manipulation.
     </p>
+
+    <div id="weather-changing-overlay" class="weather-changing-overlay">Weather changing&hellip;</div>
   </div>
 
   <!-- Environment information -->
@@ -104,55 +106,60 @@
 
   <!-- Cube control panel -->
   <div class="cube-controls">
-    <div class="panel-label">Cube</div>
+    <button id="cube-controls-toggle" class="panel-label panel-label-btn" aria-expanded="true" aria-controls="cube-controls-body">
+      Cube
+      <span class="panel-label-chevron">&#9662;</span>
+    </button>
 
-    <div class="control-row">
-      <span class="control-name">Color</span>
-      <div class="color-swatches">
-        <button class="swatch active" data-color="green"  style="--c: #00ff00" title="Green"></button>
-        <button class="swatch"        data-color="cream"  style="--c: #fff8e7" title="Cream"></button>
-        <button class="swatch"        data-color="blue"   style="--c: #4499ff" title="Blue"></button>
-        <button class="swatch"        data-color="orange" style="--c: #ff8844" title="Orange"></button>
-        <button class="swatch"        data-color="white"  style="--c: #ffffff" title="White"></button>
+    <div id="cube-controls-body" class="cube-controls-body">
+      <div class="control-row">
+        <span class="control-name">Color</span>
+        <div class="color-swatches">
+          <button class="swatch active" data-color="green"  style="--c: #00ff00" title="Green"></button>
+          <button class="swatch"        data-color="cream"  style="--c: #fff8e7" title="Cream"></button>
+          <button class="swatch"        data-color="blue"   style="--c: #4499ff" title="Blue"></button>
+          <button class="swatch"        data-color="orange" style="--c: #ff8844" title="Orange"></button>
+          <button class="swatch"        data-color="white"  style="--c: #ffffff" title="White"></button>
+        </div>
       </div>
-    </div>
 
-    <div class="control-row">
-      <span class="control-name">Wireframe</span>
-      <div class="toggle-group">
-        <button id="wf-on"  class="toggle active">On</button>
-        <button id="wf-off" class="toggle">Off</button>
+      <div class="control-row">
+        <span class="control-name">Wireframe</span>
+        <div class="toggle-group">
+          <button id="wf-on"  class="toggle active">On</button>
+          <button id="wf-off" class="toggle">Off</button>
+        </div>
       </div>
-    </div>
 
-    <div class="control-row">
-      <span class="control-name">Rotation</span>
-      <div class="toggle-group">
-        <button data-speed="off"    class="toggle active">Off</button>
-        <button data-speed="slow"   class="toggle">Slow</button>
-        <button data-speed="normal" class="toggle">Normal</button>
-        <button data-speed="fast"   class="toggle">Fast</button>
+      <div class="control-row">
+        <span class="control-name">Rotation</span>
+        <div class="toggle-group">
+          <button data-speed="off"    class="toggle active">Off</button>
+          <button data-speed="slow"   class="toggle">Slow</button>
+          <button data-speed="normal" class="toggle">Normal</button>
+          <button data-speed="fast"   class="toggle">Fast</button>
+        </div>
       </div>
-    </div>
 
-    <div class="control-row">
-      <span class="control-name">Grid</span>
-      <div class="toggle-group">
-        <button id="grid-on"  class="toggle active">On</button>
-        <button id="grid-off" class="toggle">Off</button>
+      <div class="control-row">
+        <span class="control-name">Grid</span>
+        <div class="toggle-group">
+          <button id="grid-on"  class="toggle active">On</button>
+          <button id="grid-off" class="toggle">Off</button>
+        </div>
       </div>
-    </div>
 
-    <div class="control-row">
-      <span class="control-name">Axes</span>
-      <div class="toggle-group">
-        <button id="axes-on"  class="toggle active">On</button>
-        <button id="axes-off" class="toggle">Off</button>
+      <div class="control-row">
+        <span class="control-name">Axes</span>
+        <div class="toggle-group">
+          <button id="axes-on"  class="toggle active">On</button>
+          <button id="axes-off" class="toggle">Off</button>
+        </div>
       </div>
-    </div>
 
-    <div class="control-row">
-      <button id="btn-reset" class="reset-btn">Reset</button>
+      <div class="control-row">
+        <button id="btn-reset" class="reset-btn">Reset</button>
+      </div>
     </div>
   </div>
 

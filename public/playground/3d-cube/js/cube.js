@@ -66,11 +66,12 @@ export function resetCube(cube, hitBox) {
   pulseStart = null;
 }
 
-// Hover (color) + click (pulse) + double-click (reset)
+// Hover (color) + tap/click (pulse) + double-click (reset)
 export function setupCubeInteractions({ camera, cube, hitBox }) {
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
   let downPos = null;
+  let downId = null;
 
   function hitTest(e) {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -79,22 +80,31 @@ export function setupCubeInteractions({ camera, cube, hitBox }) {
     return raycaster.intersectObject(hitBox).length > 0;
   }
 
-  window.addEventListener('mousemove', () => {
-    document.body.style.cursor = 'default';
+  window.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'mouse') document.body.style.cursor = 'default';
   });
 
-  // Manual click detection (not native 'click') so orbiting the camera
-  // over the cube doesn't accidentally trigger a pulse on mouseup.
-  window.addEventListener('mousedown', (e) => {
-    if (e.button === 0) downPos = { x: e.clientX, y: e.clientY };
+  // Manual tap/click detection (not native 'click') so orbiting the camera
+  // over the cube doesn't accidentally trigger a pulse on release. Pointer
+  // events unify mouse and touch so this works identically on phones.
+  window.addEventListener('pointerdown', (e) => {
+    if (downId !== null) return; // a second finger is down — ignore, this isn't a tap
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    downPos = { x: e.clientX, y: e.clientY };
+    downId = e.pointerId;
   });
 
-  window.addEventListener('mouseup', (e) => {
-    if (e.button !== 0 || !downPos) return;
+  window.addEventListener('pointerup', (e) => {
+    if (e.pointerId !== downId || !downPos) return;
     const moved = Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y);
     downPos = null;
-    if (moved > 5) return; // was an orbit drag, not a click
+    downId = null;
+    if (moved > (e.pointerType === 'touch' ? 10 : 5)) return; // was a drag, not a tap
     if (hitTest(e)) pulseStart = performance.now();
+  });
+
+  window.addEventListener('pointercancel', (e) => {
+    if (e.pointerId === downId) { downPos = null; downId = null; }
   });
 
   // double-click reset removed

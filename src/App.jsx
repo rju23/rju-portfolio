@@ -189,7 +189,7 @@ export default function App() {
       }} />
 
       {/* ── Mobile hamburger button ── */}
-      {!splash && !activeProjectId && (
+      {!splash && !activeProjectId && section !== "playground" && (
         <button
           className="pk1-hamburger-btn"
           onClick={() => setMobileNavOpen(true)}
@@ -1125,14 +1125,25 @@ const PROJECTS = [
   { id: "interactive-3d-cube", title: "Interactive 3D Cube",        tag: "Playground",         description: "A Three.js experiment - orbit, move and customise a 3D cube across different weather atmospheres.", platform: "Web" },
 ];
 
+const DESKTOP_ONLY_PROJECTS = new Set(["medical-visualizer"]);
+
 function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
   const activeProject = activeProjectId;
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const setActiveProject = (id) => {
     if (id) onSelectProject(id);
     else onNavigate("projects");
   };
 
   const handleSelect = (project) => {
+    if (DESKTOP_ONLY_PROJECTS.has(project.id) && isMobile) return;
     setActiveProject(project.id);
   };
 
@@ -1166,6 +1177,7 @@ function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
           const isMusic = project.id === "music-visualizer";
           const isCube = project.id === "interactive-3d-cube";
           const isSync = project.id === "media-sync";
+          const isMobileLocked = DESKTOP_ONLY_PROJECTS.has(project.id) && isMobile;
 
           const reviveDefaultBorder = "rgba(0,122,47,0.35)";
           const reviveHoverBorder = "rgba(0,122,47,0.7)";
@@ -1228,8 +1240,9 @@ function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
                 ...(isCm ? { borderRightColor: "#808080", borderBottomColor: "#808080" } : null),
                 boxShadow: "none",
                 display: "flex", flexDirection: "column", gap: 8,
-                cursor: "pointer",
-                transition: "transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease",
+                cursor: isMobileLocked ? "not-allowed" : "pointer",
+                transition: "transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, opacity 0.18s ease",
+                ...(isMobileLocked ? { filter: "grayscale(0.85)", opacity: 0.55 } : null),
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = isUno ? "translateY(-4px)" : "translateY(-3px)";
@@ -1347,7 +1360,7 @@ function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
                   transition: "color 0.18s ease",
                 }}
               >
-                View project →
+                {isMobileLocked ? "Only available on desktop" : "View project →"}
               </span>
 
               {isMed && (
@@ -1487,6 +1500,8 @@ function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
             <MedicalVisualizerProject />
           ) : activeProject === "music-visualizer" ? (
             <MusicVisualizerProject />
+          ) : activeProject === "media-sync" ? (
+            <MediaSyncProject />
           ) : (
             <div style={{ color: "#F4EFE7", padding: 40 }}>
               Project experience coming soon for: {activeProject}
@@ -1519,7 +1534,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
   const theme = PROJECT_THEMES[projectId] ?? { color: ACCENT, label: projectId };
   const rgb = hexToRgb(theme.color);
 
-  const hasOwnSplash = projectId === "876-revive" || projectId === "scq-scoreboard" || projectId === "uno-calculator" || projectId === "pk1-portfolio" || projectId === "client-management" || projectId === "medical-visualizer" || projectId === "music-visualizer";
+  const hasOwnSplash = projectId === "876-revive" || projectId === "scq-scoreboard" || projectId === "uno-calculator" || projectId === "pk1-portfolio" || projectId === "client-management" || projectId === "medical-visualizer" || projectId === "music-visualizer" || projectId === "media-sync";
 
   const [splashing, setSplashing] = useState(!hasOwnSplash);
   const [fading, setFading]       = useState(false);
@@ -1556,7 +1571,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
     if (!drag.dragging) return;
     const dx = e.clientX - drag.startX;
     const dy = e.clientY - drag.startY;
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) drag.moved = true;
+    if (Math.abs(dx) > 12 || Math.abs(dy) > 12) drag.moved = true;
     if (drag.moved) setOrbPos(clampOrbPos(drag.origX + dx, drag.origY + dy));
   };
 
@@ -1821,7 +1836,7 @@ function PortfolioProject({ onNextProject, onViewLiveSite }) {
           `,
         }} />
 
-        <div style={{
+        <div className="pf-card" style={{
           position: "relative", zIndex: 1,
           width: "min(560px, 92vw)",
           background: "rgba(20,18,16,0.72)",
@@ -1875,7 +1890,7 @@ function PortfolioProject({ onNextProject, onViewLiveSite }) {
 
           <div style={{ width: "100%", height: 1, background: BORDER, marginBottom: 24 }} />
 
-          <div style={{ display: "flex", gap: 12, width: "100%" }}>
+          <div className="pf-btn-row" style={{ display: "flex", gap: 12, width: "100%" }}>
             <button
               onClick={onViewLiveSite}
               style={{
@@ -3320,7 +3335,7 @@ function ScoreboardProject({ onNextProject }) {
         }}
       >
         {/* SECTION 1 - HERO */}
-        <section style={{
+        <section className="scq-hero-grid" style={{
           minHeight: "100vh", display: "grid", gridTemplateColumns: "1.05fr 0.95fr",
           gap: 40, alignItems: "center", padding: "90px 48px 60px", maxWidth: 1200, margin: "0 auto",
         }}>
@@ -3435,7 +3450,7 @@ function ScoreboardProject({ onNextProject }) {
             title="Two screens. One match."
             subtitle="Run the Control Panel on your laptop. Project the Main Scoreboard to a TV or projector."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
+          <div className="scq-dual-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
             <div>
               <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: SCQ.teal, textAlign: "center", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                 Control Panel
@@ -3500,7 +3515,7 @@ function ScoreboardProject({ onNextProject }) {
               { value: "∞", label: "MATCH FORMATS" },
             ].map((stat, i) => (
               <div key={stat.label} style={{ display: "flex", alignItems: "center" }}>
-                <div style={{ textAlign: "center", padding: "0 40px" }}>
+                <div className="scq-stat-item" style={{ textAlign: "center", padding: "0 40px" }}>
                   <div style={{
                     fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(2.6rem, 5vw, 3.6rem)",
                     color: SCQ.goldBright, textShadow: "0 0 20px rgba(240,200,74,0.6)",
@@ -3535,6 +3550,7 @@ function ScoreboardProject({ onNextProject }) {
             {SCQ_FEATURE_ROWS.map((row, i) => (
               <div
                 key={row.name}
+                className="scq-feature-row"
                 style={{
                   display: "grid", gridTemplateColumns: "50px 1fr 1fr 40px", alignItems: "center",
                   gap: 12, padding: "14px 18px",
@@ -3563,7 +3579,7 @@ function ScoreboardProject({ onNextProject }) {
             title="First-time install on PC/Laptop"
             subtitle="You may see a SmartScreen warning. This is expected for new software. The app is malware-checked and code-certified by SSL.com."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+          <div className="scq-install-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
             {SCQ_INSTALL_STEPS.map((step, i) => (
               <div key={step.title} style={{
                 background: SCQ.maroon, borderRadius: 12, padding: 20,
@@ -3597,7 +3613,7 @@ function ScoreboardProject({ onNextProject }) {
             title="Pick your plan"
             subtitle="One-time payment · License key delivered to your email · Payment via bank transfer"
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+          <div className="scq-pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
             {/* Panel 1 - Individual */}
             <div style={{ background: "rgba(0,0,0,0.3)", borderTop: `3px solid ${SCQ.gold}`, borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
               <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: "0.12em", color: SCQ.gold, textTransform: "uppercase" }}>STANDARD</span>
@@ -5400,9 +5416,9 @@ const CM_INSET_BORDER = {
   borderBottom: "2px solid #ffffff",
 };
 
-function CmInset({ children, style }) {
+function CmInset({ children, style, className }) {
   return (
-    <div style={{ background: "#ffffff", ...CM_INSET_BORDER, padding: 6, ...style }}>
+    <div className={className} style={{ background: "#ffffff", ...CM_INSET_BORDER, padding: 6, ...style }}>
       {children}
     </div>
   );
@@ -5654,7 +5670,7 @@ function CmSlideshow() {
         </div>
       </div>
       <div style={{ padding: 10 }}>
-        <CmInset style={{ height: 380, background: "#000", padding: 4, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+        <CmInset className="cm-slideshow-inset" style={{ height: 380, background: "#000", padding: 4, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
           <img
             src={CM_SLIDES[index].src}
             alt={CM_SLIDES[index].caption}
@@ -5691,9 +5707,13 @@ function MedicalVisualizerProject() {
   useEffect(() => {
     if (!(iframeLoaded && minTimeElapsed) || fading) return;
     setFading(true);
+  }, [iframeLoaded, minTimeElapsed, fading]);
+
+  useEffect(() => {
+    if (!fading) return;
     const t = setTimeout(() => setSplashing(false), 500);
     return () => clearTimeout(t);
-  }, [iframeLoaded, minTimeElapsed, fading]);
+  }, [fading]);
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 100, background: "#0a1628" }}>
@@ -5757,9 +5777,13 @@ function MusicVisualizerProject() {
   useEffect(() => {
     if (!(iframeLoaded && minTimeElapsed) || fading) return;
     setFading(true);
+  }, [iframeLoaded, minTimeElapsed, fading]);
+
+  useEffect(() => {
+    if (!fading) return;
     const t = setTimeout(() => setSplashing(false), 500);
     return () => clearTimeout(t);
-  }, [iframeLoaded, minTimeElapsed, fading]);
+  }, [fading]);
 
   const bars = [0, 1, 2, 3];
 
@@ -5859,6 +5883,436 @@ function MusicVisualizerProject() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+const MS = {
+  bg: "#0e0e14",
+  surface: "#16161f",
+  purple: "#7c3aed",
+  purpleLight: "#a78bfa",
+  cyan: "#06b6d4",
+  green: "#10b981",
+  amber: "#f59e0b",
+  text: "#f1f5f9",
+  muted: "rgba(241,245,249,0.55)",
+  border: "rgba(124,58,237,0.2)",
+};
+
+function MediaSyncSection({ children, style }) {
+  return (
+    <section style={{ padding: "60px 48px", ...style }} className="ms-section">
+      {children}
+    </section>
+  );
+}
+
+function MediaSyncFrame({ src, alt, style }) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      style={{
+        width: "100%",
+        display: "block",
+        objectFit: "cover",
+        border: "1px solid rgba(124,58,237,0.25)",
+        borderRadius: 8,
+        ...style,
+      }}
+    />
+  );
+}
+
+function MediaSyncSeesawDemo() {
+  const [playing, setPlaying] = useState("A");
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setPlaying((p) => (p === "A" ? "B" : "A"));
+        setIsAnimating(false);
+      }, 400);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const Box = ({ id, app, track }) => {
+    const isPlaying = playing === id;
+    return (
+      <div
+        className="ms-seesaw-box"
+        style={{
+          flex: "1 1 220px",
+          minWidth: 200,
+          background: MS.surface,
+          border: `1px solid ${isPlaying ? MS.green : "rgba(255,255,255,0.1)"}`,
+          borderRadius: 10,
+          padding: "20px 18px",
+          textAlign: "center",
+          transition: "border-color 0.4s ease",
+        }}
+      >
+        <div style={{
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 12,
+          color: MS.muted, marginBottom: 6,
+        }}>
+          {app}
+        </div>
+        <div style={{
+          fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 500,
+          color: MS.text, marginBottom: 12,
+        }}>
+          {track}
+        </div>
+        <div style={{
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700,
+          color: isPlaying ? MS.green : MS.muted,
+        }}>
+          {isPlaying ? "▶ Playing" : "⏸ Paused"}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+        <Box id="A" app="Brave Browser" track="Friends S7E10" />
+        <div style={{
+          display: "flex", flexDirection: "column", alignItems: "center",
+          justifyContent: "center", minWidth: 40, position: "relative",
+        }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, color: MS.purpleLight }}>⟷</span>
+          <span
+            className={isAnimating ? "ms-pulse-dot ms-pulse-dot-active" : "ms-pulse-dot"}
+            style={{
+              position: "absolute", top: "50%", left: playing === "A" ? "0%" : "100%",
+              width: 8, height: 8, borderRadius: "50%", background: MS.cyan,
+              transform: "translate(-50%, -50%)",
+              transition: "left 0.4s ease",
+              boxShadow: `0 0 8px ${MS.cyan}`,
+            }}
+          />
+        </div>
+        <Box id="B" app="Chrome - Youtube" track="Lo-fi Mix" />
+      </div>
+      <p style={{
+        fontFamily: "'Inter', sans-serif", fontSize: 13, color: MS.muted,
+        marginTop: 24, lineHeight: 1.7,
+      }}>
+        Polled every 700ms via Windows SMTC API. Self-healing — if both sources end up in the same state, MediaSync corrects it automatically.
+      </p>
+    </div>
+  );
+}
+
+function MediaSyncProject() {
+  const [splashing, setSplashing] = useState(true);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap";
+    document.head.appendChild(link);
+    return () => { document.head.removeChild(link); };
+  }, []);
+
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => setFading(true), 1400);
+    const doneTimer = setTimeout(() => setSplashing(false), 1900);
+    return () => { clearTimeout(fadeTimer); clearTimeout(doneTimer); };
+  }, []);
+
+  const pillStyle = {
+    display: "inline-block",
+    fontFamily: "'JetBrains Mono', monospace", fontSize: 11,
+    color: MS.purpleLight,
+    border: `1px solid ${MS.purple}`,
+    borderRadius: 999, padding: "5px 12px",
+  };
+
+  const headingFont = { fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: "#fff" };
+  const bodyFont = { fontFamily: "'Inter', sans-serif", color: MS.muted, lineHeight: 1.7 };
+
+  const downloadUrl = "https://github.com/rju23/Media-Sync/releases/download/v1.0.0/MediaSync.Setup.1.0.0.exe";
+
+  const steps = [
+    { n: "01", title: "Open the app", desc: "App detects all active Windows media sessions." },
+    { n: "02", title: "Select 2 sources", desc: "Pick exactly 2 media sessions. One playing, one paused." },
+    { n: "03", title: "Sync is active", desc: "Play one — the other pauses. Pause it — the other plays." },
+  ];
+
+  const screenshots = [
+    { src: "/images/mediasync-1.png", label: "No sources selected yet" },
+    { src: "/images/mediasync-2.png", label: "Two sources selected — ready" },
+    { src: "/images/mediasync-3.png", label: "Both paused — warning shown" },
+    { src: "/images/mediasync-4.png", label: "Sync active" },
+  ];
+
+  const smartscreenSteps = [
+    { src: "/images/scq-smartscreen-1.webp", label: "If you see this warning when downloading" },
+    { src: "/images/scq-smartscreen-2.webp", label: "Click More Info" },
+    { src: "/images/scq-smartscreen-3.webp", label: "Then click Run Anyway" },
+  ];
+
+  const techPills = ["Electron", "Vanilla JS", "C# .NET 8", "WinRT", "SMTC API", "Windows"];
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 100,
+      background: MS.bg, overflowY: "auto",
+      color: MS.text, fontFamily: "'Inter', sans-serif",
+    }}>
+      <style>{`
+        .ms-pulse-dot { opacity: 0; }
+        .ms-pulse-dot-active { opacity: 1; }
+        @media (max-width: 860px) {
+          .ms-hero-grid { grid-template-columns: 1fr !important; }
+          .ms-hero-headline { font-size: 34px !important; }
+          .ms-section { padding: 40px 20px !important; }
+          .ms-steps-flow { flex-direction: column !important; }
+          .ms-steps-flow .ms-arrow { transform: rotate(90deg); }
+          .ms-shot-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .ms-tech-grid { grid-template-columns: 1fr !important; }
+          .ms-smartscreen-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
+      {/* Splash */}
+      {splashing && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 10,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          background: MS.bg,
+          opacity: fading ? 0 : 1,
+          transition: "opacity 0.5s ease",
+        }}>
+          <div className="mediasync-splash-icons" style={{ position: "relative", width: 72, height: 40 }}>
+            <div className="mediasync-splash-a" style={{
+              position: "absolute", left: 0, top: 0,
+              width: 40, height: 40, borderRadius: "50%",
+              background: "rgba(124,58,237,0.15)", border: `2px solid ${MS.purple}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 16, color: MS.purpleLight,
+            }}>
+              ▶
+            </div>
+            <div className="mediasync-splash-b" style={{
+              position: "absolute", right: 0, top: 0,
+              width: 40, height: 40, borderRadius: "50%",
+              background: "rgba(6,182,212,0.15)", border: `2px solid ${MS.cyan}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 16, color: MS.cyan,
+            }}>
+              ⏸
+            </div>
+          </div>
+          <h2 style={{ ...headingFont, fontSize: 22, margin: "20px 0 6px" }}>MediaSync</h2>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: MS.muted }}>v1.0.0</p>
+        </div>
+      )}
+
+      {/* Section 1 — Hero */}
+      <section style={{
+        minHeight: "100vh", padding: "80px 48px",
+        display: "flex", alignItems: "center",
+        background: `radial-gradient(circle at 85% 10%, rgba(124,58,237,0.18) 0%, transparent 55%), ${MS.bg}`,
+      }} className="ms-section">
+        <div className="ms-hero-grid" style={{
+          display: "grid", gridTemplateColumns: "42% 58%", gap: 0,
+          width: "100%", alignItems: "center",
+        }}>
+          <div>
+            <span style={pillStyle}>Personal Tool · Windows</span>
+            <h1 className="ms-hero-headline" style={{
+              ...headingFont, fontSize: 52, lineHeight: 1.0, margin: "24px 0 20px",
+            }}>
+              <span style={{ color: "#fff" }}>One plays.</span><br />
+              <span style={{ color: MS.purpleLight }}>One pauses.</span><br />
+              <span style={{ color: MS.cyan }}>Always.</span>
+            </h1>
+            <p style={{ ...bodyFont, fontSize: 15, maxWidth: 460, marginBottom: 28 }}>
+              MediaSync locks two media sources into a seesaw — play one and the other pauses automatically. No more two things playing at once.
+            </p>
+            <a
+              href={downloadUrl}
+              style={{
+                display: "inline-block",
+                background: MS.purple, color: "#fff",
+                fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 600,
+                padding: "14px 26px", borderRadius: 8,
+                textDecoration: "none",
+              }}
+            >
+              Download for Windows
+            </a>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: MS.muted, marginTop: 12 }}>
+              Windows only · Electron app · v1.0.0
+            </div>
+          </div>
+          <div style={{
+            border: "1px solid rgba(124,58,237,0.4)",
+            borderRadius: 12,
+            boxShadow: "0 0 40px rgba(124,58,237,0.15)",
+            overflow: "hidden",
+          }}>
+            <img
+              src="/images/mediasync-4.png"
+              alt="MediaSync sync active screenshot"
+              style={{ width: "100%", display: "block" }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Section 2 — How it works */}
+      <MediaSyncSection style={{ background: MS.surface }}>
+        <h2 style={{ ...headingFont, fontSize: 28, marginBottom: 36 }}>How it works</h2>
+        <div className="ms-steps-flow" style={{ display: "flex", alignItems: "stretch", gap: 20 }}>
+          {steps.map((s, i) => (
+            <Fragment key={s.n}>
+              <div style={{
+                flex: "1 1 0",
+                background: MS.bg,
+                borderTop: `3px solid ${MS.purple}`,
+                borderRadius: 6,
+                padding: "20px 18px",
+              }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: MS.purpleLight, marginBottom: 10 }}>
+                  {s.n}
+                </div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff", marginBottom: 8 }}>
+                  {s.title}
+                </div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: MS.muted, lineHeight: 1.6 }}>
+                  {s.desc}
+                </div>
+              </div>
+              {i < steps.length - 1 && (
+                <div className="ms-arrow" style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: MS.purple, fontSize: 20, flex: "0 0 auto",
+                }}>
+                  →
+                </div>
+              )}
+            </Fragment>
+          ))}
+        </div>
+      </MediaSyncSection>
+
+      {/* Section 3 — Screenshots */}
+      <MediaSyncSection>
+        <h2 style={{ ...headingFont, fontSize: 28, marginBottom: 36 }}>The app</h2>
+        <div className="ms-shot-grid" style={{
+          display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20,
+        }}>
+          {screenshots.map((s) => (
+            <div key={s.src}>
+              <MediaSyncFrame src={s.src} alt={s.label} />
+              <div style={{
+                fontFamily: "'Inter', sans-serif", fontSize: 11, color: MS.muted,
+                textAlign: "center", marginTop: 10,
+              }}>
+                {s.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </MediaSyncSection>
+
+      {/* Section 4 — Seesaw demo */}
+      <MediaSyncSection style={{ background: MS.surface }}>
+        <h2 style={{ ...headingFont, fontSize: 28, marginBottom: 36 }}>The seesaw in action</h2>
+        <MediaSyncSeesawDemo />
+      </MediaSyncSection>
+
+      {/* Section 5 — Tech callout */}
+      <div style={{
+        background: "rgba(124,58,237,0.08)",
+        borderTop: `1px solid ${MS.border}`,
+        borderBottom: `1px solid ${MS.border}`,
+      }}>
+        <MediaSyncSection>
+          <div className="ms-tech-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
+            <div>
+              <h2 style={{ ...headingFont, fontSize: 24, marginBottom: 16 }}>Under the hood</h2>
+              <p style={{ ...bodyFont, fontSize: 14, maxWidth: 480 }}>
+                MediaSync calls a compiled C# .NET 8 helper that talks directly to the Windows System Media Transport Controls API — the same API behind Windows' own media flyout. This is the only reliable way to control media sessions across different apps on Windows.
+              </p>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              {techPills.map((t) => (
+                <span key={t} style={pillStyle}>{t}</span>
+              ))}
+            </div>
+          </div>
+        </MediaSyncSection>
+      </div>
+
+      {/* Section 6 — Installation (SmartScreen) */}
+      <MediaSyncSection>
+        <h2 style={{ ...headingFont, fontSize: 28, marginBottom: 10 }}>Installing on Windows</h2>
+        <p style={{ ...bodyFont, fontSize: 14, marginBottom: 32 }}>
+          Windows may show a SmartScreen warning for new software. This is expected. Here's how to proceed:
+        </p>
+        <div className="ms-smartscreen-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+          {smartscreenSteps.map((s, i) => (
+            <div key={s.src}>
+              <div style={{ position: "relative" }}>
+                <img
+                  src={s.src}
+                  alt={s.label}
+                  style={{
+                    width: "100%", display: "block",
+                    border: "1px solid rgba(124,58,237,0.25)",
+                    borderRadius: 8,
+                  }}
+                />
+                <div style={{
+                  position: "absolute", top: 10, left: 10,
+                  background: MS.purple, color: "#fff",
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700,
+                  borderRadius: 6, padding: "3px 8px",
+                }}>
+                  {i + 1}
+                </div>
+              </div>
+              <div style={{
+                fontFamily: "'Inter', sans-serif", fontSize: 12, color: MS.muted,
+                marginTop: 10, textAlign: "center",
+              }}>
+                {s.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </MediaSyncSection>
+
+      {/* Section 7 — Download CTA */}
+      <MediaSyncSection style={{ background: MS.surface, textAlign: "center" }}>
+        <a
+          href={downloadUrl}
+          style={{
+            display: "inline-block",
+            background: MS.purple, color: "#fff",
+            fontFamily: "'Inter', sans-serif", fontSize: 16, fontWeight: 600,
+            padding: "18px 36px", borderRadius: 10,
+            textDecoration: "none",
+          }}
+        >
+          Download MediaSync for Windows
+        </a>
+        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: MS.muted, marginTop: 14 }}>
+          Free · Windows 10/11 · v1.0.0 · Electron
+        </div>
+      </MediaSyncSection>
     </div>
   );
 }
@@ -5971,7 +6425,7 @@ function ClientManagerProject({ onNextProject }) {
               </div>
             </div>
 
-            <div style={{ padding: "20px 24px 12px" }}>
+            <div className="cm-intro-pad" style={{ padding: "20px 24px 12px" }}>
               <div style={{ fontFamily: "'VT323', monospace", fontSize: 22, color: "#000080" }}>
                 "A bespoke client and project management system - built for running a freelance software business."
               </div>
@@ -5989,7 +6443,7 @@ function ClientManagerProject({ onNextProject }) {
                 </div>
               </CmInset>
 
-              <div style={{ display: "flex", gap: 6, marginBottom: 18 }}>
+              <div className="cm-stat-row" style={{ display: "flex", gap: 6, marginBottom: 18 }}>
                 <CmStatBox value="13" label="Email Templates" />
                 <CmStatBox value="2-sided" label="Portal Roles" />
                 <CmStatBox value="6" label="Doc Types" />
@@ -6306,6 +6760,25 @@ function ClientManagerProject({ onNextProject }) {
                 <div style={{ ...CM_INSET_BORDER, background: "#c0c0c0", padding: "3px 10px", fontSize: 10.5 }}>
                   {clock}
                 </div>
+              </div>
+            )}
+
+            {isMobile && Object.keys(windowMeta).some((id) => windowState[id] !== "open") && (
+              <div style={{ padding: "0 12px 14px", display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {Object.keys(windowMeta).map((id) => windowState[id] !== "open" && (
+                  <button
+                    key={id}
+                    onClick={() => restoreWindow(id)}
+                    style={{
+                      background: "#c0c0c0", ...CM_RAISED_BORDER,
+                      padding: "8px 12px", fontSize: 11, fontWeight: 700,
+                      fontFamily: "'Share Tech Mono', monospace", cursor: "pointer",
+                      display: "flex", alignItems: "center", gap: 6,
+                    }}
+                  >
+                    {windowMeta[id].icon} {windowMeta[id].label}
+                  </button>
+                ))}
               </div>
             )}
 

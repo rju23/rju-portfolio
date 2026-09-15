@@ -432,18 +432,24 @@ export function initSANode(container) {
     antialias: true
   })
 
-  renderer.setSize(container.clientWidth, container.clientHeight)
+  renderer.domElement.classList.add('sa-canvas')
 
-  container.appendChild(renderer.domElement)
+  container.insertBefore(renderer.domElement, container.firstChild)
 
   camera.position.z = 5
 
+  // Measured from the canvas itself (not the parent container) so a
+  // CSS-forced size — e.g. the mobile layout's 100% / 60vh box — is
+  // respected instead of stretching the render to the container's size.
   const onResize = () => {
-    camera.aspect = container.clientWidth / container.clientHeight
+    const width = renderer.domElement.clientWidth || container.clientWidth
+    const height = renderer.domElement.clientHeight || container.clientHeight
+    camera.aspect = width / height
     camera.updateProjectionMatrix()
-    renderer.setSize(container.clientWidth, container.clientHeight)
+    renderer.setSize(width, height)
   }
 
+  onResize()
   window.addEventListener('resize', onResize)
 
   let time = 0
