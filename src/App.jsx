@@ -725,7 +725,7 @@ function HeroText() {
           Welcome to prakashsejwani.dev/chat
         </div>
 
-        <div className="hero-inner" style={{ maxWidth: 620, textAlign: "center", marginTop: 32 }}>
+        <div className="hero-inner" style={{ maxWidth: 620, textAlign: "center", marginTop: 64 }}>
 
           <img
             src="/favicon.svg"
