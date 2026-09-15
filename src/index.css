@@ -351,7 +351,12 @@ body {
   }
 
   .hero-welcome {
-    display: none !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 10.5px !important;
+    letter-spacing: 0.04em !important;
+    white-space: normal !important;
+    margin-bottom: 14px !important;
   }
 
   .hero-subtitle {
@@ -361,10 +366,10 @@ body {
   }
 
   .hero-headline {
-    font-size: 34px !important;
-    line-height: 1.15 !important;
-    margin: 0 0 12px !important;
-    padding: 0.05em 0 0.15em !important;
+    font-size: 46px !important;
+    line-height: 1.1 !important;
+    margin: 0 0 14px !important;
+    padding: 0.05em 0 0.18em !important;
     text-align: center !important;
   }
 
