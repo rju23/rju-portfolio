@@ -1540,7 +1540,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
   const [fading, setFading]       = useState(false);
   const [navOpen, setNavOpen]     = useState(false);
 
-  const ORB_SIZE = 44;
+  const ORB_SIZE = 52;
   const orbRef = useRef(null);
   const [orbPos, setOrbPos] = useState(() => {
     try {
@@ -1549,7 +1549,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
     } catch {}
     return null;
   });
-  const dragState = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0 });
+  const dragState = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0, pointerType: "mouse" });
 
   const clampOrbPos = (x, y) => ({
     x: Math.min(Math.max(x, 8), window.innerWidth - ORB_SIZE - 8),
@@ -1562,6 +1562,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
       dragging: true, moved: false,
       startX: e.clientX, startY: e.clientY,
       origX: rect.left, origY: rect.top,
+      pointerType: e.pointerType,
     };
     e.currentTarget.setPointerCapture(e.pointerId);
   };
@@ -1571,7 +1572,8 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
     if (!drag.dragging) return;
     const dx = e.clientX - drag.startX;
     const dy = e.clientY - drag.startY;
-    if (Math.abs(dx) > 12 || Math.abs(dy) > 12) drag.moved = true;
+    const threshold = drag.pointerType === "touch" ? 20 : 12;
+    if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) drag.moved = true;
     if (drag.moved) setOrbPos(clampOrbPos(drag.origX + dx, drag.origY + dy));
   };
 
@@ -1664,7 +1666,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
             position: "fixed",
             ...(orbPos ? { top: orbPos.y, left: orbPos.x } : { bottom: 28, right: 28 }),
             zIndex: 200,
-            width: 44, height: 44, borderRadius: "50%",
+            width: ORB_SIZE, height: ORB_SIZE, borderRadius: "50%",
             background: `${theme.color}E6`,
             border: "none", cursor: "grab",
             touchAction: "none",
@@ -1680,7 +1682,7 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
             e.currentTarget.style.boxShadow = "none";
           }}
         >
-          <Sparkles size={18} color="#fff" strokeWidth={1.8} />
+          <Sparkles size={20} color="#fff" strokeWidth={1.8} />
         </button>
       )}
 
