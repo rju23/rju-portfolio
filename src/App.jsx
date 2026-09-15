@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, Fragment } from "react";
 import { createPortal } from "react-dom";
 import emailjs from "@emailjs/browser";
-import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive, Trophy, Timer, RotateCcw, Image, Music, Menu, X } from "lucide-react";
+import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive, Trophy, Timer, RotateCcw, Image, Music, Menu, X, Plus } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 const BORDER   = "rgba(255,255,255,0.07)";
 const TEXT     = "#F4EFE7";
@@ -280,7 +280,7 @@ export default function App() {
           <TopBar />
         </div>
 
-        <div className="pk1-scroll" style={{
+        <div className={`pk1-scroll ${section === "chat" ? "pk1-scroll-chat" : ""}`} style={{
           position: "absolute",
           top: section === "chat" ? 12 : 84,
           left: 0, right: 12, bottom: 12,
@@ -299,7 +299,7 @@ export default function App() {
         </div>
 
         {section === "chat" && (
-          <div style={{ position: "absolute", bottom: -10, left: 0, right: 12, zIndex: 4 }}>
+          <div className="pk1-inputbar-outer" style={{ position: "absolute", bottom: -10, left: 0, right: 12, zIndex: 4 }}>
             <InputBar onNavigate={setSection} />
           </div>
         )}
@@ -351,10 +351,17 @@ function InputBar({ onNavigate }) {
   const [shaking, setShaking]   = useState(false);
   const [focused, setFocused]   = useState(false);
   const [everShown, setEverShown] = useState(false);
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
   const hideTimer               = useRef(null);
   const shakeTimer              = useRef(null);
   const inputRef                = useRef(null);
   const trackRef                = useRef(null);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   // Show the chips, marking that they've entered at least once so the
   // exit animation never plays on first paint.
@@ -399,6 +406,7 @@ function InputBar({ onNavigate }) {
 
   return (
     <div
+      className="pk1-inputbar-wrap"
       onMouseEnter={handleZoneEnter}
       onMouseLeave={handleZoneLeave}
       style={{ padding: "0 24px 24px" }}
@@ -492,79 +500,138 @@ function InputBar({ onNavigate }) {
       </div>
 
       {/* ── Input bar ── */}
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onClick={() => { showChips(); inputRef.current?.focus(); }}
-        style={{
-        position: "relative", overflow: "hidden",
-        cursor: "text",
-        display: "flex", alignItems: "center", gap: 12,
-        background: "rgba(255,255,255,0.04)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        border: hovered || focused || input
-          ? "1px solid rgba(217,138,76,0.45)"
-          : "1px solid rgba(255,255,255,0.09)",
-        borderRadius: 16, padding: "16px 16px 16px 22px",
-        animation: shaking
-          ? "shake 0.36s cubic-bezier(0.36,0.07,0.19,0.97)"
-          : (!hovered && !focused && !input ? "breathe 3s ease-in-out infinite" : "none"),
-        boxShadow: hovered || focused || input
-          ? "0 8px 32px rgba(0,0,0,0.4), 0 0 0 2px rgba(217,138,76,0.08)"
-          : "0 8px 32px rgba(0,0,0,0.4)",
-        transition: "box-shadow 0.4s ease, border-color 0.4s ease",
-      }}>
-        <input
-          className="pk1-hero-input"
-          value={input || ""}
-          placeholder="Ask PK-1 what it knows about my work…"
-          onChange={(e) => {
-            const next = e.target.value;
-            // Deletions are allowed so a filled-in suggestion can be cleared;
-            // anything that adds characters still gets rejected.
-            if (next.length < input.length && (input.startsWith(next) || input.endsWith(next))) {
-              setInput(next);
-            } else {
+      {(() => {
+        const textInputEl = (
+          <input
+            className="pk1-hero-input"
+            value={input || ""}
+            placeholder="Ask PK-1 what it knows about my work…"
+            onChange={(e) => {
+              const next = e.target.value;
+              // Deletions are allowed so a filled-in suggestion can be cleared;
+              // anything that adds characters still gets rejected.
+              if (next.length < input.length && (input.startsWith(next) || input.endsWith(next))) {
+                setInput(next);
+              } else {
+                rejectTyping();
+              }
+            }}
+            onPaste={(e) => { e.preventDefault(); rejectTyping(); }}
+            ref={inputRef}
+            onFocus={() => { setFocused(true); showChips(); }}
+            onBlur={() => setFocused(false)}
+            onKeyDown={(e) => {
+              const PASS = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Home", "End", "Tab"];
+              if (PASS.includes(e.key) || e.metaKey || e.ctrlKey || e.altKey) return;
+              e.preventDefault();
               rejectTyping();
-            }
-          }}
-          onPaste={(e) => { e.preventDefault(); rejectTyping(); }}
-          ref={inputRef}
-          onFocus={() => { setFocused(true); showChips(); }}
-          onBlur={() => setFocused(false)}
-          onKeyDown={(e) => {
-            const PASS = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Home", "End", "Tab"];
-            if (PASS.includes(e.key) || e.metaKey || e.ctrlKey || e.altKey) return;
-            e.preventDefault();
-            rejectTyping();
-          }}
-          style={{
-            flex: 1, minWidth: 0, fontSize: 15, zIndex: 2,
-            color: input ? "#F4EFE7" : "rgba(244,239,231,0.32)",
-            fontFamily: "'Inter', sans-serif",
-            background: "transparent", border: "none", outline: "none",
-            cursor: "text", caretColor: "rgba(217,138,76,0.8)",
-            textOverflow: "ellipsis",
-          }}
-        />
+            }}
+            style={{
+              flex: 1, minWidth: 0, fontSize: 15, zIndex: 2,
+              width: "100%",
+              color: input ? "#F4EFE7" : "rgba(244,239,231,0.32)",
+              fontFamily: "'Inter', sans-serif",
+              background: "transparent", border: "none", outline: "none",
+              cursor: "text", caretColor: "rgba(217,138,76,0.8)",
+              textOverflow: "ellipsis",
+            }}
+          />
+        );
 
-        <Paperclip size={17} color="rgba(244,239,231,0.32)" style={{ flexShrink: 0, zIndex: 2 }} />
+        const sendBtn = (
+          <button
+            style={{
+              width: 36, height: 36, borderRadius: "50%",
+              border: "none", cursor: "pointer", flexShrink: 0, zIndex: 2,
+              background: input ? "#D98A4C" : "rgba(255,255,255,0.07)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "background 0.15s ease, transform 0.12s ease",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.08)"; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}
+          >
+            <ArrowUp size={16} color={input ? "#1A1108" : "rgba(244,239,231,0.32)"} strokeWidth={2.2} />
+          </button>
+        );
 
-        <button
-          style={{
-            width: 36, height: 36, borderRadius: "50%",
-            border: "none", cursor: "pointer", flexShrink: 0, zIndex: 2,
-            background: input ? "#D98A4C" : "rgba(255,255,255,0.07)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            transition: "background 0.15s ease, transform 0.12s ease",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.08)"; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}
-        >
-          <ArrowUp size={16} color={input ? "#1A1108" : "rgba(244,239,231,0.32)"} strokeWidth={2.2} />
-        </button>
-      </div>
+        if (isMobile) {
+          return (
+            <div
+              className="pk1-inputbar-mobile"
+              onClick={() => { showChips(); inputRef.current?.focus(); }}
+              style={{
+                position: "relative", overflow: "hidden",
+                cursor: "text",
+                display: "flex", flexDirection: "column", gap: 10,
+                background: "rgba(255,255,255,0.04)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: focused || input
+                  ? "1px solid rgba(217,138,76,0.45)"
+                  : "1px solid rgba(255,255,255,0.09)",
+                borderRadius: 20, padding: "14px 16px",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+                transition: "box-shadow 0.4s ease, border-color 0.4s ease",
+              }}
+            >
+              {/* Row 1 — text input only */}
+              <div style={{ display: "flex", width: "100%" }}>
+                {textInputEl}
+              </div>
+
+              {/* Row 2 — plus icon (left) · attach + send (right) */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <button
+                  aria-label="Add"
+                  style={{
+                    width: 32, height: 32, borderRadius: "50%",
+                    border: `1px solid ${BORDER}`, cursor: "pointer", flexShrink: 0,
+                    background: "rgba(255,255,255,0.05)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}
+                >
+                  <Plus size={16} color="rgba(244,239,231,0.6)" strokeWidth={2.2} />
+                </button>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                  <Paperclip size={17} color="rgba(244,239,231,0.32)" style={{ flexShrink: 0, zIndex: 2 }} />
+                  {sendBtn}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onClick={() => { showChips(); inputRef.current?.focus(); }}
+            style={{
+            position: "relative", overflow: "hidden",
+            cursor: "text",
+            display: "flex", alignItems: "center", gap: 12,
+            background: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: hovered || focused || input
+              ? "1px solid rgba(217,138,76,0.45)"
+              : "1px solid rgba(255,255,255,0.09)",
+            borderRadius: 16, padding: "16px 16px 16px 22px",
+            animation: shaking
+              ? "shake 0.36s cubic-bezier(0.36,0.07,0.19,0.97)"
+              : (!hovered && !focused && !input ? "breathe 3s ease-in-out infinite" : "none"),
+            boxShadow: hovered || focused || input
+              ? "0 8px 32px rgba(0,0,0,0.4), 0 0 0 2px rgba(217,138,76,0.08)"
+              : "0 8px 32px rgba(0,0,0,0.4)",
+            transition: "box-shadow 0.4s ease, border-color 0.4s ease",
+          }}>
+            {textInputEl}
+            <Paperclip size={17} color="rgba(244,239,231,0.32)" style={{ flexShrink: 0, zIndex: 2 }} />
+            {sendBtn}
+          </div>
+        );
+      })()}
 
       <p style={{
         textAlign: "center", fontSize: 11,
@@ -624,14 +691,14 @@ function HeroText() {
   );
 
   return (
-    <div style={{
+    <div className="hero-outer" style={{
       flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
       padding: "0 60px", position: "relative", zIndex: 10, marginTop: "0px",
     }}>
-      <div style={{ maxWidth: 620 }}>
+      <div className="hero-inner" style={{ maxWidth: 620 }}>
 
         {/* Welcome line */}
-        <div style={{
+        <div className="hero-welcome" style={{
           display: "flex", alignItems: "center", gap: 8,
           fontSize: 12.5, color: "rgba(244,239,231,0.5)",
           letterSpacing: "0.06em", textTransform: "uppercase",
@@ -642,7 +709,7 @@ function HeroText() {
         </div>
 
         {/* PK-1 subtitle */}
-        <p style={{
+        <p className="hero-subtitle" style={{
           fontSize: 14, color: "rgba(244,239,231,0.45)",
           fontFamily: "'Inter', sans-serif", fontWeight: 300,
           marginBottom: 20, letterSpacing: "0.01em",
@@ -673,7 +740,7 @@ function HeroText() {
         {/* Bio */}
         {isMobile ? (
           <>
-            <p style={{
+            <p className="hero-bio" style={{
               fontSize: 15.5, lineHeight: 2,
               color: "rgba(244,239,231,0.58)",
               fontFamily: "'Inter', sans-serif", fontWeight: 300,
@@ -681,13 +748,13 @@ function HeroText() {
             }}>
               I'm a final-year medical student and software developer - I build apps, websites and other useful tools with clean interfaces to solve real problems.
             </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+            <div className="hero-chip-row" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
               {medChip}
               {devChip}
             </div>
           </>
         ) : (
-          <p style={{
+          <p className="hero-bio" style={{
             fontSize: 15.5, lineHeight: 2,
             color: "rgba(244,239,231,0.58)",
             fontFamily: "'Inter', sans-serif", fontWeight: 300,
@@ -700,7 +767,7 @@ function HeroText() {
             {" "}- I build apps, websites and other useful tools with clean interfaces to solve real problems.
           </p>
         )}
-        <p style={{
+        <p className="hero-footer" style={{
           fontSize: 15.5, lineHeight: 1.75,
           color: "rgba(244,239,231,0.45)",
           fontFamily: "'Inter', sans-serif", fontWeight: 300,

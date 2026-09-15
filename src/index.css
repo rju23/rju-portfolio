@@ -341,12 +341,81 @@ body {
     display: none !important;
   }
 
+  .hero-outer {
+    padding: 0 20px !important;
+  }
+
+  .hero-inner {
+    text-align: center !important;
+    max-width: 100% !important;
+  }
+
+  .hero-welcome {
+    display: none !important;
+  }
+
+  .hero-subtitle {
+    font-size: 12px !important;
+    margin-bottom: 12px !important;
+    text-align: center !important;
+  }
+
   .hero-headline {
-    font-size: 38px !important;
+    font-size: 34px !important;
+    line-height: 1.15 !important;
+    margin: 0 0 12px !important;
+    padding: 0.05em 0 0.15em !important;
+    text-align: center !important;
+  }
+
+  .hero-bio {
+    font-size: 13.5px !important;
+    line-height: 1.6 !important;
+    margin-bottom: 8px !important;
+    text-align: center !important;
+    max-width: 100% !important;
+  }
+
+  .hero-footer {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
+    max-width: 100% !important;
+  }
+
+  .hero-chip-row {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    justify-content: center !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .hero-chip-row::-webkit-scrollbar {
+    display: none !important;
   }
 
   .pk1-hero-input {
     overflow: hidden;
     white-space: nowrap;
+  }
+
+  .pk1-inputbar-outer {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 25 !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: transparent;
+  }
+
+  .pk1-inputbar-wrap {
+    padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .pk1-scroll-chat {
+    padding-bottom: 170px !important;
   }
 }
