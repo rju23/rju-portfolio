@@ -41,7 +41,10 @@
       "Bash(python3 -)",
       "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --screenshot=\"C:/Users/sejwa/AppData/Local/Temp/claude/c--dev-Portfolio-Website-Portfolio/0c79576c-ae07-43b1-ab33-82a6eaea5168/scratchpad/projects4.png\" --window-size=1000,500 --virtual-time-budget=4000 \"http://localhost:5184/projects\")",
       "Bash(netstat -ano)",
-      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --screenshot=\"C:/Users/sejwa/AppData/Local/Temp/claude/c--dev-Portfolio-Website-Portfolio/0c79576c-ae07-43b1-ab33-82a6eaea5168/scratchpad/live.png\" --window-size=1000,500 --virtual-time-budget=4000 \"http://localhost:5173/projects\")"
+      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --screenshot=\"C:/Users/sejwa/AppData/Local/Temp/claude/c--dev-Portfolio-Website-Portfolio/0c79576c-ae07-43b1-ab33-82a6eaea5168/scratchpad/live.png\" --window-size=1000,500 --virtual-time-budget=4000 \"http://localhost:5173/projects\")",
+      "Bash(npx vite *)",
+      "Bash(cat /tmp/vite.log 2>/dev/null; ps aux | grep vite | grep -v grep)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5183/)"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",

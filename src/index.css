@@ -271,3 +271,23 @@ body {
   .rv-step-line { display: none; }
   .rv-two-col { grid-template-columns: 1fr !important; }
 }
+
+@media (max-width: 768px) {
+  .svc-page { padding: 0 20px !important; }
+  .svc-title { font-size: 26px !important; }
+  .svc-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .svc-card { padding: 18px 18px 20px !important; }
+  .svc-cta {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 22px 20px !important;
+  }
+  .svc-cta-text { text-align: center !important; }
+}
+
+@media (max-width: 380px) {
+  .svc-page { padding: 0 14px !important; }
+  .svc-title { font-size: 22px !important; }
+  .svc-card { padding: 16px 16px 18px !important; }
+}

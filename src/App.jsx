@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import { createPortal } from "react-dom";
 import emailjs from "@emailjs/browser";
 import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive, Trophy, Timer, RotateCcw, Image, Music } from "lucide-react";
@@ -239,11 +239,12 @@ export default function App() {
         </div>
 
         <div className="pk1-scroll" style={{
-          position: "absolute", inset: "12px 12px 12px 0",
+          position: "absolute",
+          top: section === "chat" ? 12 : 84,
+          left: 0, right: 12, bottom: 12,
           display: "flex", flexDirection: "column",
           alignItems: "stretch",
           justifyContent: section === "chat" ? "center" : "flex-start",
-          paddingTop: section === "chat" ? 0 : 84,
           paddingBottom: section === "chat" ? 90 : 40,
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
@@ -640,7 +641,7 @@ function HeroText() {
 function TopBar() {
   return (
     <div style={{
-      position: "relative", zIndex: 10,
+      position: "relative", zIndex: 50,
       display: "flex", alignItems: "center", justifyContent: "space-between",
       padding: "18px 28px 0",
     }}>
@@ -2111,7 +2112,9 @@ function ReviveProject({ onNextProject }) {
                     style={{ aspectRatio: "9 / 19", width: "100%", background: RV.bg }}
                   >
                   </RvImagePlaceholder>
-                  <RvReflection src={`/images/${s.file}`} aspectRatio="9 / 19" reflectionRatio="9 / 3.2" />
+                  <div style={{ marginBottom: -70 }}>
+                    <RvReflection src={`/images/${s.file}`} aspectRatio="9 / 19" reflectionRatio="9 / 6" />
+                  </div>
                 </div>
                 <div style={{ position: "relative", height: "auto" }}>
                   <div style={{ fontWeight: 900, fontSize: 34, color: "rgba(0,122,47,0.15)", lineHeight: 1 }}>{s.num}</div>
@@ -2286,7 +2289,7 @@ function ReviveProject({ onNextProject }) {
         </section>
 
         {/* REAL-TIME SYNC */}
-        <section style={{ padding: "70px 24px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+        <section style={{ padding: "70px 24px 30px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
           <RvSectionHeading title="App and dashboard, always in sync." />
           <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28 }}>
             <div style={{ ...cardStyle, flex: 1, textAlign: "center" }}>
@@ -2310,7 +2313,7 @@ function ReviveProject({ onNextProject }) {
         </section>
 
         {/* TECH STACK */}
-        <section style={{ padding: "14px 24px 70px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+        <section style={{ padding: "14px 24px 30px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
           <RvSectionHeading title="Built with" />
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
             {["Flutter", "Dart", "Firebase", "Firestore", "Cloud Functions", "FCM", "Google Maps", "React", "JavaScript"].map((t) => (
@@ -4158,212 +4161,380 @@ function UnoProject({ onNextProject }) {
   );
 }
 
-const aboutParagraphStyle = {
-  fontSize: 15.5, lineHeight: 1.8,
-  color: "rgba(244,239,231,0.72)",
-  fontFamily: "'Inter', sans-serif", fontWeight: 300,
-  margin: 0,
-};
-
-const ABOUT_TIMELINE = [
-  { year: "2025", title: "Built first app", subtitle: "SCQ Scoreboard" },
-  { year: "2025", title: "First paying", subtitle: "client" },
-  { year: "2026", title: "Completing MD", subtitle: "University" },
-  { year: "Now",  title: "Building", subtitle: "everything" },
-];
-
-const ABOUT_STATS = [
-  { number: "5+", line1: "Apps", line2: "Shipped" },
-  { number: "2",  line1: "Paying", line2: "Clients" },
-  { number: "1",  line1: "Degree", line2: "(almost)", italic: true },
-];
-
-const ABOUT_SKILLS = [
-  { label: "Flutter", rotate: "-1.5deg" },
-  { label: "Firebase", rotate: "1deg" },
-  { label: "React", rotate: "-0.5deg" },
-  { label: "Electron", rotate: "1.5deg" },
-  { label: "Three.js", rotate: "-1deg" },
-  { label: "Next.js", rotate: "0.8deg" },
-  { label: "Dart", rotate: "-1.2deg" },
-  { label: "Vite", rotate: "1.3deg" },
-];
-
 function AboutView() {
+  const bodyStyle = {
+    fontSize: 15.5,
+    lineHeight: 1.8,
+    color: "rgba(244,239,231,0.62)",
+    fontWeight: 300,
+    marginBottom: 22,
+    fontFamily: "'Inter', sans-serif",
+  };
+
   return (
-    <div style={{ padding: "0 48px", maxWidth: 780, margin: "0 auto", width: "100%" }}>
-      <div className="rv-two-col" style={{
-        display: "grid", gridTemplateColumns: "320px 1fr", gap: 40,
-        marginBottom: 20, alignItems: "start",
+    <div style={{
+      width: "100%",
+      minHeight: "100%",
+      overflowX: "hidden",
+      boxSizing: "border-box",
+    }}>
+      {/* SECTION 1 — HERO */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "40% 60%",
+        minHeight: "70vh",
+        paddingLeft: 56,
       }}>
-        <div style={{
-          position: "relative", overflow: "hidden",
-          borderRadius: 12,
-          border: "1px solid rgba(217,138,76,0.2)",
-          boxShadow: "0 8px 32px rgba(217,138,76,0.12)",
-          maxWidth: 320,
-        }}>
+        {/* LEFT — Photo */}
+        <div style={{ position: "relative", overflow: "hidden" }}>
           <img
             src="/images/prakash.jpg"
             alt="Prakash Sejwani"
             onClick={() => openLightbox("/images/prakash.jpg")}
-            style={{
-              width: "100%", height: 400,
-              objectFit: "cover",
-              display: "block",
-              cursor: "zoom-in",
-            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block", cursor: "zoom-in" }}
           />
           <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(to top, rgba(196,98,45,0.35) 0%, transparent 50%)",
+            position: "absolute", bottom: 0, left: 0, right: 0,
+            height: "40%",
+            background: "linear-gradient(to top, rgba(196,98,45,0.4), transparent)",
             pointerEvents: "none",
+          }} />
+          <div style={{
+            position: "absolute", top: 0, right: 0, bottom: 0,
+            width: 2,
+            background: "linear-gradient(to bottom, transparent, rgba(217,138,76,0.5), transparent)",
           }} />
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {/* RIGHT — Headline */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: "60px 48px",
+          position: "relative",
+        }}>
           <div style={{
-            fontSize: 11, textTransform: "uppercase", letterSpacing: "0.12em",
-            color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 600,
+            position: "absolute", top: 24, right: 24,
+            display: "grid",
+            gridTemplateColumns: "repeat(5, 1fr)",
+            gap: 8,
+            opacity: 0.15,
           }}>
-            A builder at heart.
+            {Array.from({ length: 25 }).map((_, i) => (
+              <div key={i} style={{ width: 3, height: 3, borderRadius: "50%", background: "#D98A4C" }} />
+            ))}
           </div>
-          <p style={{ ...aboutParagraphStyle, fontSize: 17, color: "rgba(244,239,231,0.72)" }}>
-            From a young age, technology was the thing I couldn't stay away from. Not in the "future programmer" sense. I wasn't writing code in my bedroom. I was the person who knew the tricks nobody else knew, the one people called when something needed fixing, formatting, or figuring out. I rooted phones when that was still a thing. I spent hours on computers just because computers were interesting.
+
+          <div style={{
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "#D98A4C",
+            marginBottom: 24,
+            fontFamily: "'Inter', sans-serif",
+          }}>
+            Prakash Sejwani
+          </div>
+
+          <h1 style={{
+            fontFamily: "'Fraunces', serif",
+            fontStyle: "italic",
+            fontWeight: 400,
+            fontSize: "clamp(52px, 7vw, 88px)",
+            lineHeight: 0.95,
+            letterSpacing: "-0.03em",
+            color: "#F4EFE7",
+            margin: "0 0 32px",
+          }}>
+            A<br />
+            <span style={{ color: "#D98A4C" }}>Builder</span><br />
+            at<br />
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 0, lineHeight: 1, letterSpacing: "-0.08em", margin: "0 -4px" }}>
+              <span style={{ color: "#D98A4C", marginRight: "-14px" }}>He</span>
+              <img
+                src="/images/heart.png"
+                alt="heart"
+                style={{
+                  width: "0.95em",
+                  height: "0.95em",
+                  objectFit: "contain",
+                  display: "inline-block",
+                  verticalAlign: "middle",
+                  filter: "drop-shadow(0 0 8px rgba(217,138,76,0.4))",
+                }}
+              />
+              <span style={{ color: "#D98A4C", marginLeft: "-18px" }}>rt.</span>
+            </span>
+          </h1>
+
+          <div style={{ width: 48, height: 2, background: "#D98A4C", marginBottom: 24 }} />
+
+          <p style={{
+            fontSize: 15,
+            lineHeight: 1.7,
+            color: "rgba(244,239,231,0.52)",
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 300,
+            margin: 0,
+            maxWidth: 340,
+          }}>
+            Final-year medical student. Software developer. Building at the intersection of both.
           </p>
+
+          <div style={{
+            position: "absolute",
+            bottom: 32, left: 48,
+            display: "flex", alignItems: "center", gap: 10,
+            fontSize: 11, color: "rgba(244,239,231,0.25)",
+            letterSpacing: "0.1em", textTransform: "uppercase",
+            fontFamily: "'Inter', sans-serif",
+          }}>
+            <div style={{ width: 24, height: 1, background: "rgba(244,239,231,0.2)" }} />
+            Scroll
+          </div>
         </div>
       </div>
 
-      {/* Timeline strip */}
-      <div style={{ display: "flex", alignItems: "flex-start", margin: "32px 0" }}>
-        {ABOUT_TIMELINE.map((m, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "flex-start", flex: i === ABOUT_TIMELINE.length - 1 ? "0 0 auto" : 1 }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 90 }}>
+      {/* SECTION 2 — TIMELINE */}
+      <div style={{
+        borderTop: "1px solid rgba(217,138,76,0.2)",
+        borderBottom: "1px solid rgba(217,138,76,0.2)",
+        padding: "28px 0 28px 56px",
+        marginTop: 32,
+        marginRight: -200,
+        width: "calc(100% + 200px)",
+        display: "flex",
+        alignItems: "flex-start",
+        background: "rgba(217,138,76,0.03)",
+      }}>
+        {[
+          { year: "2025", label: "First app", sub: "SCQ Scoreboard", pulse: false },
+          { year: "2025", label: "First client", sub: "876 Revive", pulse: false },
+          { year: "2026", label: "Completing MD", sub: "University of WI", pulse: false },
+          { year: "Now", label: "Building", sub: "everything", pulse: true },
+        ].map((item, i, arr) => (
+          <Fragment key={i}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 0 }}>
               <div style={{
-                fontFamily: "'Fraunces', serif", fontStyle: "italic",
-                fontSize: 16, color: "#D98A4C", marginBottom: 8,
-              }}>
-                {m.year}
-              </div>
-              <div
-                className={m.year === "Now" ? "pulse-dot-amber" : undefined}
-                style={{
-                  width: 8, height: 8, borderRadius: "50%",
-                  background: "#D98A4C", flexShrink: 0,
-                }}
-              />
+                fontFamily: "'Fraunces', serif",
+                fontStyle: "italic",
+                fontSize: 15,
+                color: "#D98A4C",
+                marginBottom: 6,
+              }}>{item.year}</div>
               <div style={{
-                fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: 12,
-                color: "rgba(244,239,231,0.8)", marginTop: 10, textAlign: "center",
-              }}>
-                {m.title}
-              </div>
-              <div style={{
-                fontFamily: "'Inter', sans-serif", fontSize: 11,
-                color: "rgba(244,239,231,0.4)", marginTop: 2, textAlign: "center",
-              }}>
-                {m.subtitle}
-              </div>
+                width: 8, height: 8, borderRadius: "50%",
+                background: "#D98A4C", marginBottom: 8, flexShrink: 0,
+                boxShadow: item.pulse ? "0 0 0 3px rgba(217,138,76,0.2)" : "none",
+              }} className={item.pulse ? "pulse-dot" : ""} />
+              <div style={{ fontSize: 11, fontWeight: 500, color: "rgba(244,239,231,0.75)", textAlign: "center" }}>{item.label}</div>
+              <div style={{ fontSize: 10, color: "rgba(244,239,231,0.35)", textAlign: "center", marginTop: 2 }}>{item.sub}</div>
             </div>
-            {i !== ABOUT_TIMELINE.length - 1 && (
+            {i < arr.length - 1 ? (
               <div style={{
-                flex: 1, height: 1, marginTop: 12,
+                flex: 1,
+                height: 1,
                 background: "linear-gradient(90deg, rgba(217,138,76,0.4), rgba(217,138,76,0.1))",
+                marginTop: 29,
+              }} />
+            ) : (
+              <div style={{
+                flex: "0 0 260px",
+                height: 1,
+                background: "rgba(217,138,76,0.35)",
+                marginTop: 29,
               }} />
             )}
-          </div>
+          </Fragment>
         ))}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-        <p style={{
-          borderLeft: "3px solid #D98A4C", paddingLeft: 20,
-          fontFamily: "'Fraunces', serif", fontStyle: "italic",
-          fontSize: 17, color: "rgba(244,239,231,0.82)",
-          lineHeight: 1.8, marginTop: 28, marginBottom: 28,
-        }}>
-          That same instinct shows up everywhere. When water went out and I only had jugs, I didn't just deal with it. I built a gravity-fed system out of a metal straw and a large bottle so I'd have controlled running water. That's just how my brain works. If there's a problem, I'm already thinking about the system that solves it.
-        </p>
-        <p style={{ ...aboutParagraphStyle, color: "rgba(244,239,231,0.58)" }}>
-          I'm a final-year medical student at the University of the West Indies, and somewhere between studying and the chaos of COVID, I discovered I could build software. December 2025 was when it clicked. I built a scoring app for School's Challenge Quiz because the problem was right in front of me and no good solution existed. Watching it work, watching people use it, watching it actually sell, that opened something. I saw the intersection of everything I loved: technology, problem-solving, and now healthcare.
-        </p>
-        <p style={{ ...aboutParagraphStyle, color: "rgba(244,239,231,0.58)" }}>
-          Since then I've shipped a Flutter car wash booking app for a paying client, built an interactive admin dashboard, created medical tools including a drug learning platform, and kept building, most recently a Three.js model of SA node electrical activity. I work with AI as a core part of my development process, not as a shortcut, but as the tool that makes it possible for someone who thinks in systems rather than syntax to build things that actually work.
-        </p>
-        <p style={{ ...aboutParagraphStyle, color: "rgba(244,239,231,0.58)" }}>
-          The direction I'm heading is clear. AI and healthcare are going to collide in ways that most people in tech don't fully understand yet, because they've never been in a ward. I have. That combination is where I want to be.
-        </p>
-
-        {/* Stat row */}
-        <div style={{
-          display: "flex", gap: 0, margin: "32px 0", padding: "24px 0",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
-        }}>
-          {ABOUT_STATS.map((s, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "stretch" }}>
-              <div style={{ flex: 1, textAlign: "center", padding: "0 12px" }}>
-                <div style={{
-                  fontFamily: "'Fraunces', serif", fontStyle: "italic",
-                  fontSize: 42, color: "#D98A4C", lineHeight: 1,
-                }}>
-                  {s.number}
-                </div>
-                <div style={{
-                  fontFamily: "'Inter', sans-serif", fontSize: 11,
-                  color: "rgba(244,239,231,0.45)", textTransform: "uppercase",
-                  letterSpacing: "0.08em", marginTop: 10,
-                }}>
-                  {s.line1}
-                </div>
-                <div style={{
-                  fontFamily: "'Inter', sans-serif", fontSize: s.italic ? 10 : 11,
-                  color: s.italic ? "rgba(244,239,231,0.3)" : "rgba(244,239,231,0.45)",
-                  fontStyle: s.italic ? "italic" : "normal",
-                  textTransform: s.italic ? "none" : "uppercase",
-                  letterSpacing: s.italic ? "normal" : "0.08em",
-                }}>
-                  {s.line2}
-                </div>
-              </div>
-              {i !== ABOUT_STATS.length - 1 && (
-                <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Skill tags */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "28px 0" }}>
-          {ABOUT_SKILLS.map((skill, i) => (
-            <span
-              key={i}
-              className="about-skill-pill"
-              style={{ "--rotate": skill.rotate }}
-            >
-              {skill.label}
-            </span>
-          ))}
-        </div>
-
-        <div>
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginBottom: 20 }} />
-          <p style={{
-            margin: 0,
-            fontFamily: "'Inter', sans-serif", fontWeight: 300, fontStyle: "italic",
-            fontSize: 14, color: "rgba(244,239,231,0.42)", lineHeight: 1.8,
+      {/* SECTION 3 — CONTENT */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 280px",
+        gap: 0,
+        padding: "0 0 0 56px",
+      }}>
+        {/* LEFT — text content */}
+        <div style={{ padding: "52px 48px 52px 0", borderRight: "1px solid rgba(255,255,255,0.05)" }}>
+          {/* Water jug blockquote */}
+          <div style={{
+            borderLeft: "3px solid #D98A4C",
+            paddingLeft: 20,
+            margin: "0 0 28px",
+            borderRadius: 0,
           }}>
-            Outside of building: cooking, badminton, rewatching ATLA for what is genuinely an{" "}
-            <span style={{
-              position: "relative", display: "inline",
-              borderBottom: "2px solid rgba(217,138,76,0.6)",
-              paddingBottom: 1,
-              color: "rgba(244,239,231,0.55)",
+            <p style={{
+              fontFamily: "'Fraunces', serif",
+              fontStyle: "italic",
+              fontSize: 17,
+              color: "rgba(244,239,231,0.82)",
+              lineHeight: 1.7,
+              margin: 0,
+              fontWeight: 400,
             }}>
-              uncountable number of times
+              That same instinct shows up everywhere. When water went out and I only had jugs, I didn't just deal with it. I built a gravity-fed system out of a metal straw and a large bottle so I'd have controlled running water. That's just how my brain works. If there's a problem, I'm already thinking about the system that solves it.
+            </p>
+          </div>
+
+          <p style={{
+            fontSize: 17,
+            lineHeight: 1.78,
+            color: "rgba(244,239,231,0.72)",
+            fontWeight: 300,
+            margin: "0 0 22px",
+            fontFamily: "'Inter', sans-serif",
+          }}>
+            From a young age, technology was the thing I couldn't stay away from. Not in the "future programmer" sense, I wasn't writing code in my bedroom. I was the person who knew the tricks nobody else knew, the one people called when something needed fixing, formatting, or figuring out. I rooted phones when that was still a thing. I spent hours on computers just because computers were interesting.
+          </p>
+
+          <p style={bodyStyle}>
+            I'm a final-year medical student at the University of the West Indies, and somewhere between studying and the chaos of COVID, I discovered I could build software. December 2025 was when it clicked. I built a scoring app for School's Challenge Quiz because the problem was right in front of me and no good solution existed. Watching it work, watching people use it, watching it actually sell, that opened something. I saw the intersection of everything I loved: technology, problem-solving, and now healthcare.
+          </p>
+          <p style={bodyStyle}>
+            Since then I've shipped a Flutter car wash booking app for a paying client, built an interactive admin dashboard, created medical tools including a drug learning platform, and kept building, most recently a Three.js model of SA node electrical activity. I work with AI as a core part of my development process, not as a shortcut, but as the tool that makes it possible for someone who thinks in systems rather than syntax to build things that actually work.
+          </p>
+          <p style={bodyStyle}>
+            The direction I'm heading is clear. AI and healthcare are going to collide in ways that most people in tech don't fully understand yet, because they've never been in a ward. I have. That combination is where I want to be.
+          </p>
+
+          {/* Stat row */}
+          <div style={{
+            display: "flex",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+            padding: "24px 0",
+            margin: "32px 0",
+          }}>
+            {[
+              { num: "5+", label: "Apps Shipped", sub: null },
+              { num: "2", label: "Paying Clients", sub: null },
+              { num: "1", label: "Degree", sub: "(almost)" },
+            ].map((stat, i) => (
+              <Fragment key={i}>
+                {i > 0 && <div style={{ width: 1, background: "rgba(255,255,255,0.07)", margin: "0 8px" }} />}
+                <div style={{ flex: 1, textAlign: "center" }}>
+                  <div style={{
+                    fontFamily: "'Fraunces', serif",
+                    fontStyle: "italic",
+                    fontSize: 40,
+                    color: "#D98A4C",
+                    lineHeight: 1,
+                    marginBottom: 6,
+                  }}>{stat.num}</div>
+                  <div style={{ fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(244,239,231,0.4)" }}>
+                    {stat.label}
+                  </div>
+                  {stat.sub && <div style={{ fontSize: 10, fontStyle: "italic", color: "rgba(244,239,231,0.25)" }}>{stat.sub}</div>}
+                </div>
+              </Fragment>
+            ))}
+          </div>
+
+          {/* Skill tags */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "28px 0" }}>
+            {[
+              { label: "Flutter", rotate: "-1.5deg" },
+              { label: "Firebase", rotate: "1deg" },
+              { label: "React", rotate: "-0.5deg" },
+              { label: "Electron", rotate: "1.5deg" },
+              { label: "Three.js", rotate: "-1deg" },
+              { label: "Next.js", rotate: "0.8deg" },
+              { label: "Dart", rotate: "-1.2deg" },
+              { label: "Vite", rotate: "1.3deg" },
+              { label: "& others", rotate: "-0.8deg" },
+            ].map((skill) => (
+              <span key={skill.label} style={{
+                display: "inline-block",
+                padding: "5px 12px",
+                borderRadius: 20,
+                border: "1px solid rgba(217,138,76,0.25)",
+                color: "rgba(244,239,231,0.55)",
+                fontSize: 12,
+                fontFamily: "'Inter', sans-serif",
+                transform: `rotate(${skill.rotate})`,
+                background: "rgba(217,138,76,0.04)",
+                transition: "border-color 0.2s ease, color 0.2s ease",
+                cursor: "default",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(217,138,76,0.6)"; e.currentTarget.style.color = "#F4EFE7"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(217,138,76,0.25)"; e.currentTarget.style.color = "rgba(244,239,231,0.55)"; }}
+              >
+                {skill.label}
+              </span>
+            ))}
+          </div>
+
+          <p style={{
+            fontSize: 14,
+            fontStyle: "italic",
+            color: "rgba(244,239,231,0.38)",
+            lineHeight: 1.7,
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            paddingTop: 20,
+            marginTop: 8,
+            fontFamily: "'Inter', sans-serif",
+          }}>
+            Outside of building: cooking, badminton, rewatching ATLA for what is genuinely{" "}
+            <span style={{
+              borderBottom: "1.5px solid rgba(217,138,76,0.55)",
+              paddingBottom: 1,
+              color: "rgba(244,239,231,0.48)",
+            }}>
+              an uncountable number of times
             </span>
             , and whatever game has my attention this week. I also really want an Arduino kit. That one's coming.
           </p>
+        </div>
+
+        {/* RIGHT — decorative sidebar */}
+        <div style={{ padding: "52px 32px", display: "flex", flexDirection: "column", gap: 40 }}>
+          <div style={{
+            writingMode: "vertical-rl",
+            transform: "rotate(180deg)",
+            fontSize: 10,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "rgba(244,239,231,0.15)",
+            fontFamily: "'Inter', sans-serif",
+            alignSelf: "flex-end",
+          }}>
+            Medical Student · Software Developer
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0, alignSelf: "center" }}>
+            <div style={{ width: 1, height: 80, background: "linear-gradient(to bottom, transparent, rgba(217,138,76,0.4))" }} />
+            <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#D98A4C", opacity: 0.6 }} />
+            <div style={{ width: 1, height: 80, background: "linear-gradient(to bottom, rgba(217,138,76,0.4), transparent)" }} />
+          </div>
+
+          <div style={{
+            fontFamily: "'Fraunces', serif",
+            fontStyle: "italic",
+            fontSize: 120,
+            fontWeight: 400,
+            color: "rgba(217,138,76,0.06)",
+            lineHeight: 1,
+            alignSelf: "center",
+            userSelect: "none",
+          }}>
+            PK
+          </div>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 10,
+            opacity: 0.1,
+            alignSelf: "center",
+          }}>
+            {Array.from({ length: 16 }).map((_, i) => (
+              <div key={i} style={{ width: 3, height: 3, borderRadius: "50%", background: "#D98A4C" }} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -4690,10 +4861,10 @@ const SERVICES = [
 
 function ServicesView({ onNavigate }) {
   return (
-    <div style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+    <div className="svc-page" style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
+        <h2 className="svc-title" style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
           Services
         </h2>
       </div>
@@ -4701,7 +4872,7 @@ function ServicesView({ onNavigate }) {
         What I can build for you.
       </p>
 
-      <div style={{
+      <div className="svc-grid" style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
         gap: 14,
@@ -4709,6 +4880,7 @@ function ServicesView({ onNavigate }) {
         {SERVICES.map(({ Icon, title, tag, description, highlight }) => (
           <div
             key={title}
+            className="svc-card"
             style={{
               padding: "22px 22px 24px",
               borderRadius: 12,
@@ -4748,7 +4920,7 @@ function ServicesView({ onNavigate }) {
       </div>
 
       {/* CTA */}
-      <div style={{
+      <div className="svc-cta" style={{
         marginTop: 36, marginBottom: 24,
         padding: "26px 30px", borderRadius: 14,
         background: "rgba(255,255,255,0.035)",
@@ -4756,7 +4928,7 @@ function ServicesView({ onNavigate }) {
         display: "flex", alignItems: "center", justifyContent: "space-between",
         gap: 20, flexWrap: "wrap",
       }}>
-        <div>
+        <div className="svc-cta-text">
           <h3 style={{
             fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
             fontSize: 20, color: TEXT, margin: "0 0 4px",
