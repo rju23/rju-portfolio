@@ -4355,21 +4355,21 @@ function AboutView() {
   };
 
   return (
-    <div style={{
+    <div className="about-page" style={{
       width: "100%",
       minHeight: "100%",
       overflowX: "hidden",
       boxSizing: "border-box",
     }}>
       {/* SECTION 1 — HERO */}
-      <div style={{
+      <div className="about-hero" style={{
         display: "grid",
         gridTemplateColumns: "40% 60%",
         minHeight: "70vh",
         paddingLeft: 56,
       }}>
         {/* LEFT — Photo */}
-        <div style={{ position: "relative", overflow: "hidden" }}>
+        <div className="about-photo" style={{ position: "relative", overflow: "hidden" }}>
           <img
             src="/images/prakash.jpg"
             alt="Prakash Sejwani"
@@ -4390,14 +4390,14 @@ function AboutView() {
         </div>
 
         {/* RIGHT — Headline */}
-        <div style={{
+        <div className="about-hero-right" style={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           padding: "60px 48px",
           position: "relative",
         }}>
-          <div style={{
+          <div className="about-dotgrid-top" style={{
             position: "absolute", top: 24, right: 24,
             display: "grid",
             gridTemplateColumns: "repeat(5, 1fr)",
@@ -4409,7 +4409,7 @@ function AboutView() {
             ))}
           </div>
 
-          <div style={{
+          <div className="about-name-tag" style={{
             fontSize: 11,
             fontWeight: 600,
             letterSpacing: "0.18em",
@@ -4421,7 +4421,7 @@ function AboutView() {
             Prakash Sejwani
           </div>
 
-          <h1 style={{
+          <h1 className="about-headline" style={{
             fontFamily: "'Fraunces', serif",
             fontStyle: "italic",
             fontWeight: 400,
@@ -4452,9 +4452,9 @@ function AboutView() {
             </span>
           </h1>
 
-          <div style={{ width: 48, height: 2, background: "#D98A4C", marginBottom: 24 }} />
+          <div className="about-rule" style={{ width: 48, height: 2, background: "#D98A4C", marginBottom: 24 }} />
 
-          <p style={{
+          <p className="about-tagline" style={{
             fontSize: 15,
             lineHeight: 1.7,
             color: "rgba(244,239,231,0.52)",
@@ -4466,7 +4466,7 @@ function AboutView() {
             Final-year medical student. Software developer. Building at the intersection of both.
           </p>
 
-          <div style={{
+          <div className="about-scroll-indicator" style={{
             position: "absolute",
             bottom: 32, left: 48,
             display: "flex", alignItems: "center", gap: 10,
@@ -4481,7 +4481,7 @@ function AboutView() {
       </div>
 
       {/* SECTION 2 — TIMELINE */}
-      <div style={{
+      <div className="about-timeline" style={{
         borderTop: "1px solid rgba(217,138,76,0.2)",
         borderBottom: "1px solid rgba(217,138,76,0.2)",
         padding: "28px 0 28px 56px",
@@ -4535,16 +4535,16 @@ function AboutView() {
       </div>
 
       {/* SECTION 3 — CONTENT */}
-      <div style={{
+      <div className="about-content-grid" style={{
         display: "grid",
         gridTemplateColumns: "1fr 280px",
         gap: 0,
         padding: "0 0 0 56px",
       }}>
         {/* LEFT — text content */}
-        <div style={{ padding: "52px 48px 52px 0", borderRight: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="about-content-left" style={{ padding: "52px 48px 52px 0", borderRight: "1px solid rgba(255,255,255,0.05)" }}>
           {/* Water jug blockquote */}
-          <div style={{
+          <div className="about-quote" style={{
             borderLeft: "3px solid #D98A4C",
             paddingLeft: 20,
             margin: "0 0 28px",
@@ -4585,7 +4585,7 @@ function AboutView() {
           </p>
 
           {/* Stat row */}
-          <div style={{
+          <div className="about-stats" style={{
             display: "flex",
             borderTop: "1px solid rgba(255,255,255,0.06)",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
@@ -4600,7 +4600,7 @@ function AboutView() {
               <Fragment key={i}>
                 {i > 0 && <div style={{ width: 1, background: "rgba(255,255,255,0.07)", margin: "0 8px" }} />}
                 <div style={{ flex: 1, textAlign: "center" }}>
-                  <div style={{
+                  <div className="about-stat-num" style={{
                     fontFamily: "'Fraunces', serif",
                     fontStyle: "italic",
                     fontSize: 40,
@@ -4674,7 +4674,7 @@ function AboutView() {
         </div>
 
         {/* RIGHT — decorative sidebar */}
-        <div style={{ padding: "52px 32px", display: "flex", flexDirection: "column", gap: 40 }}>
+        <div className="about-content-right" style={{ padding: "52px 32px", display: "flex", flexDirection: "column", gap: 40 }}>
           <div style={{
             writingMode: "vertical-rl",
             transform: "rotate(180deg)",
