@@ -189,7 +189,7 @@ export default function App() {
       }} />
 
       {/* ── Mobile hamburger button ── */}
-      {!splash && (
+      {!splash && !activeProjectId && (
         <button
           className="pk1-hamburger-btn"
           onClick={() => setMobileNavOpen(true)}

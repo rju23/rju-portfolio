@@ -272,6 +272,11 @@ body {
   animation: rvPulseTravel 2.6s ease-in-out infinite;
 }
 
+.rv-app-section {
+  min-width: 0;
+  width: 100%;
+}
+
 @media (max-width: 700px) {
   .rv-step-line { display: none; }
   .rv-two-col { grid-template-columns: 1fr !important; }
