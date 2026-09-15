@@ -280,14 +280,14 @@ export default function App() {
           <TopBar />
         </div>
 
-        <div className={`pk1-scroll ${section === "chat" ? "pk1-scroll-chat" : ""}`} style={{
+        <div className={`pk1-scroll pk1-scroll-chat`} style={{
           position: "absolute",
           top: section === "chat" ? 12 : 84,
           left: 0, right: 12, bottom: 12,
           display: "flex", flexDirection: "column",
           alignItems: "stretch",
           justifyContent: section === "chat" ? "center" : "flex-start",
-          paddingBottom: section === "chat" ? 90 : 40,
+          paddingBottom: section === "chat" ? 90 : 190,
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
           {section === "chat"        && <HeroText />}
@@ -298,11 +298,9 @@ export default function App() {
           {section === "comingsoon" && <ComingSoonView />}
         </div>
 
-        {section === "chat" && (
-          <div className="pk1-inputbar-outer" style={{ position: "absolute", bottom: -10, left: 0, right: 12, zIndex: 4 }}>
-            <InputBar onNavigate={setSection} />
-          </div>
-        )}
+        <div className="pk1-inputbar-outer" style={{ position: "absolute", bottom: -10, left: 0, right: 12, zIndex: 4 }}>
+          <InputBar onNavigate={setSection} />
+        </div>
       </main>
 
     </div>
