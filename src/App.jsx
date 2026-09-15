@@ -2368,8 +2368,10 @@ function ReviveProject({ onNextProject }) {
         </section>
 
         {/* THE APP */}
-        <section style={{ padding: "70px 24px", maxWidth: 1100, margin: "0 auto" }}>
-          <RvSectionHeading title="The App" subtitle="Four screens. Everything a customer needs." />
+        <section className="rv-app-section" style={{ padding: "70px 24px", maxWidth: 1100, margin: "0 auto" }}>
+          <div className="rv-app-heading">
+            <RvSectionHeading title="The App" subtitle="Four screens. Everything a customer needs." />
+          </div>
           <div className="rv-screens-row" style={{
             display: "flex", flexWrap: "nowrap", gap: 28, overflowX: "auto",
           }}>

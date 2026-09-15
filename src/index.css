@@ -281,10 +281,22 @@ body {
   .rv-sync-connector { display: none !important; }
   .rv-next-project { flex-wrap: wrap !important; gap: 6px !important; font-size: 12.5px !important; }
 
+  .rv-app-heading h2 {
+    font-size: 28px !important;
+    line-height: 1.15 !important;
+  }
+
+  .rv-app-heading p {
+    font-size: 13px !important;
+    padding: 0 8px !important;
+  }
+
   .rv-screens-row {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
+    flex-wrap: nowrap !important;
+    gap: 16px !important;
     margin: 0 -24px !important;
     padding: 0 24px !important;
   }
@@ -294,8 +306,8 @@ body {
   }
 
   .rv-screen-item {
-    flex: 0 0 130px !important;
-    min-width: 130px !important;
+    flex: 0 0 240px !important;
+    min-width: 240px !important;
   }
 }
 
