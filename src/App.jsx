@@ -280,7 +280,7 @@ export default function App() {
           <TopBar />
         </div>
 
-        <div className={`pk1-scroll ${section === "about" ? "" : "pk1-scroll-chat"}`} style={{
+        <div className={`pk1-scroll ${section === "about" ? "pk1-scroll-about" : "pk1-scroll-chat"}`} style={{
           position: "absolute",
           top: section === "chat" ? 12 : 84,
           left: 0, right: 12, bottom: 12,
