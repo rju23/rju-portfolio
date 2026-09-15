@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, Fragment } from "react";
 import { createPortal } from "react-dom";
 import emailjs from "@emailjs/browser";
-import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive, Trophy, Timer, RotateCcw, Image, Music } from "lucide-react";
+import { MessageSquare, Code2, User, Grid3x3, Mail, ChevronDown, ChevronRight, Paperclip, ArrowUp, Sparkles, Target, FlaskConical, Gamepad2, ScrollText, Smartphone, Globe, Monitor, Stethoscope, IdCard, Wrench, ArrowRight, MapPin, Clock, Link2, Users, Check, AlertCircle, ShoppingCart, Pause, RefreshCw, Zap, WifiOff, Tag, Megaphone, Archive, Trophy, Timer, RotateCcw, Image, Music, Menu, X } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 const BORDER   = "rgba(255,255,255,0.07)";
 const TEXT     = "#F4EFE7";
@@ -76,9 +76,11 @@ export default function App() {
     }
   );
   const [splash, setSplash]   = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const navigateTo = (id) => {
     setSection(id);
+    setMobileNavOpen(false);
     const path = id === "chat" ? "/" : `/${id}`;
     if (window.location.pathname !== path) {
       window.history.pushState({ pk1Section: id }, "", path);
@@ -156,8 +158,33 @@ export default function App() {
         `,
       }} />
 
+      {/* ── Mobile hamburger button ── */}
+      <button
+        className="pk1-hamburger-btn"
+        onClick={() => setMobileNavOpen(true)}
+        aria-label="Open navigation menu"
+        style={{
+          display: "none",
+          position: "absolute", top: 22, left: 22, zIndex: 30,
+          width: 38, height: 38, borderRadius: 10,
+          alignItems: "center", justifyContent: "center",
+          background: "rgba(20,18,16,0.55)",
+          backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
+          border: `1px solid ${BORDER}`,
+          color: TEXT, cursor: "pointer",
+        }}
+      >
+        <Menu size={18} strokeWidth={2} />
+      </button>
+
+      {/* ── Mobile sidebar backdrop ── */}
+      <div
+        className={`pk1-sidebar-backdrop ${mobileNavOpen ? "pk1-sidebar-backdrop-open" : ""}`}
+        onClick={() => setMobileNavOpen(false)}
+      />
+
       {/* ── Sidebar ── */}
-      <aside style={{
+      <aside className={`pk1-sidebar ${mobileNavOpen ? "pk1-sidebar-open" : ""}`} style={{
          position: "relative", zIndex: 10,
          width: 190, minWidth: 190,
          display: "flex", flexDirection: "column",
@@ -169,6 +196,22 @@ export default function App() {
          borderRadius: 18,
          overflow: "hidden",
       }}>
+        <button
+          className="pk1-sidebar-close-btn"
+          onClick={() => setMobileNavOpen(false)}
+          aria-label="Close navigation menu"
+          style={{
+            display: "none",
+            position: "absolute", top: 14, right: 14, zIndex: 5,
+            width: 30, height: 30, borderRadius: 8,
+            alignItems: "center", justifyContent: "center",
+            background: "rgba(255,255,255,0.06)",
+            border: `1px solid ${BORDER}`,
+            color: TEXT, cursor: "pointer",
+          }}
+        >
+          <X size={16} strokeWidth={2} />
+        </button>
 
         <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", display: "flex", flexDirection: "column", paddingBottom: 80 }}>
           {/* Brand */}

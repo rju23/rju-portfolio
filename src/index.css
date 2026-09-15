@@ -291,3 +291,45 @@ body {
   .svc-title { font-size: 22px !important; }
   .svc-card { padding: 16px 16px 18px !important; }
 }
+
+/* Mobile hamburger sidebar */
+.pk1-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+@media (max-width: 768px) {
+  .pk1-hamburger-btn {
+    display: flex !important;
+  }
+
+  .pk1-sidebar {
+    position: fixed !important;
+    top: 12px;
+    bottom: 12px;
+    left: -260px;
+    width: 230px !important;
+    min-width: 230px !important;
+    z-index: 40;
+    transition: left 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .pk1-sidebar-open {
+    left: 12px;
+  }
+
+  .pk1-sidebar-close-btn {
+    display: flex !important;
+  }
+
+  .pk1-sidebar-backdrop-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
