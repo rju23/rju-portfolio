@@ -82,7 +82,13 @@ export default function App() {
     const parts = path.split("/");
     return parts[0] === "projects" && parts[1] ? parts[1] : null;
   });
-  const [splash, setSplash]   = useState(true);
+  const [splash, setSplash]   = useState(() => {
+    try {
+      return !sessionStorage.getItem("pk1SplashShown");
+    } catch {
+      return true;
+    }
+  });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const navigateTo = (id) => {
@@ -152,7 +158,10 @@ export default function App() {
 
       {/* ── Background ── */}
       <Lightbox />
-      {splash && <SplashScreen onDone={() => setSplash(false)} />}
+      {splash && <SplashScreen onDone={() => {
+        setSplash(false);
+        try { sessionStorage.setItem("pk1SplashShown", "1"); } catch {}
+      }} />}
       <img
         id="parallax-bg"
         src="/bg.png"
@@ -598,12 +607,12 @@ function InputBar({ onNavigate }) {
                 transition: "box-shadow 0.4s ease, border-color 0.4s ease",
               }}
             >
-              {/* Row 1 — text input only */}
+              {/* Row 1 - text input only */}
               <div style={{ display: "flex", width: "100%" }}>
                 {textInputEl}
               </div>
 
-              {/* Row 2 — plus icon (left) · attach + send (right) */}
+              {/* Row 2 - plus icon (left) · attach + send (right) */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <button
                   aria-label="Add"
@@ -1106,7 +1115,7 @@ function ComingSoonView() {
 
 const PROJECTS = [
   { id: "876-revive",          title: "876 Revive & Drive",         tag: "Client Work",       description: "A Flutter car wash booking app with a full admin dashboard for managing bookings in real time.", platform: "Mobile" },
-  { id: "scq-scoreboard",      title: "SCQ Scoreboard",             tag: "Personal · Selling", description: "A PC/Laptop desktop scoring app built for School's Challenge Quiz competitions. My first shipped product.", platform: "PC/Laptop" },
+  { id: "scq-scoreboard",      title: "SCQ Scoreboard",             tag: "Personal · Sold & Selling", description: "A PC/Laptop desktop scoring app built for School's Challenge Quiz competitions. My first shipped product.", platform: "PC/Laptop" },
   { id: "uno-calculator",      title: "Uno Calculator",             tag: "Personal",           description: "A Flutter app that tracks and calculates Uno scores across multiple players and rounds.", platform: "Mobile" },
   { id: "client-management",   title: "Client Management System",   tag: "Personal Tool",      description: "A system I built for myself to manage clients, projects, contracts and follow-ups.", platform: "Web" },
   { id: "pk1-portfolio",       title: "PK-1 Portfolio",             tag: "Personal",           description: "This portfolio - an AI platform aesthetic built in React/Vite with a prompt-driven navigation system.", platform: "Web" },
@@ -1438,8 +1447,10 @@ function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
                         position: "absolute",
                         top: f.top, left: f.left,
                         width: f.size, height: f.size,
-                        border: "1px solid #D98A4C",
-                        opacity: 0.12,
+                        border: "1.5px solid #FFB870",
+                        background: "rgba(255, 184, 112, 0.10)",
+                        boxShadow: "0 0 5px rgba(255, 184, 112, 0.3)",
+                        opacity: 0.32,
                         "--r": `${f.rotate}deg`,
                         animationDelay: f.delay,
                       }}
@@ -2039,9 +2050,10 @@ function RvReflection({ src, aspectRatio = "9 / 19", reflectionRatio = "9 / 7" }
   );
 }
 
-function RvImagePlaceholder({ src, alt, style, label, fit = "cover" }) {
+function RvImagePlaceholder({ src, alt, style, label, fit = "cover", className }) {
   return (
     <div
+      className={className}
       style={{
         background: "rgba(0,122,47,0.06)",
         border: `1px solid ${RV.border}`,
@@ -2377,8 +2389,9 @@ function ReviveProject({ onNextProject }) {
           }}>
             {RV_SCREENS.map((s) => (
               <div key={s.name} className="rv-screen-item" style={{ display: "flex", flexDirection: "column", gap: 12, flex: "1 1 0", minWidth: 160 }}>
-                <div>
+                <div className="rv-screen-thumb-wrap">
                   <RvImagePlaceholder
+                    className="rv-screen-thumb"
                     src={`/images/${s.file}`}
                     alt={s.name}
                     style={{ aspectRatio: "9 / 19", width: "100%", background: RV.bg }}
@@ -4451,14 +4464,14 @@ function AboutView() {
       overflowX: "hidden",
       boxSizing: "border-box",
     }}>
-      {/* SECTION 1 — HERO */}
+      {/* SECTION 1 - HERO */}
       <div className="about-hero" style={{
         display: "grid",
         gridTemplateColumns: "40% 60%",
         minHeight: "70vh",
         paddingLeft: 56,
       }}>
-        {/* LEFT — Photo */}
+        {/* LEFT - Photo */}
         <div className="about-photo" style={{ position: "relative", overflow: "hidden" }}>
           <img
             src="/images/prakash.jpg"
@@ -4479,7 +4492,7 @@ function AboutView() {
           }} />
         </div>
 
-        {/* RIGHT — Headline */}
+        {/* RIGHT - Headline */}
         <div className="about-hero-right" style={{
           display: "flex",
           flexDirection: "column",
@@ -4571,7 +4584,7 @@ function AboutView() {
         </div>
       </div>
 
-      {/* SECTION 2 — TIMELINE */}
+      {/* SECTION 2 - TIMELINE */}
       <div className="about-timeline" style={{
         borderTop: "1px solid rgba(217,138,76,0.2)",
         borderBottom: "1px solid rgba(217,138,76,0.2)",
@@ -4625,14 +4638,14 @@ function AboutView() {
         ))}
       </div>
 
-      {/* SECTION 3 — CONTENT */}
+      {/* SECTION 3 - CONTENT */}
       <div className="about-content-grid" style={{
         display: "grid",
         gridTemplateColumns: "1fr 280px",
         gap: 0,
         padding: "0 0 0 56px",
       }}>
-        {/* LEFT — text content */}
+        {/* LEFT - text content */}
         <div className="about-content-left" style={{ padding: "52px 48px 52px 0", borderRight: "1px solid rgba(255,255,255,0.05)" }}>
           {/* Water jug blockquote */}
           <div className="about-quote" style={{
@@ -4764,7 +4777,7 @@ function AboutView() {
           </p>
         </div>
 
-        {/* RIGHT — decorative sidebar */}
+        {/* RIGHT - decorative sidebar */}
         <div className="about-content-right" style={{ padding: "52px 32px", display: "flex", flexDirection: "column", gap: 40 }}>
           <div style={{
             writingMode: "vertical-rl",

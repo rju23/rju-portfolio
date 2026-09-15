@@ -306,8 +306,12 @@ body {
   }
 
   .rv-screen-item {
-    flex: 0 0 240px !important;
-    min-width: 240px !important;
+    flex: 0 0 190px !important;
+    min-width: 190px !important;
+  }
+
+  .rv-screen-thumb {
+    aspect-ratio: 9 / 14 !important;
   }
 }
 
