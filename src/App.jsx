@@ -159,23 +159,22 @@ export default function App() {
       }} />
 
       {/* ── Mobile hamburger button ── */}
-      <button
-        className="pk1-hamburger-btn"
-        onClick={() => setMobileNavOpen(true)}
-        aria-label="Open navigation menu"
-        style={{
-          display: "none",
-          position: "absolute", top: 22, left: 22, zIndex: 30,
-          width: 38, height: 38, borderRadius: 10,
-          alignItems: "center", justifyContent: "center",
-          background: "rgba(20,18,16,0.55)",
-          backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
-          border: `1px solid ${BORDER}`,
-          color: TEXT, cursor: "pointer",
-        }}
-      >
-        <Menu size={18} strokeWidth={2} />
-      </button>
+      {!splash && (
+        <button
+          className="pk1-hamburger-btn"
+          onClick={() => setMobileNavOpen(true)}
+          aria-label="Open navigation menu"
+          style={{
+            display: "none",
+            position: "absolute", top: 22, left: 22, zIndex: 30,
+            alignItems: "center", justifyContent: "center",
+            background: "none", border: "none",
+            padding: 0, color: TEXT, cursor: "pointer",
+          }}
+        >
+          <Menu size={22} strokeWidth={2} />
+        </button>
+      )}
 
       {/* ── Mobile sidebar backdrop ── */}
       <div
