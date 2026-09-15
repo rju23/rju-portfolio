@@ -690,6 +690,75 @@ function HeroText() {
     </span>
   );
 
+  const headlineStyle = {
+    fontFamily: "'Fraunces', serif",
+    fontStyle: "italic", fontWeight: 400,
+    fontSize: 68, lineHeight: 1.04,
+    letterSpacing: "-0.025em",
+    // The background box is what background-clip:text paints into, so it
+    // has to cover the descenders. Negative margin keeps layout unchanged.
+    padding: "0.08em 0 0.22em",
+    margin: "-0.08em 0 calc(28px - 0.22em)",
+    overflow: "visible",
+    backgroundImage: "linear-gradient(105deg, #FFFFFF 0%, #FFFFFF 50%, #F9F2E3 57%, #F0DFBE 70%, #E8C58A 82%, #E0A85C 91%, #EFD9AF 98%, #F4EFE7 100%)",
+    WebkitBackgroundClip: "text", backgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    color: "transparent",
+    display: "inline-block", width: "fit-content",
+  };
+
+  if (isMobile) {
+    return (
+      <div className="hero-outer" style={{
+        flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "0 60px", position: "relative", zIndex: 10, marginTop: "0px",
+      }}>
+        <div className="hero-welcome-top" style={{
+          position: "absolute", top: 18, left: 0, right: 0,
+          textAlign: "center",
+          fontSize: 11, color: "rgba(244,239,231,0.5)",
+          letterSpacing: "0.06em", textTransform: "uppercase",
+          fontFamily: "'Inter', sans-serif",
+        }}>
+          Welcome to prakashsejwani.dev/chat
+        </div>
+
+        <div className="hero-inner" style={{ maxWidth: 620, textAlign: "center" }}>
+
+          <img
+            src="/favicon.svg"
+            alt=""
+            style={{ width: 40, height: 40, margin: "0 auto 16px", display: "block" }}
+          />
+
+          {/* Main headline with light effect */}
+          <h1 className="hero-headline" style={headlineStyle}>
+            Hey, I'm Prakash.
+          </h1>
+
+          {/* PK-1 subtitle */}
+          <p className="hero-subtitle" style={{
+            fontSize: 14, color: "rgba(244,239,231,0.45)",
+            fontFamily: "'Inter', sans-serif", fontWeight: 300,
+            marginBottom: 10, letterSpacing: "0.01em",
+          }}>
+            Meet PK-1 - Prakash's personal AI portfolio assistant.
+          </p>
+
+          <p className="hero-footer" style={{
+            fontSize: 15.5, lineHeight: 1.75,
+            color: "rgba(244,239,231,0.45)",
+            fontFamily: "'Inter', sans-serif", fontWeight: 300,
+            maxWidth: 520, margin: "0 auto",
+          }}>
+            Ask it what it knows about my work, or use the side menu to explore directly.
+          </p>
+
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="hero-outer" style={{
       flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
@@ -718,55 +787,23 @@ function HeroText() {
         </p>
 
         {/* Main headline with light effect */}
-        <h1 className="hero-headline" style={{
-          fontFamily: "'Fraunces', serif",
-          fontStyle: "italic", fontWeight: 400,
-          fontSize: 68, lineHeight: 1.04,
-          letterSpacing: "-0.025em",
-          // The background box is what background-clip:text paints into, so it
-          // has to cover the descenders. Negative margin keeps layout unchanged.
-          padding: "0.08em 0 0.22em",
-          margin: "-0.08em 0 calc(28px - 0.22em)",
-          overflow: "visible",
-          backgroundImage: "linear-gradient(105deg, #FFFFFF 0%, #FFFFFF 50%, #F9F2E3 57%, #F0DFBE 70%, #E8C58A 82%, #E0A85C 91%, #EFD9AF 98%, #F4EFE7 100%)",
-          WebkitBackgroundClip: "text", backgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          color: "transparent",
-          display: "inline-block", width: "fit-content",
-        }}>
+        <h1 className="hero-headline" style={headlineStyle}>
           Hey, I'm Prakash.
         </h1>
 
         {/* Bio */}
-        {isMobile ? (
-          <>
-            <p className="hero-bio" style={{
-              fontSize: 15.5, lineHeight: 2,
-              color: "rgba(244,239,231,0.58)",
-              fontFamily: "'Inter', sans-serif", fontWeight: 300,
-              marginBottom: 10, maxWidth: 520,
-            }}>
-              I'm a final-year medical student and software developer - I build apps, websites and other useful tools with clean interfaces to solve real problems.
-            </p>
-            <div className="hero-chip-row" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
-              {medChip}
-              {devChip}
-            </div>
-          </>
-        ) : (
-          <p className="hero-bio" style={{
-            fontSize: 15.5, lineHeight: 2,
-            color: "rgba(244,239,231,0.58)",
-            fontFamily: "'Inter', sans-serif", fontWeight: 300,
-            marginBottom: 10, maxWidth: 520,
-          }}>
-            I'm a{" "}
-            {medChip}
-            {" "}and{" "}
-            {devChip}
-            {" "}- I build apps, websites and other useful tools with clean interfaces to solve real problems.
-          </p>
-        )}
+        <p className="hero-bio" style={{
+          fontSize: 15.5, lineHeight: 2,
+          color: "rgba(244,239,231,0.58)",
+          fontFamily: "'Inter', sans-serif", fontWeight: 300,
+          marginBottom: 10, maxWidth: 520,
+        }}>
+          I'm a{" "}
+          {medChip}
+          {" "}and{" "}
+          {devChip}
+          {" "}- I build apps, websites and other useful tools with clean interfaces to solve real problems.
+        </p>
         <p className="hero-footer" style={{
           fontSize: 15.5, lineHeight: 1.75,
           color: "rgba(244,239,231,0.45)",
