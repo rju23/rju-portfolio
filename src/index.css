@@ -543,4 +543,46 @@ body {
   .pk1-scroll-contact {
     padding-bottom: 200px !important;
   }
+
+  /* Coming Soon page */
+  .cs-page {
+    padding: 0 16px !important;
+  }
+
+  .cs-title {
+    font-size: 26px !important;
+  }
+
+  .cs-badge {
+    margin-left: 0 !important;
+    font-size: 10.5px !important;
+  }
+
+  .cs-tabs {
+    margin-left: 0 !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .cs-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .cs-tab-btn {
+    flex-shrink: 0 !important;
+    padding: 8px 10px !important;
+    font-size: 12.5px !important;
+  }
+
+  .cs-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .cs-card {
+    width: 100% !important;
+    padding: 18px 16px !important;
+  }
 }

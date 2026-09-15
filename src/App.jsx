@@ -973,10 +973,10 @@ function ComingSoonView() {
   const gridCols = tab.cards.length > 1 ? "repeat(auto-fit, minmax(300px, 1fr))" : "1fr";
 
   return (
-    <div style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+    <div className="cs-page" style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <Sparkles size={18} color={ACCENT} strokeWidth={1.8} />
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
+        <h2 className="cs-title" style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
           Coming Soon
         </h2>
       </div>
@@ -984,7 +984,7 @@ function ComingSoonView() {
         A preview of what's next for PK-1.
       </p>
 
-      <div style={{
+      <div className="cs-badge" style={{
         display: "inline-flex", alignItems: "center", gap: 6,
         padding: "5px 12px", borderRadius: 999,
         background: "rgba(217,138,76,0.12)", border: "1px solid rgba(217,138,76,0.28)",
@@ -996,7 +996,7 @@ function ComingSoonView() {
         In development
       </div>
 
-      <div style={{
+      <div className="cs-tabs" style={{
         display: "flex", gap: 4, marginLeft: 17, marginBottom: 24,
         borderBottom: `1px solid ${BORDER}`,
       }}>
@@ -1005,6 +1005,7 @@ function ComingSoonView() {
           return (
             <button
               key={t.id}
+              className="cs-tab-btn"
               onClick={() => setActiveTab(t.id)}
               style={{
                 display: "flex", alignItems: "center", gap: 7,
@@ -1026,12 +1027,13 @@ function ComingSoonView() {
 
       <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 20px 1px" }}>{tab.subtitle}</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: 14 }}>
+      <div className="cs-grid" style={{ display: "grid", gridTemplateColumns: gridCols, gap: 14 }}>
         {tab.cards.map((card) => {
           const statusStyle = STATUS_STYLES[card.status] ?? STATUS_STYLES["Coming soon"];
           return (
             <div
               key={card.title}
+              className="cs-card"
               style={{
                 padding: "22px 22px 20px",
                 borderRadius: 12,
