@@ -2266,7 +2266,7 @@ function ReviveProject({ onNextProject }) {
           backgroundImage: RV.grid,
           backgroundSize: "480px",
           backgroundRepeat: "repeat",
-          overflowY: "auto",
+          overflowY: "auto", overflowX: "hidden",
           fontFamily: "'Roboto', sans-serif", color: RV.ink,
           display: "flex", flexDirection: "column", gap: 48,
         }}
@@ -2370,11 +2370,11 @@ function ReviveProject({ onNextProject }) {
         {/* THE APP */}
         <section style={{ padding: "70px 24px", maxWidth: 1100, margin: "0 auto" }}>
           <RvSectionHeading title="The App" subtitle="Four screens. Everything a customer needs." />
-          <div style={{
+          <div className="rv-screens-row" style={{
             display: "flex", flexWrap: "nowrap", gap: 28, overflowX: "auto",
           }}>
             {RV_SCREENS.map((s) => (
-              <div key={s.name} style={{ display: "flex", flexDirection: "column", gap: 12, flex: "1 1 0", minWidth: 160 }}>
+              <div key={s.name} className="rv-screen-item" style={{ display: "flex", flexDirection: "column", gap: 12, flex: "1 1 0", minWidth: 160 }}>
                 <div>
                   <RvImagePlaceholder
                     src={`/images/${s.file}`}
