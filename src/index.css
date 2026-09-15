@@ -514,4 +514,33 @@ body {
   .about-stat-num {
     font-size: 28px !important;
   }
+
+  /* Contact page */
+  .contact-page {
+    padding: 0 16px !important;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .contact-left {
+    order: 1;
+  }
+
+  .contact-form-card {
+    order: 2;
+    width: 100% !important;
+    padding: 18px !important;
+    box-sizing: border-box !important;
+  }
+
+  .contact-submit-btn {
+    width: 100% !important;
+  }
+
+  .pk1-scroll-contact {
+    padding-bottom: 200px !important;
+  }
 }

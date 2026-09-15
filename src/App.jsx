@@ -280,7 +280,7 @@ export default function App() {
           <TopBar />
         </div>
 
-        <div className={`pk1-scroll ${section === "about" ? "pk1-scroll-about" : "pk1-scroll-chat"}`} style={{
+        <div className={`pk1-scroll ${section === "about" ? "pk1-scroll-about" : section === "contact" ? "pk1-scroll-contact" : "pk1-scroll-chat"}`} style={{
           position: "absolute",
           top: section === "chat" ? 12 : 84,
           left: 0, right: 12, bottom: 12,
@@ -4804,7 +4804,7 @@ function ContactView() {
   };
 
   return (
-    <div style={{ padding: "0 48px", maxWidth: 900, margin: "0 auto", width: "100%" }}>
+    <div className="contact-page" style={{ padding: "0 48px", maxWidth: 900, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
         <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
@@ -4813,13 +4813,13 @@ function ContactView() {
       </div>
       <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 36px 17px" }}>Get in touch.</p>
 
-      <div style={{
+      <div className="contact-grid" style={{
         display: "grid",
         gridTemplateColumns: "minmax(220px, 320px) 1fr",
         gap: 28,
       }}>
         {/* ── Left: info ── */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <div className="contact-left" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <p style={{ fontSize: 14.5, lineHeight: 1.65, color: TEXT_DIM, margin: 0 }}>
             Have a project in mind or just want to talk? Reach out.
           </p>
@@ -4900,7 +4900,7 @@ function ContactView() {
         </div>
 
         {/* ── Right: form ── */}
-        <div style={{
+        <div className="contact-form-card" style={{
           padding: 24, borderRadius: 12,
           background: "rgba(255,255,255,0.035)",
           border: `1px solid ${BORDER}`,
@@ -4969,6 +4969,7 @@ function ContactView() {
 
             <button
               type="submit"
+              className="contact-submit-btn"
               disabled={status === "sending" || cooldown > 0}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
