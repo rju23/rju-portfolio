@@ -715,7 +715,7 @@ function HeroText() {
         padding: "0 60px", position: "relative", zIndex: 10, marginTop: "0px",
       }}>
         <div className="hero-welcome-top" style={{
-          position: "fixed", top: 22, left: 0, right: 0, height: 22, zIndex: 30,
+          position: "fixed", top: 22, left: 54, right: 12, height: 22, zIndex: 30,
           display: "flex", alignItems: "center", justifyContent: "center",
           textAlign: "center",
           fontSize: 11, color: "rgba(244,239,231,0.5)",
