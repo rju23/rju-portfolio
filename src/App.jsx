@@ -273,7 +273,7 @@ export default function App() {
       {section === "playground" && <PlaygroundView onBack={() => navigateTo("chat")} />}
 
       {/* ── Main ── */}
-      <main style={{
+      <main className="pk1-main" style={{
         flex: 1, position: "relative", zIndex: 10,
         padding: "12px 12px 12px 0",
       }}>

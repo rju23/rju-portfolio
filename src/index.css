@@ -335,4 +335,8 @@ body {
     opacity: 1;
     pointer-events: auto;
   }
+
+  .pk1-main {
+    display: none !important;
+  }
 }
