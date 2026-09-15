@@ -67,19 +67,27 @@ const NAV = [
   { id: "comingsoon",  label: "Coming Soon", Icon: Sparkles      },
 ];
 
+const VALID_SECTIONS = ["chat","projects","about","services","contact","playground","comingsoon"];
+
 export default function App() {
   const [section, setSection] = useState(
     () => {
       const path = window.location.pathname.replace(/^\//, "") || "chat";
-      const valid = ["chat","projects","about","services","contact","playground","comingsoon"];
-      return valid.includes(path) ? path : "chat";
+      const top = path.split("/")[0] || "chat";
+      return VALID_SECTIONS.includes(top) ? top : "chat";
     }
   );
+  const [activeProjectId, setActiveProjectId] = useState(() => {
+    const path = window.location.pathname.replace(/^\//, "");
+    const parts = path.split("/");
+    return parts[0] === "projects" && parts[1] ? parts[1] : null;
+  });
   const [splash, setSplash]   = useState(true);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const navigateTo = (id) => {
     setSection(id);
+    setActiveProjectId(null);
     setMobileNavOpen(false);
     const path = id === "chat" ? "/" : `/${id}`;
     if (window.location.pathname !== path) {
@@ -87,11 +95,24 @@ export default function App() {
     }
   };
 
+  const navigateToProject = (id) => {
+    setSection("projects");
+    setActiveProjectId(id);
+    setMobileNavOpen(false);
+    const path = `/projects/${id}`;
+    if (window.location.pathname !== path) {
+      window.history.pushState({ pk1Section: "projects", projectId: id }, "", path);
+    }
+  };
+
   // Keep section in sync when the browser's own back/forward is used
   useEffect(() => {
     const onPopState = () => {
-      const id = window.location.pathname.replace(/^\//, "") || "chat";
-      setSection(id);
+      const path = window.location.pathname.replace(/^\//, "") || "chat";
+      const parts = path.split("/");
+      const top = parts[0] || "chat";
+      setSection(VALID_SECTIONS.includes(top) ? top : "chat");
+      setActiveProjectId(top === "projects" && parts[1] ? parts[1] : null);
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -257,11 +278,15 @@ export default function App() {
         }}>
           <div style={{
             width: 32, height: 32, borderRadius: "50%",
-            background: "rgba(217,138,76,0.18)",
-            color: ACCENT, fontSize: 13, fontWeight: 500,
-            display: "flex", alignItems: "center", justifyContent: "center",
+            overflow: "hidden",
             flexShrink: 0,
-          }}>P</div>
+          }}>
+            <img
+              src="/images/prakash.jpg"
+              alt="Prakash"
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+            />
+          </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 500 }}>Prakash</div>
             <div style={{ fontSize: 10.5, color: TEXT_MUTE }}>Developer. Builder.</div>
@@ -291,7 +316,7 @@ export default function App() {
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
           {section === "chat"        && <HeroText />}
-          {section === "projects"    && <ProjectsView onNavigate={navigateTo} />}
+          {section === "projects"    && <ProjectsView onNavigate={navigateTo} activeProjectId={activeProjectId} onSelectProject={navigateToProject} />}
           {section === "about"       && <AboutView />}
           {section === "services"    && <ServicesView onNavigate={navigateTo} />}
           {section === "contact"     && <ContactView />}
@@ -1091,12 +1116,20 @@ const PROJECTS = [
   { id: "interactive-3d-cube", title: "Interactive 3D Cube",        tag: "Playground",         description: "A Three.js experiment - orbit, move and customise a 3D cube across different weather atmospheres.", platform: "Web" },
 ];
 
-function ProjectsView({ onNavigate }) {
-  const [activeProject, setActiveProject] = useState(null);
+function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
+  const activeProject = activeProjectId;
+  const setActiveProject = (id) => {
+    if (id) onSelectProject(id);
+    else onNavigate("projects");
+  };
 
   const handleSelect = (project) => {
     setActiveProject(project.id);
   };
+
+  useEffect(() => {
+    if (activeProjectId === "interactive-3d-cube") onNavigate("playground");
+  }, [activeProjectId]);
 
   return (
     <div className="proj-page" style={{ padding: "0 48px", maxWidth: 980, margin: "0 auto", width: "100%" }}>

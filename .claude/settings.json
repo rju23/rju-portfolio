@@ -66,7 +66,8 @@
       "Bash(npm install *)",
       "Bash(node ./__scrollcheck.cjs)",
       "Bash(sed -i \"s/const pages = \\\\['projects', 'about'\\\\];/const pages = ['projects','about','services','contact','comingsoon'];/\" \"C:\\\\Users\\\\sejwa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--dev-Portfolio-Website-Portfolio\\\\d9c0f5c4-cc05-4383-b6dc-bc20e85a89b1\\\\scratchpad\\\\scrollcheck.cjs\")",
-      "Bash(npm uninstall *)"
+      "Bash(npm uninstall *)",
+      "Bash(pkill -f \"vite --port\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",
