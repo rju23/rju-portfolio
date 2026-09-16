@@ -164,7 +164,7 @@ export default function App() {
       }} />}
       <img
         id="parallax-bg"
-        src="/bg.png"
+        src="/bg.webp"
         alt=""
         style={{
           position: "absolute",
@@ -1831,7 +1831,7 @@ function PortfolioProject({ onNextProject, onViewLiveSite }) {
         transition: "opacity 0.4s ease",
       }}>
         <img
-          src="/bg.png"
+          src="/bg.webp"
           alt=""
           style={{
             position: "absolute", top: "50%", left: "50%",
