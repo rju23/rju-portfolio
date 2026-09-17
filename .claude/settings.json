@@ -148,7 +148,16 @@
       "Bash(powershell -Command \"Stop-Process -Id 16388 -Force\")",
       "Bash(awk '{print $5}')",
       "Bash(powershell -Command \"Stop-Process -Id 13716 -Force\")",
-      "Bash(python3 -c \"from PIL import Image; im = Image.open\\('public/favicon.png'\\); print\\(im.size, im.mode\\)\")"
+      "Bash(python3 -c \"from PIL import Image; im = Image.open\\('public/favicon.png'\\); print\\(im.size, im.mode\\)\")",
+      "Bash(node -e \"console.log\\('node ok'\\)\")",
+      "Bash(python3)",
+      "Bash(git show *)",
+      "Bash(node -e \"require.resolve\\('sharp'\\); console.log\\('sharp available'\\)\")",
+      "Bash(pip show *)",
+      "Bash(python3 -c \"import cairosvg\")",
+      "Bash(pip install *)",
+      "Read(//c/Users/sejwa/AppData/Local/Temp/svgrender/**)",
+      "Bash(cp /tmp/svgrender/apple-touch-icon-padded.png \"c:/dev/Portfolio/Website Portfolio/public/apple-touch-icon.png\" && cd \"c:/dev/Portfolio/Website Portfolio\" && git status public/apple-touch-icon.png)"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",

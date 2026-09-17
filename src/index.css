@@ -794,6 +794,49 @@ body {
   }
 }
 
+@media (max-width: 700px) {
+  .scq-subnav {
+    position: sticky !important;
+    padding: 10px 16px !important;
+  }
+
+  .scq-subnav-tabs {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    padding: 8px 16px;
+    background: rgba(10, 9, 8, 0.97);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+    overflow: visible !important;
+  }
+
+  .scq-subnav-tabs.scq-subnav-tabs-open {
+    display: flex !important;
+  }
+
+  .scq-subnav-tabs button {
+    width: 100%;
+    padding: 11px 8px !important;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .scq-subnav-menu-button {
+    display: flex !important;
+    flex-shrink: 0;
+  }
+
+  .scq-subnav-next {
+    display: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pk1-page-fade { animation: none; }
 }

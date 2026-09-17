@@ -3837,6 +3837,13 @@ const SCQ_SUBNAV_TABS = [
 ];
 
 function ScqSubNav({ active, onNavigate, onNextProject }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const navigateTo = (tabId) => {
+    setMenuOpen(false);
+    onNavigate(tabId === "overview" ? null : tabId);
+  };
+
   return (
     <div className="scq-subnav" style={{
       position: "sticky", top: 0, zIndex: 20,
@@ -3853,13 +3860,13 @@ function ScqSubNav({ active, onNavigate, onNextProject }) {
         </span>
       </div>
 
-      <div className="scq-subnav-tabs" style={{ display: "flex", alignItems: "center", gap: 4, overflowX: "auto", flex: 1 }}>
+      <div className={`scq-subnav-tabs${menuOpen ? " scq-subnav-tabs-open" : ""}`} style={{ display: "flex", alignItems: "center", gap: 4, overflowX: "auto", flex: 1 }}>
         {SCQ_SUBNAV_TABS.map((tab) => {
           const isActive = active === tab.id;
           return (
             <button
               key={tab.id}
-              onClick={() => onNavigate(tab.id === "overview" ? null : tab.id)}
+              onClick={() => navigateTo(tab.id)}
               style={{
                 background: "none", border: "none",
                 padding: "6px 12px",
@@ -3877,6 +3884,22 @@ function ScqSubNav({ active, onNavigate, onNextProject }) {
       </div>
 
       <button
+        className="scq-subnav-menu-button"
+        onClick={() => setMenuOpen((isOpen) => !isOpen)}
+        aria-expanded={menuOpen}
+        aria-label={menuOpen ? "Close scoreboard menu" : "Open scoreboard menu"}
+        style={{
+          display: "none", alignItems: "center", justifyContent: "center",
+          background: "rgba(255,255,255,0.05)",
+          border: `1px solid ${BORDER}`, borderRadius: 8,
+          color: TEXT, padding: 7, cursor: "pointer",
+        }}
+      >
+        {menuOpen ? <X size={18} strokeWidth={2} /> : <Menu size={18} strokeWidth={2} />}
+      </button>
+
+      <button
+        className="scq-subnav-next"
         onClick={onNextProject}
         style={{
           background: "rgba(255,255,255,0.05)",
