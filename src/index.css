@@ -395,12 +395,21 @@ body {
     pointer-events: auto;
   }
 
+}
+
+/* Tablet: keep the topbar (PK-1 chip / weather) visible, just shifted
+   right so it clears the hamburger button that also shows at this width */
+@media (min-width: 701px) and (max-width: 1024px) {
   .pk1-topbar-wrap {
-    display: none !important;
+    left: 54px !important;
   }
 }
 
 @media (max-width: 700px) {
+  .pk1-topbar-wrap {
+    display: none !important;
+  }
+
   .hero-outer {
     padding: 0 20px !important;
   }
@@ -618,6 +627,17 @@ body {
   }
 }
 
+/* Short/landscape viewports (e.g. an iPad rotated to landscape, which is
+   wide enough to read as "desktop" but not tall enough for the contact
+   form's default clearance): give the contact page extra bottom padding
+   so the floating input bar can't sit over the last field/button. Scoped
+   by height, not width, so it doesn't touch portrait tablets or desktop. */
+@media (min-width: 769px) and (max-height: 850px) {
+  .pk1-scroll-contact {
+    padding-bottom: 220px !important;
+  }
+}
+
 /* About page: same stacked layout on phones and tablets alike (photo +
    headline side by side up top, single-column content below) */
 @media (max-width: 1024px) {
@@ -745,6 +765,16 @@ body {
 .pk1-page-fade {
   animation: pk1PageFade 0.24s ease;
 }
+/* Uno project page: on phones the height/reserve split leaves the throw
+   button + card counter floating in a visible gap below the card; tighten
+   it so the bar tucks slightly under the card's bottom edge. Tablet/desktop
+   keep the calc(100vh - 160px) reserve used above, unchanged. */
+@media (max-width: 700px) {
+  .uno-card-shell {
+    height: calc(100vh - 120px) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pk1-page-fade { animation: none; }
 }

@@ -131,11 +131,14 @@
       "Bash(node -e \"console.log\\(require\\('./package.json'\\).devDependencies\\)\")",
       "Bash(./node_modules/.bin/vite build *)",
       "Bash(git checkout *)",
-      "Bash(node_modules/.bin/vite build *)"
+      "Bash(node_modules/.bin/vite build *)",
+      "Bash(mkdir -p \"/c/Users/sejwa/AppData/Local/Temp/claude/c--dev-Portfolio-Website-Portfolio/bf12cd03-654b-43b5-9ba8-deb226b0a6e5/scratchpad/favicon\")",
+      "Bash(timeout 60 node_modules/.bin/vite build)"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",
-      "\\tmp"
+      "\\tmp",
+      "C:\\Users\\sejwa\\AppData\\Local\\Temp\\claude\\c--dev-Portfolio-Website-Portfolio\\bf12cd03-654b-43b5-9ba8-deb226b0a6e5\\scratchpad"
     ]
   }
 }

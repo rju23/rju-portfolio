@@ -1618,6 +1618,22 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [navOpen]);
 
+  // A dragged-and-saved orb position is only valid for the viewport it was
+  // saved in — re-clamp on resize/orientation change so it can't end up
+  // off-screen (e.g. dragged in landscape, then rotated to portrait).
+  useEffect(() => {
+    const onResize = () => {
+      setOrbPos((pos) => {
+        if (!pos) return pos;
+        const next = clampOrbPos(pos.x, pos.y);
+        try { localStorage.setItem("pk1_orb_pos", JSON.stringify(next)); } catch {}
+        return next;
+      });
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const navButtonStyle = {
     width: "100%", textAlign: "left",
     background: "rgba(255,255,255,0.05)",
@@ -3781,7 +3797,7 @@ function UnoCard({ color, label, children, animClass }) {
 
   return (
     <div
-      className={animClass}
+      className={`uno-card-shell ${animClass}`}
       style={{
         position: "relative",
         width: "min(520px, 92vw)",
@@ -4221,7 +4237,7 @@ function UnoProject({ onNextProject }) {
             style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}
           >
             {/* ghost cards */}
-            <div style={{
+            <div className="uno-card-shell" style={{
               position: "absolute",
               transform: "translateY(8px) scale(0.97)",
               zIndex: -1,
@@ -4231,7 +4247,7 @@ function UnoProject({ onNextProject }) {
               height: "min(720px, calc(100vh - 160px))",
               opacity: 0.6,
             }} />
-            <div style={{
+            <div className="uno-card-shell" style={{
               position: "absolute",
               transform: "translateY(16px) scale(0.94)",
               zIndex: -2,
