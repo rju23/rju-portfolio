@@ -176,7 +176,8 @@
       "Bash(cp /c/tmp/pw-check/check2.js /tmp/pw-check/check2.js)",
       "Bash(node check2.js)",
       "Read(//c/Users/sejwa/AppData/Local/Temp/pw-check/**)",
-      "Bash(lsof -ti:5173 -sTCP:LISTEN)"
+      "Bash(lsof -ti:5173 -sTCP:LISTEN)",
+      "Bash(python -)"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",

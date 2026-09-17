@@ -69,6 +69,30 @@ const NAV = [
 
 const VALID_SECTIONS = ["chat","projects","about","services","contact","playground","comingsoon"];
 
+/* The input bar's suggestion chips. Each section is reachable from one, so a
+   page can render as the answer to the exact chip that navigates to it. */
+const PROMPTS = [
+  { label: "What have you built?",        Icon: Code2,     target: "projects"   },
+  { label: "Tell me about Prakash",       Icon: User,      target: "about"      },
+  { label: "What can he build for me?",   Icon: Grid3x3,   target: "services"   },
+  { label: "What is Prakash working on?", Icon: Code2,     target: "projects"   },
+  { label: "What's coming to PK-1?",      Icon: Sparkles,  target: "comingsoon" },
+  { label: "Take me to the playground",   Icon: Gamepad2,  target: "playground" },
+  { label: "How can I contact Prakash?",  Icon: Mail,      target: "contact"    },
+];
+
+const promptFor = (section) => PROMPTS.find((p) => p.target === section)?.label ?? "";
+
+// Pages that scroll underneath the chat bar and so need the scrim behind it.
+const SCRIM_SECTIONS = new Set(["about", "projects", "services", "contact", "comingsoon"]);
+
+// Height of the ramp above the input bar over which scrolling content fades out.
+const SCRIM_FADE = 90;
+// Top strip of the input bar taken up by the suggestion chips (their reserved
+// minHeight plus its margin). The scrim's heavy blur stops below this so the
+// chip area stays comparatively crisp.
+const SCRIM_CHIP_ROW = 50;
+
 export default function App() {
   const [section, setSection] = useState(
     () => {
@@ -96,6 +120,28 @@ export default function App() {
   });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
+  // Only the page inside the scroll container remounts on navigation (via
+  // key={section}); the container itself persists, and so does its scrollTop.
+  // Reset it so every section opens at the top instead of wherever the last
+  // one was left.
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [section]);
+
+  // The scrim that content dissolves into has to clear the whole input bar,
+  // suggestion chips included, so it's measured rather than hardcoded.
+  const inputBarRef = useRef(null);
+  const [barHeight, setBarHeight] = useState(0);
+  useEffect(() => {
+    const el = inputBarRef.current;
+    if (!el) return;
+    const measure = () => setBarHeight(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const navigateTo = (id) => {
     setSection(id);
     setActiveProjectId(null);
@@ -321,13 +367,15 @@ export default function App() {
           <TopBar />
         </div>
 
-        <div className={`pk1-scroll ${section === "about" ? "pk1-scroll-about" : section === "contact" ? "pk1-scroll-contact" : "pk1-scroll-chat"}`} style={{
+        <div ref={scrollRef} className={`pk1-scroll ${section === "about" ? "pk1-scroll-about" : section === "contact" ? "pk1-scroll-contact" : "pk1-scroll-chat"}${section === "chat" ? " pk1-scroll-hero" : ""}`} style={{
           position: "absolute",
           top: section === "chat" ? 12 : 84,
           left: 0, right: 12, bottom: 12,
           display: "flex", flexDirection: "column",
           alignItems: "stretch",
-          justifyContent: section === "chat" ? "center" : "flex-start",
+          // Left unset for chat so .pk1-scroll-hero can own the centring —
+          // an inline value here would outrank the class.
+          justifyContent: section === "chat" ? undefined : "flex-start",
           paddingBottom: section === "contact" ? 260 : 190,
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
@@ -341,7 +389,22 @@ export default function App() {
           </div>
         </div>
 
-        <div className="pk1-inputbar-outer" style={{ position: "fixed", bottom: 0, left: 202, right: 0, zIndex: 4 }}>
+        {SCRIM_SECTIONS.has(section) && !activeProjectId && (
+          <>
+            <div
+              className="pk1-inputbar-scrim"
+              aria-hidden="true"
+              style={{ "--scrim-h": `${barHeight + SCRIM_FADE}px`, "--scrim-fade": `${SCRIM_FADE}px` }}
+            />
+            <div
+              className="pk1-inputbar-scrim-blur"
+              aria-hidden="true"
+              style={{ "--scrim-blur-h": `${Math.max(0, barHeight - SCRIM_CHIP_ROW)}px` }}
+            />
+          </>
+        )}
+
+        <div ref={inputBarRef} className="pk1-inputbar-outer" style={{ position: "fixed", bottom: 0, left: 202, right: 0, zIndex: 4 }}>
           <InputBar onNavigate={navigateTo} />
         </div>
       </main>
@@ -408,6 +471,17 @@ function InputBar({ onNavigate }) {
   // exit animation never plays on first paint.
   const showChips = () => { setEverShown(true); setVisible(true); };
 
+  // Tapping the bar surfaces the chips, and on desktop also drops the caret
+  // into the field. Below 1024px it deliberately does not: the input already
+  // spans its row so a real tap lands on it directly, and hoisting focus from
+  // the wrapper would let taps on the surrounding chrome reopen the on-screen
+  // keyboard. Read live rather than from isMobile, whose 768px breakpoint is
+  // about layout and would leave tablets hoisting focus.
+  const handleBarTap = () => {
+    showChips();
+    if (window.innerWidth >= 1024) inputRef.current?.focus();
+  };
+
   // Nudge the bar and bounce the chips in - the input is a prop, not a real field.
   const rejectTyping = () => {
     showChips();
@@ -421,20 +495,16 @@ function InputBar({ onNavigate }) {
     clearTimeout(shakeTimer.current);
   }, []);
 
-  const PROMPTS = [
-    { label: "What have you built?",        Icon: Code2,     target: "projects"   },
-    { label: "Tell me about Prakash",        Icon: User,      target: "about"      },
-    { label: "What can he build for me?",    Icon: Grid3x3,   target: "services"   },
-    { label: "What is Prakash working on?",  Icon: Code2,     target: "projects"   },
-    { label: "What's coming to PK-1?",       Icon: Sparkles,  target: "comingsoon" },
-    { label: "Take me to the playground",    Icon: Gamepad2,  target: "playground" },
-    { label: "How can I contact Prakash?",   Icon: Mail,      target: "contact"    },
-  ];
-
   const matchedPrompt = PROMPTS.find((p) => p.label === input);
 
   const handleSend = () => {
     if (!matchedPrompt) return;
+    // Give up focus before navigating. The bar lives outside the keyed page
+    // wrapper so it never remounts — without this the field stays focused
+    // through the navigation and the on-screen keyboard follows it onto the
+    // next page.
+    inputRef.current?.blur();
+    setFocused(false);
     onNavigate && onNavigate(matchedPrompt.target);
     setInput("");
     setVisible(false);
@@ -590,7 +660,11 @@ function InputBar({ onNavigate }) {
 
         const sendBtn = (
           <button
-            onClick={handleSend}
+            // The tap must not reach the wrapper below, whose click handler
+            // focuses the field — that is what reopened the keyboard right
+            // after a send.
+            onClick={(e) => { e.stopPropagation(); handleSend(); }}
+            onMouseDown={(e) => e.preventDefault()}
             disabled={!matchedPrompt}
             style={{
               width: 36, height: 36, borderRadius: "50%",
@@ -610,7 +684,7 @@ function InputBar({ onNavigate }) {
           return (
             <div
               className="pk1-inputbar-mobile"
-              onClick={() => { showChips(); inputRef.current?.focus(); }}
+              onClick={handleBarTap}
               style={{
                 position: "relative", overflow: "hidden",
                 cursor: "text",
@@ -659,7 +733,7 @@ function InputBar({ onNavigate }) {
           <div
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            onClick={() => { showChips(); inputRef.current?.focus(); }}
+            onClick={handleBarTap}
             style={{
             position: "relative", overflow: "hidden",
             cursor: "text",
@@ -710,10 +784,10 @@ function InputBar({ onNavigate }) {
    JSX (colored spans, inline images) without reflowing anything below
    it. Retriggers automatically because the page it lives on is
    remounted (via `key={section}`) on every navigation. */
-function TypewriterText({ as: Tag = "span", text, className = "", style, onDone, durationMs = 550 }) {
+function TypewriterText({ as: Tag = "span", text, className = "", style, onDone, durationMs = 550, startDelayMs = 0 }) {
   useEffect(() => {
     if (!onDone) return;
-    const t = setTimeout(onDone, durationMs);
+    const t = setTimeout(onDone, startDelayMs + durationMs);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -723,7 +797,12 @@ function TypewriterText({ as: Tag = "span", text, className = "", style, onDone,
   return (
     <Tag
       className={`pk1-typewriter ${className}`.trim()}
-      style={{ ...style, "--pk1-tw-steps": steps, "--pk1-tw-duration": `${durationMs}ms` }}
+      style={{
+        ...style,
+        "--pk1-tw-steps": steps,
+        "--pk1-tw-duration": `${durationMs}ms`,
+        animationDelay: `${startDelayMs}ms`,
+      }}
       aria-label={text}
     >
       {text}
@@ -731,10 +810,10 @@ function TypewriterText({ as: Tag = "span", text, className = "", style, onDone,
   );
 }
 
-function TypewriterLines({ as: Tag = "h1", lines, className = "", style, onDone, lineDurationMs = 380, lineDelayMs = 110 }) {
+function TypewriterLines({ as: Tag = "h1", lines, className = "", style, onDone, lineDurationMs = 380, lineDelayMs = 110, startDelayMs = 0 }) {
   useEffect(() => {
     if (!onDone) return;
-    const total = lineDelayMs * (lines.length - 1) + lineDurationMs;
+    const total = startDelayMs + lineDelayMs * (lines.length - 1) + lineDurationMs;
     const t = setTimeout(onDone, total);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -750,7 +829,7 @@ function TypewriterLines({ as: Tag = "h1", lines, className = "", style, onDone,
             style={{
               "--pk1-tw-steps": line.steps || 8,
               "--pk1-tw-duration": `${lineDurationMs}ms`,
-              animationDelay: `${i * lineDelayMs}ms`,
+              animationDelay: `${startDelayMs + i * lineDelayMs}ms`,
             }}
           >
             {line.node}
@@ -761,9 +840,53 @@ function TypewriterLines({ as: Tag = "h1", lines, className = "", style, onDone,
   );
 }
 
+/* ── "Generated response" reveal tiers ──
+   Both split text into spans that fade in on their own CSS delay, so the whole
+   choreography is declarative — nothing to keep in sync at runtime. The spans
+   carry no aria overrides: the text nodes stay complete and in order, with the
+   separating spaces left outside the spans, so assistive tech reads the prose
+   normally and line wrapping is unaffected. */
+
+function LetterStream({ text, as: Tag = "span", className = "", style, delay = 0, charMs = 26 }) {
+  return (
+    <Tag className={className} style={style}>
+      {Array.from(text).map((ch, i) => (
+        <span
+          key={i}
+          className="pk1-gen-char"
+          style={{ animationDelay: `${delay + i * charMs}ms` }}
+        >
+          {ch === " " ? " " : ch}
+        </span>
+      ))}
+    </Tag>
+  );
+}
+
+function WordStream({ text, as: Tag = "p", className = "", style, delay = 0, wordMs = 14 }) {
+  const words = text.split(" ");
+  return (
+    <Tag className={className} style={style}>
+      {words.map((word, i) => (
+        <Fragment key={i}>
+          <span
+            className="pk1-gen-word"
+            style={{ animationDelay: `${delay + i * wordMs}ms` }}
+          >
+            {word}
+          </span>
+          {i < words.length - 1 ? " " : null}
+        </Fragment>
+      ))}
+    </Tag>
+  );
+}
+
 function HeroText() {
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 700);
-  const [headingDone, setHeadingDone] = useState(false);
+  // No typewriter here, so there's no onDone to wait on — the stagger below
+  // can play immediately.
+  const headingDone = true;
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 700);
     window.addEventListener("resize", onResize);
@@ -844,13 +967,9 @@ function HeroText() {
           />
 
           {/* Main headline with light effect */}
-          <TypewriterText
-            as="h1"
-            className="hero-headline"
-            style={{ ...headlineStyle, fontSize: 56 }}
-            text="Hey, I'm Prakash."
-            onDone={() => setHeadingDone(true)}
-          />
+          <h1 className="hero-headline" style={{ ...headlineStyle, fontSize: 56 }}>
+            Hey, I'm Prakash.
+          </h1>
 
           <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
             {/* PK-1 subtitle */}
@@ -859,7 +978,7 @@ function HeroText() {
               fontFamily: "'Inter', sans-serif", fontWeight: 300,
               marginBottom: 10, letterSpacing: "0.01em",
             }}>
-              Meet PK-1 - Prakash's personal AI portfolio assistant.
+              Meet pk-1 - My personalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonal AI portfolio assistant.
             </p>
 
             <p className="hero-footer" style={{
@@ -881,6 +1000,15 @@ function HeroText() {
     <div className="hero-outer" style={{
       flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
       padding: "0 60px", position: "relative", zIndex: 10, marginTop: "0px",
+      // The scroll container reserves 190px of paddingBottom for the fixed chat
+      // bar, so centring here sits 95px above the true middle of the area.
+      // Splitting that gap halfway keeps the hero clear of the suggestion
+      // chips that pop up above the bar on hover/focus, while still reading
+      // closer to centred than the original position. A transform corrects it
+      // visually without adding to layout size — a real padding-top would
+      // double the reserved space and, on short viewports, overflow the
+      // fixed-height container and force a scrollbar.
+      transform: "translateY(48px)",
     }}>
       <div className="hero-inner" style={{ maxWidth: 620 }}>
 
@@ -901,17 +1029,13 @@ function HeroText() {
           fontFamily: "'Inter', sans-serif", fontWeight: 300,
           marginBottom: 20, letterSpacing: "0.01em",
         }}>
-          Meet PK-1 - Prakash's personal AI portfolio assistant.
+          Meet pk-1 — My personal AI portfolio assistant.
         </p>
 
         {/* Main headline with light effect */}
-        <TypewriterText
-          as="h1"
-          className="hero-headline"
-          style={headlineStyle}
-          text="Hey, I'm Prakash."
-          onDone={() => setHeadingDone(true)}
-        />
+        <h1 className="hero-headline" style={headlineStyle}>
+          Hey, I'm Prakash.
+        </h1>
 
         <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
           {/* Bio */}
@@ -1095,10 +1219,12 @@ function ComingSoonView() {
   const [activeTab, setActiveTab] = useState("experiments");
   const [headingDone, setHeadingDone] = useState(false);
   const tab = COMING_SOON_TABS.find((t) => t.id === activeTab);
+  const { settled, cardClass, genDelay, pageClass } = useGeneratedResponse(genTotal(tab.cards.length));
   const gridCols = tab.cards.length > 1 ? "repeat(auto-fit, minmax(300px, 1fr))" : "1fr";
 
   return (
-    <div className="cs-page" style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+    <div className={pageClass("cs-page")} style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+      <PromptExchange prompt={promptFor("comingsoon")} settled={settled} />
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <Sparkles size={18} color={ACCENT} strokeWidth={1.8} />
         <TypewriterText
@@ -1106,13 +1232,18 @@ function ComingSoonView() {
           className="cs-title"
           style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
           text="Coming Soon"
+          startDelayMs={GEN.respond}
           onDone={() => setHeadingDone(true)}
         />
       </div>
-      <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
-      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 20px 17px" }}>
-        A preview of what's next for PK-1.
-      </p>
+      <div className={`pk1-stagger${headingDone || settled ? " pk1-stagger-go" : ""}`}>
+      <WordStream
+        className="pk1-gen-self"
+        text="A preview of what's next for PK-1."
+        delay={GEN.subtitle}
+        wordMs={GEN.subtitleWordMs}
+        style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 20px 17px" }}
+      />
 
       <div className="cs-badge" style={{
         display: "inline-flex", alignItems: "center", gap: 6,
@@ -1157,14 +1288,15 @@ function ComingSoonView() {
 
       <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 20px 1px" }}>{tab.subtitle}</p>
 
-      <div className="cs-grid" style={{ display: "grid", gridTemplateColumns: gridCols, gap: 14 }}>
-        {tab.cards.map((card) => {
+      <div className="cs-grid pk1-gen-self" style={{ display: "grid", gridTemplateColumns: gridCols, gap: 14 }}>
+        {tab.cards.map((card, cardIndex) => {
           const statusStyle = STATUS_STYLES[card.status] ?? STATUS_STYLES["Coming soon"];
           return (
             <div
               key={card.title}
-              className="cs-card"
+              className={cardClass("cs-card")}
               style={{
+                animationDelay: genDelay(cardAt(cardIndex)),
                 padding: "22px 22px 20px",
                 borderRadius: 12,
                 background: "rgba(255,255,255,0.035)",
@@ -1180,16 +1312,23 @@ function ComingSoonView() {
                 {card.tag}
               </div>
 
-              <h3 style={{
-                fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
-                fontSize: 19, color: TEXT, margin: 0,
-              }}>
-                {card.title}
-              </h3>
+              <WordStream
+                as="h3"
+                text={card.title}
+                delay={cardTextAt(cardIndex)}
+                wordMs={GEN.cardTitleWordMs}
+                style={{
+                  fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+                  fontSize: 19, color: TEXT, margin: 0,
+                }}
+              />
 
-              <p style={{ fontSize: 13, lineHeight: 1.65, color: TEXT_DIM, margin: "0 0 8px", flex: 1 }}>
-                {card.description}
-              </p>
+              <WordStream
+                text={card.description}
+                delay={afterWords(cardTextAt(cardIndex), card.title, GEN.cardTitleWordMs)}
+                wordMs={GEN.cardBodyWordMs}
+                style={{ fontSize: 13, lineHeight: 1.65, color: TEXT_DIM, margin: "0 0 8px", flex: 1 }}
+              />
 
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <span style={{
@@ -1225,6 +1364,7 @@ const PROJECTS = [
 const DESKTOP_ONLY_PROJECTS = new Set(["medical-visualizer"]);
 
 function ProjectsView({ onNavigate, activeProjectId, activeProjectSubPage, onSelectProject }) {
+  const { settled, cardClass, genDelay, pageClass } = useGeneratedResponse(genTotal(PROJECTS.length));
   const activeProject = activeProjectId;
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
   const [headingDone, setHeadingDone] = useState(false);
@@ -1250,25 +1390,33 @@ function ProjectsView({ onNavigate, activeProjectId, activeProjectSubPage, onSel
   }, [activeProjectId]);
 
   return (
-    <div className="proj-page" style={{ padding: "0 48px", maxWidth: 980, margin: "0 auto", width: "100%" }}>
+    <div className={pageClass("proj-page")} style={{ padding: "0 48px", maxWidth: 980, margin: "0 auto", width: "100%" }}>
+      <PromptExchange prompt={promptFor("projects")} settled={settled} />
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
         <TypewriterText
           as="h2"
           style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
           text="Projects"
+          startDelayMs={GEN.respond}
           onDone={() => setHeadingDone(true)}
         />
       </div>
-      <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
-      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}>Things I've built.</p>
+      <div className={`pk1-stagger${headingDone || settled ? " pk1-stagger-go" : ""}`}>
+      <WordStream
+        className="pk1-gen-self"
+        text="Things I've built."
+        delay={GEN.subtitle}
+        wordMs={GEN.subtitleWordMs}
+        style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}
+      />
 
-      <div className="proj-grid" style={{
+      <div className="proj-grid pk1-gen-self" style={{
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
         gap: 14,
       }}>
-        {PROJECTS.map((project) => {
+        {PROJECTS.map((project, cardIndex) => {
           const isActive = activeProject === project.id;
           const isRevive = project.id === "876-revive";
           const isScq = project.id === "scq-scoreboard";
@@ -1291,9 +1439,10 @@ function ProjectsView({ onNavigate, activeProjectId, activeProjectSubPage, onSel
           return (
             <div
               key={project.id}
-              className="proj-card"
+              className={cardClass("proj-card")}
               onClick={() => isCube ? onNavigate("playground") : handleSelect(project)}
               style={{
+                animationDelay: genDelay(cardAt(cardIndex)),
                 position: "relative",
                 overflow: (isMed || isMusic || isCube || isSync) ? "hidden" : "visible",
                 padding: "20px 20px 18px",
@@ -1443,16 +1592,23 @@ function ProjectsView({ onNavigate, activeProjectId, activeProjectSubPage, onSel
                 {project.tag}
               </div>
 
-              <h3 style={{
-                fontFamily: isCm ? "'VT323', 'Fraunces', serif" : "'Fraunces', serif", fontStyle: isCm ? "normal" : "italic", fontWeight: isCm ? 700 : 400,
-                fontSize: isCm ? 22 : 18, color: isRevive ? "#0A1F0D" : isScq ? "#f0c84a" : isUno ? "#fff" : isCm ? "#ffffff" : (isMed || isMusic || isCube || isSync) ? "#ffffff" : TEXT, margin: 0,
-              }}>
-                {project.title}
-              </h3>
+              <WordStream
+                as="h3"
+                text={project.title}
+                delay={cardTextAt(cardIndex)}
+                wordMs={GEN.cardTitleWordMs}
+                style={{
+                  fontFamily: isCm ? "'VT323', 'Fraunces', serif" : "'Fraunces', serif", fontStyle: isCm ? "normal" : "italic", fontWeight: isCm ? 700 : 400,
+                  fontSize: isCm ? 22 : 18, color: isRevive ? "#0A1F0D" : isScq ? "#f0c84a" : isUno ? "#fff" : isCm ? "#ffffff" : (isMed || isMusic || isCube || isSync) ? "#ffffff" : TEXT, margin: 0,
+                }}
+              />
 
-              <p style={{ fontSize: 13, lineHeight: 1.6, color: isRevive ? "rgba(10,31,13,0.68)" : isScq ? "rgba(255,255,255,0.6)" : isUno ? "rgba(255,255,255,0.62)" : isCm ? "rgba(255,255,255,0.75)" : isMed ? "rgba(255,255,255,0.65)" : isMusic ? "rgba(255,255,255,0.65)" : isCube ? "rgba(255,255,255,0.65)" : isSync ? "rgba(255,255,255,0.65)" : TEXT_DIM, margin: "0 0 6px", flex: 1 }}>
-                {project.description}
-              </p>
+              <WordStream
+                text={project.description}
+                delay={afterWords(cardTextAt(cardIndex), project.title, GEN.cardTitleWordMs)}
+                wordMs={GEN.cardBodyWordMs}
+                style={{ fontSize: 13, lineHeight: 1.6, color: isRevive ? "rgba(10,31,13,0.68)" : isScq ? "rgba(255,255,255,0.6)" : isUno ? "rgba(255,255,255,0.62)" : isCm ? "rgba(255,255,255,0.75)" : isMed ? "rgba(255,255,255,0.65)" : isMusic ? "rgba(255,255,255,0.65)" : isCube ? "rgba(255,255,255,0.65)" : isSync ? "rgba(255,255,255,0.65)" : TEXT_DIM, margin: "0 0 6px", flex: 1 }}
+              />
 
               <span
                 data-view-link
@@ -5113,8 +5269,123 @@ function UnoProject({ onNextProject }) {
   );
 }
 
+/* Every generated page opens on the same three beats, then answers in tiers
+   that get coarser as they run — characters, then words, then whole blocks —
+   so it reads as a stream catching up to itself rather than a uniform crawl.
+   Offsets are ms from mount. */
+const GEN = {
+  prompt:      0,   // the visitor's message
+  thinking:  520,   // PK-1's header and thinking dots
+  respond:  1400,   // dots fade, the answer starts building
+  charMs:     30,
+  // The four short pages: a TypewriterText heading (550ms), then the subtitle
+  // streams by word while the rest of the page staggers in as blocks.
+  subtitle:      1950,
+  subtitleWordMs:  45,
+  // Cards land one at a time, and each one's text types out once its shell has
+  // faded in. Shells keep arriving while earlier cards are still typing, so the
+  // page doesn't stall waiting on one card to finish.
+  cards:         2100,
+  cardStep:       130,
+  cardShell:      380,
+  cardTitleWordMs: 26,
+  cardBodyWordMs:  12,
+  cardTail:      1800,
+  total:         3000,
+};
+
+const cardAt = (i) => GEN.cards + i * GEN.cardStep;
+const cardTextAt = (i) => cardAt(i) + GEN.cardShell;
+const afterWords = (start, text, wordMs) => start + text.split(" ").length * wordMs;
+const genTotal = (cardCount) => GEN.cards + cardCount * GEN.cardStep + GEN.cardTail;
+
+/* About says far more, so it runs longer and earns the extra tiers. Paced so
+   the page can be scrolled while it generates and lower sections arrive as you
+   reach them. */
+const GEN_ABOUT = {
+  photo:         GEN.respond,
+  nameTag:       GEN.respond,
+  headline:      1940,
+  headlineLineMs: 520,
+  headlineGapMs:  260,
+  tagline:       3280,
+  taglineWordMs:   55,
+  timeline:      3330,
+  quote:         4080,
+  quoteWordMs:     38,
+  paraOne:       5480,
+  paraOneWordMs:   30,
+  blocks:        6700,
+  blockStep:      260,
+  // Must outlast the last block (blocks + 5 steps + its 420ms run), or
+  // settling would cut that animation off mid-flight.
+  total:         8600,
+};
+
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+/* Drives a page's generated-response reveal. Everything is CSS animation
+   delays, so this only tracks when the sequence is over: at that point the
+   reveal classes come off, which both stops blurred spans lingering as
+   composited layers and gives a clean end state. Deliberately not cancelled by
+   scrolling or tapping — scrolling along to watch the answer arrive is the
+   point, and every gesture that could cancel it is one used to follow it. */
+function useGeneratedResponse(totalMs) {
+  const [settled, setSettled] = useState(prefersReducedMotion);
+
+  useEffect(() => {
+    if (settled) return;
+    const t = setTimeout(() => setSettled(true), totalMs);
+    return () => clearTimeout(t);
+  }, [settled, totalMs]);
+
+  return {
+    settled,
+    genClass: (base = "") => (settled ? base : `${base} pk1-gen-block`.trim()),
+    // Cards fade without the rise: they set `transform` inline on hover, and a
+    // filled animation's transform would outrank it and kill the hover lift.
+    cardClass: (base = "") => (settled ? base : `${base} pk1-gen-card`.trim()),
+    genDelay: (ms) => (settled ? undefined : `${ms}ms`),
+    pageClass: (base) => `${base}${settled ? " pk1-gen-done" : ""}`,
+  };
+}
+
+/* The prompt a page reads as an answer to: the visitor's message, then PK-1's
+   header with a thinking state that fades out just as the response starts
+   building below it. The dots fade rather than unmount so the handoff doesn't
+   shift the page. */
+function PromptExchange({ prompt, settled, className = "" }) {
+  const cls = (base = "") => (settled ? base : `${base} pk1-gen-block`.trim());
+  const delay = (ms) => (settled ? undefined : `${ms}ms`);
+
+  return (
+    <div className={`pk1-exchange ${className}`.trim()}>
+      <div className={cls("pk1-prompt-bubble")} style={{ animationDelay: delay(GEN.prompt) }}>
+        {prompt}
+      </div>
+
+      <div className={cls("pk1-answer-head")} style={{ animationDelay: delay(GEN.thinking) }}>
+        <span className="pulse-dot pk1-answer-dot" />
+        <span className="pk1-answer-name">PK-1</span>
+        {!settled && (
+          <span className="pk1-thinking" style={{ animationDelay: `${GEN.respond - 240}ms` }}>
+            <i style={{ animationDelay: "0ms" }} />
+            <i style={{ animationDelay: "160ms" }} />
+            <i style={{ animationDelay: "320ms" }} />
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function AboutView() {
   const [headingDone, setHeadingDone] = useState(false);
+  const { settled, genClass, genDelay, pageClass } = useGeneratedResponse(GEN_ABOUT.total);
+  const heroRevealed = headingDone || settled;
+
   const bodyStyle = {
     fontSize: 15.5,
     lineHeight: 1.8,
@@ -5125,12 +5396,18 @@ function AboutView() {
   };
 
   return (
-    <div className="about-page" style={{
+    <div className={pageClass("about-page")} style={{
       width: "100%",
       minHeight: "100%",
-      overflowX: "hidden",
+      // `clip`, not `hidden`: pairing `hidden` with a visible y-axis forces
+      // overflow-y to compute to `auto`, which made this element its own scroll
+      // container — and the reveal's translateY then overflowed it, showing a
+      // second scrollbar for the length of the animation.
+      overflowX: "clip",
       boxSizing: "border-box",
     }}>
+      <PromptExchange prompt={promptFor("about")} settled={settled} className="about-exchange" />
+
       {/* SECTION 1 - HERO */}
       <div className="about-hero" style={{
         display: "grid",
@@ -5139,7 +5416,7 @@ function AboutView() {
         paddingLeft: 56,
       }}>
         {/* LEFT - Photo */}
-        <div className="about-photo" style={{ position: "relative", overflow: "hidden" }}>
+        <div className={genClass("about-photo")} style={{ position: "relative", overflow: "hidden", animationDelay: genDelay(GEN_ABOUT.photo) }}>
           <img
             src="/images/prakash.jpg"
             alt="Prakash Sejwani"
@@ -5187,13 +5464,18 @@ function AboutView() {
             color: "#D98A4C",
             marginBottom: 24,
             fontFamily: "'Inter', sans-serif",
+            position: "relative",
           }}>
-            Prakash Sejwani
+            {!settled && <span className="pk1-gen-caret" aria-hidden="true" />}
+            <LetterStream text="Prakash Sejwani" delay={GEN_ABOUT.nameTag} charMs={GEN.charMs} />
           </div>
 
           <TypewriterLines
             as="h1"
             className="about-headline"
+            startDelayMs={GEN_ABOUT.headline}
+            lineDurationMs={GEN_ABOUT.headlineLineMs}
+            lineDelayMs={GEN_ABOUT.headlineGapMs}
             style={{
               fontFamily: "'Fraunces', serif",
               fontStyle: "italic",
@@ -5235,20 +5517,24 @@ function AboutView() {
             ]}
           />
 
-          <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
+          <div className={`pk1-stagger${heroRevealed ? " pk1-stagger-go" : ""}`}>
           <div className="about-rule" style={{ width: 48, height: 2, background: "#D98A4C", marginBottom: 24 }} />
 
-          <p className="about-tagline" style={{
-            fontSize: 15,
-            lineHeight: 1.7,
-            color: "rgba(244,239,231,0.52)",
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 300,
-            margin: 0,
-            maxWidth: 340,
-          }}>
-            Final-year medical student. Software developer. Building at the intersection of both.
-          </p>
+          <WordStream
+            className="about-tagline"
+            text="Final-year medical student. Software developer. Building at the intersection of both."
+            delay={GEN_ABOUT.tagline}
+            wordMs={GEN_ABOUT.taglineWordMs}
+            style={{
+              fontSize: 15,
+              lineHeight: 1.7,
+              color: "rgba(244,239,231,0.52)",
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 300,
+              margin: 0,
+              maxWidth: 340,
+            }}
+          />
 
           <div className="about-scroll-indicator" style={{
             position: "absolute",
@@ -5284,7 +5570,7 @@ function AboutView() {
           { year: "Now", label: "Building", sub: "everything", pulse: true },
         ].map((item, i, arr) => (
           <Fragment key={i}>
-            <div className="about-timeline-item" style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 0 }}>
+            <div className={genClass("about-timeline-item")} style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 0, animationDelay: genDelay(GEN_ABOUT.timeline + i * GEN_ABOUT.blockStep) }}>
               <div style={{
                 fontFamily: "'Fraunces', serif",
                 fontStyle: "italic",
@@ -5301,18 +5587,20 @@ function AboutView() {
               <div style={{ fontSize: 10, color: "rgba(244,239,231,0.35)", textAlign: "center", marginTop: 2 }}>{item.sub}</div>
             </div>
             {i < arr.length - 1 ? (
-              <div className="about-timeline-link" style={{
+              <div className={genClass("about-timeline-link")} style={{
                 flex: 1,
                 height: 1,
                 background: "linear-gradient(90deg, rgba(217,138,76,0.4), rgba(217,138,76,0.1))",
                 marginTop: 29,
+                animationDelay: genDelay(GEN_ABOUT.timeline + i * GEN_ABOUT.blockStep + 45),
               }} />
             ) : (
-              <div className="about-timeline-link-end" style={{
+              <div className={genClass("about-timeline-link-end")} style={{
                 flex: "0 0 260px",
                 height: 1,
                 background: "rgba(217,138,76,0.35)",
                 marginTop: 29,
+                animationDelay: genDelay(GEN_ABOUT.timeline + i * GEN_ABOUT.blockStep + 45),
               }} />
             )}
           </Fragment>
@@ -5335,47 +5623,54 @@ function AboutView() {
             margin: "0 0 28px",
             borderRadius: 0,
           }}>
-            <p style={{
-              fontFamily: "'Fraunces', serif",
-              fontStyle: "italic",
-              fontSize: 17,
-              color: "rgba(244,239,231,0.82)",
-              lineHeight: 1.7,
-              margin: 0,
-              fontWeight: 400,
-            }}>
-              That same instinct shows up everywhere. When water went out and I only had jugs, I didn't just deal with it. I built a gravity-fed system out of a metal straw and a large bottle so I'd have controlled running water. That's just how my brain works. If there's a problem, I'm already thinking about the system that solves it.
-            </p>
+            <WordStream
+              delay={GEN_ABOUT.quote}
+              wordMs={GEN_ABOUT.quoteWordMs}
+              text="That same instinct shows up everywhere. When water went out and I only had jugs, I didn't just deal with it. I built a gravity-fed system out of a metal straw and a large bottle so I'd have controlled running water. That's just how my brain works. If there's a problem, I'm already thinking about the system that solves it."
+              style={{
+                fontFamily: "'Fraunces', serif",
+                fontStyle: "italic",
+                fontSize: 17,
+                color: "rgba(244,239,231,0.82)",
+                lineHeight: 1.7,
+                margin: 0,
+                fontWeight: 400,
+              }}
+            />
           </div>
 
-          <p style={{
-            fontSize: 17,
-            lineHeight: 1.78,
-            color: "rgba(244,239,231,0.72)",
-            fontWeight: 300,
-            margin: "0 0 22px",
-            fontFamily: "'Inter', sans-serif",
-          }}>
-            From a young age, technology was the thing I couldn't stay away from. Not in the "future programmer" sense, I wasn't writing code in my bedroom. I was the person who knew the tricks nobody else knew, the one people called when something needed fixing, formatting, or figuring out. I rooted phones when that was still a thing. I spent hours on computers just because computers were interesting.
-          </p>
+          <WordStream
+            delay={GEN_ABOUT.paraOne}
+            wordMs={GEN_ABOUT.paraOneWordMs}
+            text={'From a young age, technology was the thing I couldn\'t stay away from. Not in the "future programmer" sense, I wasn\'t writing code in my bedroom. I was the person who knew the tricks nobody else knew, the one people called when something needed fixing, formatting, or figuring out. I rooted phones when that was still a thing. I spent hours on computers just because computers were interesting.'}
+            style={{
+              fontSize: 17,
+              lineHeight: 1.78,
+              color: "rgba(244,239,231,0.72)",
+              fontWeight: 300,
+              margin: "0 0 22px",
+              fontFamily: "'Inter', sans-serif",
+            }}
+          />
 
-          <p style={bodyStyle}>
+          <p className={genClass()} style={{ ...bodyStyle, animationDelay: genDelay(GEN_ABOUT.blocks) }}>
             I'm a final-year medical student at the University of the West Indies, and somewhere between studying and the chaos of COVID, I discovered I could build software. December 2025 was when it clicked. I built a scoring app for School's Challenge Quiz because the problem was right in front of me and no good solution existed. Watching it work, watching people use it, watching it actually sell, that opened something. I saw the intersection of everything I loved: technology, problem-solving, and now healthcare.
           </p>
-          <p style={bodyStyle}>
+          <p className={genClass()} style={{ ...bodyStyle, animationDelay: genDelay(GEN_ABOUT.blocks + GEN_ABOUT.blockStep) }}>
             Since then I've shipped a Flutter car wash booking app for a paying client, built an interactive admin dashboard, created medical tools including a drug learning platform, and kept building, most recently a Three.js model of SA node electrical activity. I work with AI as a core part of my development process, not as a shortcut, but as the tool that makes it possible for someone who thinks in systems rather than syntax to build things that actually work.
           </p>
-          <p style={bodyStyle}>
+          <p className={genClass()} style={{ ...bodyStyle, animationDelay: genDelay(GEN_ABOUT.blocks + GEN_ABOUT.blockStep * 2) }}>
             The direction I'm heading is clear. AI and healthcare are going to collide in ways that most people in tech don't fully understand yet, because they've never been in a ward. I have. That combination is where I want to be.
           </p>
 
           {/* Stat row */}
-          <div className="about-stats" style={{
+          <div className={genClass("about-stats")} style={{
             display: "flex",
             borderTop: "1px solid rgba(255,255,255,0.06)",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
             padding: "24px 0",
             margin: "32px 0",
+            animationDelay: genDelay(GEN_ABOUT.blocks + GEN_ABOUT.blockStep * 3),
           }}>
             {[
               { num: "5+", label: "Apps Shipped", sub: null },
@@ -5403,7 +5698,7 @@ function AboutView() {
           </div>
 
           {/* Skill tags */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "28px 0" }}>
+          <div className={genClass()} style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "28px 0", animationDelay: genDelay(GEN_ABOUT.blocks + GEN_ABOUT.blockStep * 4) }}>
             {[
               { label: "Flutter", rotate: "-1.5deg" },
               { label: "Firebase", rotate: "1deg" },
@@ -5436,7 +5731,7 @@ function AboutView() {
             ))}
           </div>
 
-          <p style={{
+          <p className={genClass()} style={{
             fontSize: 14,
             fontStyle: "italic",
             color: "rgba(244,239,231,0.38)",
@@ -5445,6 +5740,7 @@ function AboutView() {
             paddingTop: 20,
             marginTop: 8,
             fontFamily: "'Inter', sans-serif",
+            animationDelay: genDelay(GEN_ABOUT.blocks + GEN_ABOUT.blockStep * 5),
           }}>
             Outside of building: cooking, badminton, rewatching ATLA for what is genuinely{" "}
             <span style={{
@@ -5459,7 +5755,7 @@ function AboutView() {
         </div>
 
         {/* RIGHT - decorative sidebar */}
-        <div className="about-content-right" style={{ padding: "52px 32px", display: "flex", flexDirection: "column", gap: 40 }}>
+        <div className={genClass("about-content-right")} style={{ padding: "52px 32px", display: "flex", flexDirection: "column", gap: 40, animationDelay: genDelay(GEN_ABOUT.blocks + GEN_ABOUT.blockStep) }}>
           <div style={{
             writingMode: "vertical-rl",
             transform: "rotate(180deg)",
@@ -5544,6 +5840,7 @@ function ContactView() {
   const [focusedField, setFocusedField] = useState(null);
   const [cooldown, setCooldown] = useState(readStoredCooldown);
   const [headingDone, setHeadingDone] = useState(false);
+  const { settled, cardClass, genDelay, pageClass } = useGeneratedResponse(genTotal(5));
 
   // Resume the countdown on mount if a cooldown is still active from before reload.
   useEffect(() => {
@@ -5591,31 +5888,42 @@ function ContactView() {
   };
 
   return (
-    <div className="contact-page" style={{ padding: "0 48px", maxWidth: 900, margin: "0 auto", width: "100%" }}>
+    <div className={pageClass("contact-page")} style={{ padding: "0 48px", maxWidth: 900, margin: "0 auto", width: "100%" }}>
+      <PromptExchange prompt={promptFor("contact")} settled={settled} />
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
         <TypewriterText
           as="h2"
           style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
           text="Contact"
+          startDelayMs={GEN.respond}
           onDone={() => setHeadingDone(true)}
         />
       </div>
-      <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
-      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 36px 17px" }}>Get in touch.</p>
+      <div className={`pk1-stagger${headingDone || settled ? " pk1-stagger-go" : ""}`}>
+      <WordStream
+        className="pk1-gen-self"
+        text="Get in touch."
+        delay={GEN.subtitle}
+        wordMs={GEN.subtitleWordMs}
+        style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 36px 17px" }}
+      />
 
-      <div className="contact-grid" style={{
+      <div className="contact-grid pk1-gen-self" style={{
         display: "grid",
         gridTemplateColumns: "minmax(220px, 320px) 1fr",
         gap: 28,
       }}>
         {/* ── Left: info ── */}
         <div className="contact-left" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <p style={{ fontSize: 14.5, lineHeight: 1.65, color: TEXT_DIM, margin: 0 }}>
-            Have a project in mind or just want to talk? Reach out.
-          </p>
+          <WordStream
+            text="Have a project in mind or just want to talk? Reach out."
+            delay={GEN.cards}
+            wordMs={GEN.cardBodyWordMs}
+            style={{ fontSize: 14.5, lineHeight: 1.65, color: TEXT_DIM, margin: 0 }}
+          />
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className={cardClass()} style={{ animationDelay: genDelay(cardAt(0)), display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: TEXT_DIM }}>
               <MapPin size={15} color={ACCENT} strokeWidth={1.8} />
               Kingston, Jamaica
@@ -5639,7 +5947,9 @@ function ContactView() {
             <a
               href="https://wa.me/18763718377"
               target="_blank" rel="noopener noreferrer"
+              className={cardClass()}
               style={{
+                animationDelay: genDelay(cardAt(1)),
                 display: "flex", alignItems: "center", gap: 9,
                 padding: "10px 14px", borderRadius: 10,
                 background: "rgba(255,255,255,0.035)",
@@ -5656,7 +5966,9 @@ function ContactView() {
             <a
               href="https://www.linkedin.com/in/prakash-sejwani-92b4b4350"
               target="_blank" rel="noopener noreferrer"
+              className={cardClass()}
               style={{
+                animationDelay: genDelay(cardAt(2)),
                 display: "flex", alignItems: "center", gap: 9,
                 padding: "10px 14px", borderRadius: 10,
                 background: "rgba(255,255,255,0.035)",
@@ -5673,7 +5985,9 @@ function ContactView() {
             <a
               href="https://github.com/rju23"
               target="_blank" rel="noopener noreferrer"
+              className={cardClass()}
               style={{
+                animationDelay: genDelay(cardAt(3)),
                 display: "flex", alignItems: "center", gap: 9,
                 padding: "10px 14px", borderRadius: 10,
                 background: "rgba(255,255,255,0.035)",
@@ -5691,7 +6005,8 @@ function ContactView() {
         </div>
 
         {/* ── Right: form ── */}
-        <div className="contact-form-card" style={{
+        <div className={cardClass("contact-form-card")} style={{
+          animationDelay: genDelay(cardAt(4)),
           padding: 24, borderRadius: 12,
           background: "rgba(255,255,255,0.035)",
           border: `1px solid ${BORDER}`,
@@ -5836,8 +6151,10 @@ const SERVICES = [
 
 function ServicesView({ onNavigate }) {
   const [headingDone, setHeadingDone] = useState(false);
+  const { settled, cardClass, genDelay, pageClass } = useGeneratedResponse(genTotal(SERVICES.length));
   return (
-    <div className="svc-page" style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+    <div className={pageClass("svc-page")} style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+      <PromptExchange prompt={promptFor("services")} settled={settled} />
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
         <TypewriterText
@@ -5845,24 +6162,30 @@ function ServicesView({ onNavigate }) {
           className="svc-title"
           style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
           text="Services"
+          startDelayMs={GEN.respond}
           onDone={() => setHeadingDone(true)}
         />
       </div>
-      <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
-      <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}>
-        What I can build for you.
-      </p>
+      <div className={`pk1-stagger${headingDone || settled ? " pk1-stagger-go" : ""}`}>
+      <WordStream
+        className="pk1-gen-self"
+        text="What I can build for you."
+        delay={GEN.subtitle}
+        wordMs={GEN.subtitleWordMs}
+        style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}
+      />
 
-      <div className="svc-grid" style={{
+      <div className="svc-grid pk1-gen-self" style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
         gap: 14,
       }}>
-        {SERVICES.map(({ Icon, title, tag, description, highlight }) => (
+        {SERVICES.map(({ Icon, title, tag, description, highlight }, cardIndex) => (
           <div
             key={title}
-            className="svc-card"
+            className={cardClass("svc-card")}
             style={{
+              animationDelay: genDelay(cardAt(cardIndex)),
               padding: "22px 22px 24px",
               borderRadius: 12,
               background: highlight ? "rgba(217,138,76,0.06)" : "rgba(255,255,255,0.035)",
@@ -5880,21 +6203,28 @@ function ServicesView({ onNavigate }) {
             </div>
 
             <div>
-              <h3 style={{
-                fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
-                fontSize: 18, color: TEXT, margin: "0 0 4px",
-              }}>
-                {title}
-              </h3>
+              <WordStream
+                as="h3"
+                text={title}
+                delay={cardTextAt(cardIndex)}
+                wordMs={GEN.cardTitleWordMs}
+                style={{
+                  fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 400,
+                  fontSize: 18, color: TEXT, margin: "0 0 4px",
+                }}
+              />
               <div style={{
                 fontSize: 11, color: highlight ? ACCENT : TEXT_MUTE,
                 letterSpacing: "0.03em", marginBottom: 10,
               }}>
                 {tag}
               </div>
-              <p style={{ fontSize: 13, lineHeight: 1.65, color: TEXT_DIM, margin: 0 }}>
-                {description}
-              </p>
+              <WordStream
+                text={description}
+                delay={afterWords(cardTextAt(cardIndex), title, GEN.cardTitleWordMs)}
+                wordMs={GEN.cardBodyWordMs}
+                style={{ fontSize: 13, lineHeight: 1.65, color: TEXT_DIM, margin: 0 }}
+              />
             </div>
           </div>
         ))}
@@ -6020,19 +6350,6 @@ function PlaygroundView({ onBack }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "#0D0C0B", overflow: "auto" }}>
       <div style={{ padding: "48px 48px 32px", maxWidth: 780, margin: "0 auto" }}>
-        <button
-          onClick={onBack}
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8,
-            color: "#F4EFE7", fontSize: 12.5, padding: "6px 14px",
-            cursor: "pointer", fontFamily: "'Inter', sans-serif",
-            marginBottom: 28,
-          }}
-        >
-          ← Back to Chat
-        </button>
-
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
           <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
           <TypewriterText

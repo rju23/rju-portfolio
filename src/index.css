@@ -156,6 +156,74 @@ body {
   background-clip: padding-box;
 }
 
+/* Chat landing hero. The container reserves clearance at the bottom for the
+   fixed chat bar, so centring inside it sits the hero ~95px above the true
+   middle of the area. `safe center` keeps the hero reachable if a short
+   window ever makes it overflow — plain `center` would clip it out of scroll
+   range — with the unprefixed value first as a fallback. */
+.pk1-scroll-hero {
+  justify-content: center;
+  justify-content: safe center;
+}
+
+/* Scrim that sits between the scrolling page and the fixed chat bar, so
+   content dissolves as it passes under the bar instead of sliding past it
+   in full view — the way messages tuck under a chat composer. Its height and
+   fade ramp come from App.jsx, which measures the live bar so the scrim
+   always clears the suggestion chips too. */
+.pk1-inputbar-scrim {
+  position: fixed;
+  left: 202px;
+  right: 0;
+  bottom: 0;
+  height: var(--scrim-h, 210px);
+  z-index: 3;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  background: linear-gradient(
+    to bottom,
+    rgba(13,12,11,0) 0%,
+    rgba(13,12,11,0.35) var(--scrim-fade, 90px),
+    rgba(13,12,11,0.7) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0,0,0,0.3) calc(var(--scrim-fade, 90px) * 0.45),
+    #000 var(--scrim-fade, 90px)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0,0,0,0.3) calc(var(--scrim-fade, 90px) * 0.45),
+    #000 var(--scrim-fade, 90px)
+  );
+}
+
+/* The heavier blur, confined to the input row so it doesn't wash out the
+   suggestion chips sitting above it. */
+.pk1-inputbar-scrim-blur {
+  position: fixed;
+  left: 202px;
+  right: 0;
+  bottom: 0;
+  height: var(--scrim-blur-h, 120px);
+  z-index: 3;
+  pointer-events: none;
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 45%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 45%);
+}
+
+@media (max-width: 1024px) {
+  .pk1-inputbar-scrim,
+  .pk1-inputbar-scrim-blur {
+    left: 0;
+  }
+}
+
 /* --- 876 Revive & Drive case study --- */
 .rv-splash-logo {
   opacity: 0;
@@ -801,6 +869,163 @@ body {
 .pk1-stagger-go > *:nth-child(5) { animation-delay: 280ms; }
 .pk1-stagger-go > *:nth-child(6) { animation-delay: 350ms; }
 
+/* ── About page: "generated response" reveal ──
+   Three tiers, each driven purely by its own animation-delay so the whole
+   sequence is declarative: characters, then words, then whole blocks. The
+   delays live in the GEN table in App.jsx. `.pk1-gen-done` on the page root
+   drops all of it — set once the sequence ends, or immediately if the visitor
+   interacts or prefers reduced motion. */
+@keyframes pk1GenIn {
+  from { opacity: 0; filter: blur(4px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+.pk1-gen-char,
+.pk1-gen-word {
+  display: inline-block;
+  animation: pk1GenIn 240ms ease both;
+}
+
+@keyframes pk1GenBlockIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.pk1-gen-block {
+  animation: pk1GenBlockIn 420ms ease both;
+}
+
+/* Cards fade without the rise. They set `transform` inline on hover, and a
+   filled animation's transform would outrank it and kill the hover lift. */
+@keyframes pk1GenFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.pk1-gen-card {
+  animation: pk1GenFadeIn 380ms ease both;
+}
+
+/* A cursor waiting in the name-tag slot before the first characters land.
+   Positioned out of flow so its removal doesn't nudge the text. */
+@keyframes pk1GenCaret {
+  0%, 49%  { opacity: 1; }
+  50%, 99% { opacity: 0.15; }
+  100%     { opacity: 0; }
+}
+.pk1-gen-caret {
+  position: absolute;
+  left: -9px;
+  top: 1px;
+  width: 2px;
+  height: 11px;
+  background: #D98A4C;
+  animation: pk1GenCaret 220ms steps(1, end) 2 both;
+}
+
+/* Word-streamed text inside a stagger opts out of the parent's block fade —
+   two compounding opacity animations read as a stutter. Its own spans handle
+   the reveal. */
+.pk1-stagger > .about-tagline,
+.pk1-stagger-go > .about-tagline,
+.pk1-stagger > .pk1-gen-self,
+.pk1-stagger-go > .pk1-gen-self {
+  opacity: 1;
+  animation: none !important;
+}
+
+/* ── The prompt exchange above the response ── */
+/* No side padding by default: on the four short pages the exchange sits inside
+   a container that is already padded. About is full-bleed, so it adds its own. */
+.pk1-exchange {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 6px 0 26px;
+}
+.about-exchange {
+  padding-left: 56px;
+  padding-right: 56px;
+}
+
+.pk1-prompt-bubble {
+  align-self: flex-end;
+  max-width: min(72%, 440px);
+  padding: 11px 17px;
+  border-radius: 18px 18px 4px 18px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  color: rgba(244,239,231,0.82);
+  font-family: 'Inter', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.pk1-answer-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 20px;
+}
+.pk1-answer-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5FBF7A;
+  flex-shrink: 0;
+}
+.pk1-answer-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244,239,231,0.45);
+}
+
+@keyframes pk1ThinkBounce {
+  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+  30%           { opacity: 1;    transform: translateY(-3px); }
+}
+@keyframes pk1GenFadeOut {
+  to { opacity: 0; }
+}
+.pk1-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  animation: pk1GenFadeOut 240ms ease both;
+}
+.pk1-thinking i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(217,138,76,0.75);
+  animation: pk1ThinkBounce 1s ease-in-out infinite;
+}
+
+@media (max-width: 1024px) {
+  .pk1-exchange {
+    padding: 2px 0 20px;
+  }
+  .about-exchange {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.pk1-gen-done .pk1-thinking { display: none !important; }
+.pk1-gen-done .pk1-gen-char,
+.pk1-gen-done .pk1-gen-word,
+.pk1-gen-done .pk1-gen-card,
+.pk1-gen-done .pk1-gen-block {
+  animation: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+.pk1-gen-done .pk1-gen-caret { display: none !important; }
+
 /* Uno project page: on phones, shrink the card a bit more than
    tablet/desktop's calc(100dvh - 160px) reserve so the throw button +
    card counter clear the card's bottom edge with a visible gap instead
@@ -893,4 +1118,15 @@ body {
   .pk1-typewriter { animation: none !important; clip-path: none !important; }
   .pk1-stagger > * { opacity: 1; }
   .pk1-stagger-go > * { animation: none !important; }
+  .pk1-gen-char,
+  .pk1-gen-word,
+  .pk1-gen-card,
+  .pk1-gen-block {
+    animation: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+  .pk1-gen-caret { display: none !important; }
+  .pk1-thinking { display: none !important; }
 }
