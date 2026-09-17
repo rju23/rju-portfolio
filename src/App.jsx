@@ -321,7 +321,7 @@ export default function App() {
           display: "flex", flexDirection: "column",
           alignItems: "stretch",
           justifyContent: section === "chat" ? "center" : "flex-start",
-          paddingBottom: section === "chat" ? 90 : section === "about" ? 90 : 190,
+          paddingBottom: section === "chat" ? 90 : section === "about" ? 90 : section === "contact" ? 260 : 190,
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
           <div key={section} className="pk1-page-fade" style={{ display: "flex", flexDirection: "column", flex: 1, width: "100%" }}>
@@ -1555,19 +1555,26 @@ function ProjectShell({ projectId, onBack, onNavigate, children }) {
 
   const ORB_SIZE = 52;
   const orbRef = useRef(null);
-  const [orbPos, setOrbPos] = useState(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("pk1_orb_pos"));
-      if (saved && typeof saved.x === "number" && typeof saved.y === "number") return saved;
-    } catch {}
-    return null;
-  });
-  const dragState = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0, pointerType: "mouse" });
 
   const clampOrbPos = (x, y) => ({
     x: Math.min(Math.max(x, 8), window.innerWidth - ORB_SIZE - 8),
     y: Math.min(Math.max(y, 8), window.innerHeight - ORB_SIZE - 8),
   });
+
+  const [orbPos, setOrbPos] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("pk1_orb_pos"));
+      // Clamp against the viewport we're actually loading into — a position
+      // saved from a different orientation/screen size (e.g. landscape)
+      // could otherwise land off-screen on first paint, with no resize
+      // event ever firing to correct it.
+      if (saved && typeof saved.x === "number" && typeof saved.y === "number") {
+        return clampOrbPos(saved.x, saved.y);
+      }
+    } catch {}
+    return null;
+  });
+  const dragState = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0, pointerType: "mouse" });
 
   const handleOrbPointerDown = (e) => {
     const rect = orbRef.current.getBoundingClientRect();
@@ -3801,7 +3808,7 @@ function UnoCard({ color, label, children, animClass }) {
       style={{
         position: "relative",
         width: "min(520px, 92vw)",
-        height: "min(720px, calc(100vh - 160px))",
+        height: "min(720px, calc(100dvh - 160px))",
         borderRadius: 24,
         background: bg,
         backgroundImage: isWild ? UNO_COLORS.wild : undefined,
@@ -4244,7 +4251,7 @@ function UnoProject({ onNextProject }) {
               background: "#2a2a2a",
               borderRadius: 24,
               width: "min(520px, 92vw)",
-              height: "min(720px, calc(100vh - 160px))",
+              height: "min(720px, calc(100dvh - 160px))",
               opacity: 0.6,
             }} />
             <div className="uno-card-shell" style={{
@@ -4254,7 +4261,7 @@ function UnoProject({ onNextProject }) {
               background: "#2a2a2a",
               borderRadius: 24,
               width: "min(520px, 92vw)",
-              height: "min(720px, calc(100vh - 160px))",
+              height: "min(720px, calc(100dvh - 160px))",
               opacity: 0.35,
             }} />
 
