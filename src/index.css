@@ -2,13 +2,10 @@
 
 html, body, #root {
   height: 100%;
+  height: 100dvh; /* ignored by browsers that don't support dvh, so 100% still applies there */
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-}
-
-.pk1-app-shell {
-  overflow-y: auto !important;
 }
 
 html {
@@ -464,8 +461,12 @@ body {
     padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
-  .pk1-scroll-chat {
-    padding-bottom: 170px !important;
+  /* One clearance value for every page's scroll container on mobile,
+     sized to the taller two-row mobile input bar (suggestion chips +
+     input row + disclaimer text) plus headroom, so nothing ever ends
+     up hidden behind the fixed bar. */
+  .pk1-scroll {
+    padding-bottom: 230px !important;
   }
 
   .proj-page {
@@ -505,10 +506,6 @@ body {
 
   .contact-submit-btn {
     width: 100% !important;
-  }
-
-  .pk1-scroll-contact {
-    padding-bottom: 200px !important;
   }
 
   /* Coming Soon page */
@@ -613,6 +610,22 @@ body {
   }
 }
 
+/* Tablet: sidebar is off-canvas here (see the max-width:1024px hamburger
+   rule above), so the input bar only needs to clear the shell's own
+   left padding, not the sidebar's width. Keeps it pinned to the
+   viewport like the phone and desktop tiers instead of scrolling with
+   the page. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .pk1-inputbar-outer {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 25 !important;
+  }
+}
+
 /* Tablet: single-column project grid (same as phones), with room to
    clear the fixed input bar */
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -627,7 +640,7 @@ body {
    headline side by side up top, single-column content below) */
 @media (max-width: 1024px) {
   .pk1-scroll-about {
-    padding-bottom: 110px !important;
+    padding-bottom: 230px !important;
   }
 
   .about-hero {
@@ -750,6 +763,44 @@ body {
 .pk1-page-fade {
   animation: pk1PageFade 0.24s ease;
 }
+
+/* ── Heading typewriter + stagger-in content ──
+   The heading reveals via an animated clip-path rather than by typing
+   characters into the DOM, so it works for plain strings and for rich
+   JSX (colored spans, inline images) without reflowing anything below
+   it. `.pk1-stagger` holds whatever sits below a heading; it starts
+   invisible and only plays once the heading's onDone callback adds
+   `.pk1-stagger-go` (see TypewriterText/TypewriterLines in App.jsx).
+   Both retrigger automatically because the page they live on is
+   remounted (via `key={section}`, or plain conditional rendering for
+   Playground) on every navigation. */
+@keyframes pk1TypeIn {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+.pk1-typewriter {
+  display: inline-block;
+  max-width: 100%;
+  animation: pk1TypeIn var(--pk1-tw-duration, 550ms) steps(var(--pk1-tw-steps, 20), end) both;
+}
+
+@keyframes pk1StaggerFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.pk1-stagger > * {
+  opacity: 0;
+}
+.pk1-stagger-go > * {
+  animation: pk1StaggerFade 0.4s ease both;
+}
+.pk1-stagger-go > *:nth-child(1) { animation-delay: 0ms; }
+.pk1-stagger-go > *:nth-child(2) { animation-delay: 70ms; }
+.pk1-stagger-go > *:nth-child(3) { animation-delay: 140ms; }
+.pk1-stagger-go > *:nth-child(4) { animation-delay: 210ms; }
+.pk1-stagger-go > *:nth-child(5) { animation-delay: 280ms; }
+.pk1-stagger-go > *:nth-child(6) { animation-delay: 350ms; }
+
 /* Uno project page: on phones, shrink the card a bit more than
    tablet/desktop's calc(100dvh - 160px) reserve so the throw button +
    card counter clear the card's bottom edge with a visible gap instead
@@ -839,4 +890,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .pk1-page-fade { animation: none; }
+  .pk1-typewriter { animation: none !important; clip-path: none !important; }
+  .pk1-stagger > * { opacity: 1; }
+  .pk1-stagger-go > * { animation: none !important; }
 }

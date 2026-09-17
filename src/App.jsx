@@ -328,7 +328,7 @@ export default function App() {
           display: "flex", flexDirection: "column",
           alignItems: "stretch",
           justifyContent: section === "chat" ? "center" : "flex-start",
-          paddingBottom: section === "chat" ? 90 : section === "about" ? 90 : section === "contact" ? 260 : 190,
+          paddingBottom: section === "contact" ? 260 : 190,
           zIndex: 1, overflowY: "auto", overflowX: "hidden",
         }}>
           <div key={section} className="pk1-page-fade" style={{ display: "flex", flexDirection: "column", flex: 1, width: "100%" }}>
@@ -341,7 +341,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="pk1-inputbar-outer" style={{ position: "absolute", bottom: -10, left: 0, right: 12, zIndex: 4 }}>
+        <div className="pk1-inputbar-outer" style={{ position: "fixed", bottom: 0, left: 202, right: 0, zIndex: 4 }}>
           <InputBar onNavigate={navigateTo} />
         </div>
       </main>
@@ -704,8 +704,66 @@ function InputBar({ onNavigate }) {
   );
 }
 
+/* ── Typewriter heading effect ──
+   Reveals already-laid-out content via an animated clip-path (not by
+   inserting characters), so it works for plain strings and for rich
+   JSX (colored spans, inline images) without reflowing anything below
+   it. Retriggers automatically because the page it lives on is
+   remounted (via `key={section}`) on every navigation. */
+function TypewriterText({ as: Tag = "span", text, className = "", style, onDone, durationMs = 550 }) {
+  useEffect(() => {
+    if (!onDone) return;
+    const t = setTimeout(onDone, durationMs);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const steps = Math.max(4, Math.min(40, text.length));
+
+  return (
+    <Tag
+      className={`pk1-typewriter ${className}`.trim()}
+      style={{ ...style, "--pk1-tw-steps": steps, "--pk1-tw-duration": `${durationMs}ms` }}
+      aria-label={text}
+    >
+      {text}
+    </Tag>
+  );
+}
+
+function TypewriterLines({ as: Tag = "h1", lines, className = "", style, onDone, lineDurationMs = 380, lineDelayMs = 110 }) {
+  useEffect(() => {
+    if (!onDone) return;
+    const total = lineDelayMs * (lines.length - 1) + lineDurationMs;
+    const t = setTimeout(onDone, total);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <Tag className={className} style={style} aria-label={lines.map((l) => l.label || "").join(" ")}>
+      {lines.map((line, i) => (
+        <Fragment key={i}>
+          {i > 0 && <br />}
+          <span
+            className="pk1-typewriter"
+            style={{
+              "--pk1-tw-steps": line.steps || 8,
+              "--pk1-tw-duration": `${lineDurationMs}ms`,
+              animationDelay: `${i * lineDelayMs}ms`,
+            }}
+          >
+            {line.node}
+          </span>
+        </Fragment>
+      ))}
+    </Tag>
+  );
+}
+
 function HeroText() {
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 700);
+  const [headingDone, setHeadingDone] = useState(false);
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 700);
     window.addEventListener("resize", onResize);
@@ -786,27 +844,33 @@ function HeroText() {
           />
 
           {/* Main headline with light effect */}
-          <h1 className="hero-headline" style={{ ...headlineStyle, fontSize: 56 }}>
-            Hey, I'm Prakash.
-          </h1>
+          <TypewriterText
+            as="h1"
+            className="hero-headline"
+            style={{ ...headlineStyle, fontSize: 56 }}
+            text="Hey, I'm Prakash."
+            onDone={() => setHeadingDone(true)}
+          />
 
-          {/* PK-1 subtitle */}
-          <p className="hero-subtitle" style={{
-            fontSize: 14, color: "rgba(244,239,231,0.45)",
-            fontFamily: "'Inter', sans-serif", fontWeight: 300,
-            marginBottom: 10, letterSpacing: "0.01em",
-          }}>
-            Meet PK-1 - Prakash's personal AI portfolio assistant.
-          </p>
+          <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
+            {/* PK-1 subtitle */}
+            <p className="hero-subtitle" style={{
+              fontSize: 14, color: "rgba(244,239,231,0.45)",
+              fontFamily: "'Inter', sans-serif", fontWeight: 300,
+              marginBottom: 10, letterSpacing: "0.01em",
+            }}>
+              Meet PK-1 - Prakash's personal AI portfolio assistant.
+            </p>
 
-          <p className="hero-footer" style={{
-            fontSize: 15.5, lineHeight: 1.75,
-            color: "rgba(244,239,231,0.45)",
-            fontFamily: "'Inter', sans-serif", fontWeight: 300,
-            maxWidth: 520, margin: "0 auto",
-          }}>
-            Ask it what it knows about my work, or use the side menu to explore directly.
-          </p>
+            <p className="hero-footer" style={{
+              fontSize: 15.5, lineHeight: 1.75,
+              color: "rgba(244,239,231,0.45)",
+              fontFamily: "'Inter', sans-serif", fontWeight: 300,
+              maxWidth: 520, margin: "0 auto",
+            }}>
+              Ask it what it knows about my work, or use the side menu to explore directly.
+            </p>
+          </div>
 
         </div>
       </div>
@@ -841,31 +905,37 @@ function HeroText() {
         </p>
 
         {/* Main headline with light effect */}
-        <h1 className="hero-headline" style={headlineStyle}>
-          Hey, I'm Prakash.
-        </h1>
+        <TypewriterText
+          as="h1"
+          className="hero-headline"
+          style={headlineStyle}
+          text="Hey, I'm Prakash."
+          onDone={() => setHeadingDone(true)}
+        />
 
-        {/* Bio */}
-        <p className="hero-bio" style={{
-          fontSize: 15.5, lineHeight: 2,
-          color: "rgba(244,239,231,0.58)",
-          fontFamily: "'Inter', sans-serif", fontWeight: 300,
-          marginBottom: 10, maxWidth: 520,
-        }}>
-          I'm a{" "}
-          {medChip}
-          {" "}and{" "}
-          {devChip}
-          {" "}- I build apps, websites and other useful tools with clean interfaces to solve real problems.
-        </p>
-        <p className="hero-footer" style={{
-          fontSize: 15.5, lineHeight: 1.75,
-          color: "rgba(244,239,231,0.45)",
-          fontFamily: "'Inter', sans-serif", fontWeight: 300,
-          maxWidth: 520,
-        }}>
-          Ask PK-1 what it knows about my work, or use the side menu to explore directly.
-        </p>
+        <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
+          {/* Bio */}
+          <p className="hero-bio" style={{
+            fontSize: 15.5, lineHeight: 2,
+            color: "rgba(244,239,231,0.58)",
+            fontFamily: "'Inter', sans-serif", fontWeight: 300,
+            marginBottom: 10, maxWidth: 520,
+          }}>
+            I'm a{" "}
+            {medChip}
+            {" "}and{" "}
+            {devChip}
+            {" "}- I build apps, websites and other useful tools with clean interfaces to solve real problems.
+          </p>
+          <p className="hero-footer" style={{
+            fontSize: 15.5, lineHeight: 1.75,
+            color: "rgba(244,239,231,0.45)",
+            fontFamily: "'Inter', sans-serif", fontWeight: 300,
+            maxWidth: 520,
+          }}>
+            Ask PK-1 what it knows about my work, or use the side menu to explore directly.
+          </p>
+        </div>
 
       </div>
     </div>
@@ -1023,6 +1093,7 @@ const COMING_SOON_TABS = [
 
 function ComingSoonView() {
   const [activeTab, setActiveTab] = useState("experiments");
+  const [headingDone, setHeadingDone] = useState(false);
   const tab = COMING_SOON_TABS.find((t) => t.id === activeTab);
   const gridCols = tab.cards.length > 1 ? "repeat(auto-fit, minmax(300px, 1fr))" : "1fr";
 
@@ -1030,10 +1101,15 @@ function ComingSoonView() {
     <div className="cs-page" style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <Sparkles size={18} color={ACCENT} strokeWidth={1.8} />
-        <h2 className="cs-title" style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
-          Coming Soon
-        </h2>
+        <TypewriterText
+          as="h2"
+          className="cs-title"
+          style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
+          text="Coming Soon"
+          onDone={() => setHeadingDone(true)}
+        />
       </div>
+      <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
       <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 20px 17px" }}>
         A preview of what's next for PK-1.
       </p>
@@ -1129,6 +1205,7 @@ function ComingSoonView() {
           );
         })}
       </div>
+      </div>
     </div>
   );
 }
@@ -1150,6 +1227,7 @@ const DESKTOP_ONLY_PROJECTS = new Set(["medical-visualizer"]);
 function ProjectsView({ onNavigate, activeProjectId, activeProjectSubPage, onSelectProject }) {
   const activeProject = activeProjectId;
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
+  const [headingDone, setHeadingDone] = useState(false);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -1175,10 +1253,14 @@ function ProjectsView({ onNavigate, activeProjectId, activeProjectSubPage, onSel
     <div className="proj-page" style={{ padding: "0 48px", maxWidth: 980, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
-          Projects
-        </h2>
+        <TypewriterText
+          as="h2"
+          style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
+          text="Projects"
+          onDone={() => setHeadingDone(true)}
+        />
       </div>
+      <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
       <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}>Things I've built.</p>
 
       <div className="proj-grid" style={{
@@ -1495,6 +1577,7 @@ function ProjectsView({ onNavigate, activeProjectId, activeProjectSubPage, onSel
             </div>
           );
         })}
+      </div>
       </div>
 
       {activeProject && (
@@ -5031,6 +5114,7 @@ function UnoProject({ onNextProject }) {
 }
 
 function AboutView() {
+  const [headingDone, setHeadingDone] = useState(false);
   const bodyStyle = {
     fontSize: 15.5,
     lineHeight: 1.8,
@@ -5107,38 +5191,51 @@ function AboutView() {
             Prakash Sejwani
           </div>
 
-          <h1 className="about-headline" style={{
-            fontFamily: "'Fraunces', serif",
-            fontStyle: "italic",
-            fontWeight: 400,
-            fontSize: "clamp(52px, 7vw, 88px)",
-            lineHeight: 0.95,
-            letterSpacing: "-0.03em",
-            color: "#F4EFE7",
-            margin: "0 0 32px",
-          }}>
-            A<br />
-            <span style={{ color: "#D98A4C" }}>Builder</span><br />
-            at<br />
-            <span className="about-heart-wrap" style={{ display: "inline-flex", alignItems: "center", gap: 0, lineHeight: 1, letterSpacing: "-0.08em", margin: "0 -4px" }}>
-              <span className="about-heart-pre" style={{ color: "#D98A4C", marginRight: "-14px" }}>He</span>
-              <img
-                className="about-heart-img"
-                src="/images/heart.png"
-                alt="heart"
-                style={{
-                  width: "0.95em",
-                  height: "0.95em",
-                  objectFit: "contain",
-                  display: "inline-block",
-                  verticalAlign: "middle",
-                  filter: "drop-shadow(0 0 8px rgba(217,138,76,0.4))",
-                }}
-              />
-              <span className="about-heart-post" style={{ color: "#D98A4C", marginLeft: "-18px" }}>rt.</span>
-            </span>
-          </h1>
+          <TypewriterLines
+            as="h1"
+            className="about-headline"
+            style={{
+              fontFamily: "'Fraunces', serif",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(52px, 7vw, 88px)",
+              lineHeight: 0.95,
+              letterSpacing: "-0.03em",
+              color: "#F4EFE7",
+              margin: "0 0 32px",
+            }}
+            onDone={() => setHeadingDone(true)}
+            lines={[
+              { label: "A", steps: 3, node: "A" },
+              { label: "Builder", steps: 8, node: <span style={{ color: "#D98A4C" }}>Builder</span> },
+              { label: "at", steps: 3, node: "at" },
+              {
+                label: "Heart",
+                steps: 10,
+                node: (
+                  <span className="about-heart-wrap" style={{ display: "inline-flex", alignItems: "center", gap: 0, lineHeight: 1, letterSpacing: "-0.08em", margin: "0 -4px" }}>
+                    <span className="about-heart-pre" style={{ color: "#D98A4C", marginRight: "-14px" }}>He</span>
+                    <img
+                      className="about-heart-img"
+                      src="/images/heart.png"
+                      alt="heart"
+                      style={{
+                        width: "0.95em",
+                        height: "0.95em",
+                        objectFit: "contain",
+                        display: "inline-block",
+                        verticalAlign: "middle",
+                        filter: "drop-shadow(0 0 8px rgba(217,138,76,0.4))",
+                      }}
+                    />
+                    <span className="about-heart-post" style={{ color: "#D98A4C", marginLeft: "-18px" }}>rt.</span>
+                  </span>
+                ),
+              },
+            ]}
+          />
 
+          <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
           <div className="about-rule" style={{ width: 48, height: 2, background: "#D98A4C", marginBottom: 24 }} />
 
           <p className="about-tagline" style={{
@@ -5163,6 +5260,7 @@ function AboutView() {
           }}>
             <div style={{ width: 24, height: 1, background: "rgba(244,239,231,0.2)" }} />
             Scroll
+          </div>
           </div>
         </div>
       </div>
@@ -5445,6 +5543,7 @@ function ContactView() {
   const [status, setStatus]   = useState("idle"); // idle | sending | success | error
   const [focusedField, setFocusedField] = useState(null);
   const [cooldown, setCooldown] = useState(readStoredCooldown);
+  const [headingDone, setHeadingDone] = useState(false);
 
   // Resume the countdown on mount if a cooldown is still active from before reload.
   useEffect(() => {
@@ -5495,10 +5594,14 @@ function ContactView() {
     <div className="contact-page" style={{ padding: "0 48px", maxWidth: 900, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
-          Contact
-        </h2>
+        <TypewriterText
+          as="h2"
+          style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
+          text="Contact"
+          onDone={() => setHeadingDone(true)}
+        />
       </div>
+      <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
       <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 36px 17px" }}>Get in touch.</p>
 
       <div className="contact-grid" style={{
@@ -5680,6 +5783,7 @@ function ContactView() {
           </form>
         </div>
       </div>
+      </div>
     </div>
   );
 }
@@ -5731,14 +5835,20 @@ const SERVICES = [
 ];
 
 function ServicesView({ onNavigate }) {
+  const [headingDone, setHeadingDone] = useState(false);
   return (
     <div className="svc-page" style={{ padding: "0 48px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
-        <h2 className="svc-title" style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
-          Services
-        </h2>
+        <TypewriterText
+          as="h2"
+          className="svc-title"
+          style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
+          text="Services"
+          onDone={() => setHeadingDone(true)}
+        />
       </div>
+      <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
       <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}>
         What I can build for you.
       </p>
@@ -5827,6 +5937,7 @@ function ServicesView({ onNavigate }) {
           <ArrowRight size={15} strokeWidth={2.2} />
         </button>
       </div>
+      </div>
     </div>
   );
 }
@@ -5834,6 +5945,7 @@ function ServicesView({ onNavigate }) {
 function PlaygroundView({ onBack }) {
   const [active, setActive] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [headingDone, setHeadingDone] = useState(false);
 
   const experiments = [
     {
@@ -5923,10 +6035,14 @@ function PlaygroundView({ onBack }) {
 
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
           <div style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
-          <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
-            Playground
-          </h2>
+          <TypewriterText
+            as="h2"
+            style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}
+            text="Playground"
+            onDone={() => setHeadingDone(true)}
+          />
         </div>
+        <div className={`pk1-stagger${headingDone ? " pk1-stagger-go" : ""}`}>
         <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "0 0 32px 17px" }}>
           Things you can interact with.
         </p>
@@ -5954,6 +6070,7 @@ function PlaygroundView({ onBack }) {
               <div style={{ fontSize: 13, color: TEXT_DIM }}>{exp.description}</div>
             </button>
           ))}
+        </div>
         </div>
       </div>
     </div>

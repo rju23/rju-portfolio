@@ -160,13 +160,31 @@
       "Bash(cp /tmp/svgrender/apple-touch-icon-padded.png \"c:/dev/Portfolio/Website Portfolio/public/apple-touch-icon.png\" && cd \"c:/dev/Portfolio/Website Portfolio\" && git status public/apple-touch-icon.png)",
       "Bash(cd \"c:/dev/Portfolio\" && ls -la 2>&1)",
       "Read(//c/dev/Portfolio/**)",
-      "Bash(find /c/dev /c/Users/sejwa/Documents /c/Users/sejwa/Desktop -maxdepth 4 -iname \"*music-visualizer*\" -not -path \"*/node_modules/*\" 2>/dev/null)"
+      "Bash(find /c/dev /c/Users/sejwa/Documents /c/Users/sejwa/Desktop -maxdepth 4 -iname \"*music-visualizer*\" -not -path \"*/node_modules/*\" 2>/dev/null)",
+      "Bash(mkdir -p /tmp/lintcheck)",
+      "Read(//tmp/lintcheck/**)",
+      "Bash(npx --yes playwright install chromium --with-deps)",
+      "Bash(npx --yes playwright install chromium)",
+      "Bash(mkdir -p /tmp/pw-check)",
+      "Bash(npm init *)",
+      "Bash(npx playwright *)",
+      "Bash(node check.js)",
+      "Bash(ls -la /tmp/pw-check/ 2>&1; echo ---; ls -la \"/c/Users/sejwa/AppData/Local/Temp/pw-check/\" 2>&1)",
+      "Read(//c/Users/sejwa/AppData/Local/Temp/pw-check//**)",
+      "Bash(cp /c/tmp/pw-check/check.js /tmp/pw-check/check.js)",
+      "Bash(node /c/tmp/pw-check/check2.js)",
+      "Bash(cp /c/tmp/pw-check/check2.js /tmp/pw-check/check2.js)",
+      "Bash(node check2.js)",
+      "Read(//c/Users/sejwa/AppData/Local/Temp/pw-check/**)",
+      "Bash(lsof -ti:5173 -sTCP:LISTEN)"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",
       "\\tmp",
       "C:\\Users\\sejwa\\AppData\\Local\\Temp\\claude\\c--dev-Portfolio-Website-Portfolio\\bf12cd03-654b-43b5-9ba8-deb226b0a6e5\\scratchpad",
-      "C:\\Users\\sejwa\\AppData\\Local\\Temp\\claude\\c--dev-Portfolio-Website-Portfolio\\bf12cd03-654b-43b5-9ba8-deb226b0a6e5\\scratchpad\\favicon"
+      "C:\\Users\\sejwa\\AppData\\Local\\Temp\\claude\\c--dev-Portfolio-Website-Portfolio\\bf12cd03-654b-43b5-9ba8-deb226b0a6e5\\scratchpad\\favicon",
+      "\\tmp\\pw-check",
+      "c:\\tmp\\pw-check"
     ]
   }
 }
