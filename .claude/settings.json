@@ -157,7 +157,10 @@
       "Bash(python3 -c \"import cairosvg\")",
       "Bash(pip install *)",
       "Read(//c/Users/sejwa/AppData/Local/Temp/svgrender/**)",
-      "Bash(cp /tmp/svgrender/apple-touch-icon-padded.png \"c:/dev/Portfolio/Website Portfolio/public/apple-touch-icon.png\" && cd \"c:/dev/Portfolio/Website Portfolio\" && git status public/apple-touch-icon.png)"
+      "Bash(cp /tmp/svgrender/apple-touch-icon-padded.png \"c:/dev/Portfolio/Website Portfolio/public/apple-touch-icon.png\" && cd \"c:/dev/Portfolio/Website Portfolio\" && git status public/apple-touch-icon.png)",
+      "Bash(cd \"c:/dev/Portfolio\" && ls -la 2>&1)",
+      "Read(//c/dev/Portfolio/**)",
+      "Bash(find /c/dev /c/Users/sejwa/Documents /c/Users/sejwa/Desktop -maxdepth 4 -iname \"*music-visualizer*\" -not -path \"*/node_modules/*\" 2>/dev/null)"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",
