@@ -135,7 +135,8 @@
       "Bash(mkdir -p \"/c/Users/sejwa/AppData/Local/Temp/claude/c--dev-Portfolio-Website-Portfolio/bf12cd03-654b-43b5-9ba8-deb226b0a6e5/scratchpad/favicon\")",
       "Bash(timeout 60 node_modules/.bin/vite build)",
       "Bash(python -c \"from PIL import Image; im=Image.open\\(r'C:/dev/Portfolio/Website Portfolio/public/favicon.png'\\); print\\(im.mode, im.size\\)\")",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(mkdir -p \"/c/Users/sejwa/AppData/Local/Temp/claude/c--dev-Portfolio-Website-Portfolio/bf12cd03-654b-43b5-9ba8-deb226b0a6e5/scratchpad/favicon2\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",
