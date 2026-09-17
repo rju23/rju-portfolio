@@ -978,7 +978,7 @@ function HeroText() {
               fontFamily: "'Inter', sans-serif", fontWeight: 300,
               marginBottom: 10, letterSpacing: "0.01em",
             }}>
-              Meet pk-1 - My personalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonalpersonal AI portfolio assistant.
+              Meet pk-1 — My personal AI portfolio assistant.
             </p>
 
             <p className="hero-footer" style={{
