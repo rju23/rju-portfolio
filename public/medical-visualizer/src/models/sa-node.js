@@ -11,6 +11,7 @@ export function initSANode(container) {
   const scene = new THREE.Scene()
 
   const mechanism = document.createElement('div')
+  mechanism.className = 'sa-overlay sa-mechanism'
 
   mechanism.textContent = 'β₁ → Gs → ↑ cAMP → ↑ HCN → ↑ If'
 
@@ -26,6 +27,7 @@ export function initSANode(container) {
   container.appendChild(mechanism)
 
   const ionDirection = document.createElement('div')
+  ionDirection.className = 'sa-overlay sa-ion-direction'
 
   ionDirection.innerHTML = `
     <strong>Ion movement</strong><br>
@@ -47,6 +49,7 @@ export function initSANode(container) {
   container.appendChild(ionDirection)
 
   const legend = document.createElement('div')
+  legend.className = 'sa-overlay sa-legend'
 
   legend.innerHTML = `
     <div>
@@ -82,6 +85,7 @@ export function initSANode(container) {
   container.appendChild(legend)
 
   const phaseLabel = document.createElement('div')
+  phaseLabel.className = 'sa-overlay sa-phase-label'
 
   phaseLabel.textContent = 'Phase 4: Pacemaker depolarization'
 
@@ -98,6 +102,7 @@ export function initSANode(container) {
   container.appendChild(phaseLabel)
 
   const campLabel = document.createElement('div')
+  campLabel.className = 'sa-overlay sa-camp-label'
 
   campLabel.textContent = 'cAMP: baseline'
 
@@ -114,6 +119,7 @@ export function initSANode(container) {
   container.appendChild(campLabel)
 
   const heartRateLabel = document.createElement('div')
+  heartRateLabel.className = 'sa-overlay sa-heart-rate'
 
   heartRateLabel.textContent = 'Heart rate: 75 bpm'
 
@@ -129,6 +135,7 @@ export function initSANode(container) {
   container.appendChild(heartRateLabel)
 
   const rateStatus = document.createElement('div')
+  rateStatus.className = 'sa-overlay sa-rate-status'
 
   rateStatus.textContent = 'Normal pacemaker rate'
 
@@ -144,6 +151,7 @@ export function initSANode(container) {
   container.appendChild(rateStatus)
 
   const summary = document.createElement('div')
+  summary.className = 'sa-overlay sa-summary'
 
   summary.innerHTML = `
     <strong>β₁ effect on SA node</strong><br><br>
@@ -167,6 +175,7 @@ export function initSANode(container) {
   container.appendChild(summary)
 
   const controls = document.createElement('div')
+  controls.className = 'sa-overlay sa-controls'
 
   controls.style.position = 'absolute'
   controls.style.left = '50%'
@@ -479,6 +488,7 @@ export function initSANode(container) {
   animate()
 
   const graph = document.createElement('canvas')
+  graph.className = 'sa-overlay sa-graph'
 
   graph.width = 500
   graph.height = 250
@@ -692,6 +702,7 @@ export function initSANode(container) {
   animateGraph()
 
   const beta1Button = document.createElement('button')
+  beta1Button.className = 'sa-overlay sa-beta1-btn'
 
   beta1Button.textContent = 'β₁ stimulation: OFF'
 

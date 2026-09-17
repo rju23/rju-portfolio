@@ -400,7 +400,7 @@ body {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .hero-outer {
     padding: 0 20px !important;
   }
@@ -422,7 +422,24 @@ body {
     text-align: center !important;
     max-width: 100% !important;
   }
+}
 
+/* Tablet: keep the desktop-style hero, just scaled to fit narrower widths */
+@media (min-width: 701px) and (max-width: 1024px) {
+  .hero-outer {
+    padding: 0 40px !important;
+  }
+
+  .hero-inner {
+    max-width: 100% !important;
+  }
+
+  .hero-headline {
+    font-size: clamp(40px, 6vw, 64px) !important;
+  }
+}
+
+@media (max-width: 768px) {
   .pk1-hero-input {
     overflow: hidden;
     white-space: nowrap;
@@ -447,10 +464,6 @@ body {
     padding-bottom: 170px !important;
   }
 
-  .pk1-scroll-about {
-    padding-bottom: 110px !important;
-  }
-
   .proj-page {
     padding: 0 16px !important;
   }
@@ -463,116 +476,6 @@ body {
   .proj-card {
     width: 100% !important;
     padding: 18px 16px 16px !important;
-  }
-
-  /* About page */
-  .about-hero {
-    grid-template-columns: 42% 58% !important;
-    min-height: unset !important;
-    align-items: stretch !important;
-    padding: 16px 16px 0 16px !important;
-    gap: 12px !important;
-  }
-
-  .about-photo {
-    height: auto !important;
-    border-radius: 12px !important;
-  }
-
-  .about-hero-right {
-    padding: 4px 4px 20px !important;
-    justify-content: center !important;
-  }
-
-  .about-dotgrid-top,
-  .about-scroll-indicator {
-    display: none !important;
-  }
-
-  .about-name-tag {
-    font-size: 9px !important;
-    letter-spacing: 0.1em !important;
-    margin-bottom: 10px !important;
-  }
-
-  .about-headline {
-    font-size: clamp(26px, 9vw, 38px) !important;
-    line-height: 1 !important;
-    margin: 0 0 12px !important;
-  }
-
-  .about-rule {
-    margin-bottom: 12px !important;
-  }
-
-  .about-tagline {
-    font-size: 12px !important;
-    line-height: 1.5 !important;
-    max-width: 100% !important;
-  }
-
-  .about-heart-pre {
-    margin-right: -5px !important;
-  }
-
-  .about-heart-post {
-    margin-left: -6px !important;
-  }
-
-  .about-timeline-item {
-    flex: 0 0 auto !important;
-    padding: 0 14px !important;
-  }
-
-  .about-timeline-link {
-    flex: 0 0 40px !important;
-  }
-
-  .about-timeline-link-end {
-    flex: 0 0 40px !important;
-  }
-
-  .about-timeline {
-    padding: 20px 16px !important;
-    margin-top: 20px !important;
-    margin-right: 0 !important;
-    width: 100% !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .about-content-grid {
-    grid-template-columns: 1fr !important;
-    padding: 0 16px !important;
-  }
-
-  .about-content-left {
-    padding: 24px 0 32px !important;
-    border-right: none !important;
-  }
-
-  .about-content-right {
-    display: none !important;
-  }
-
-  .about-content-left p {
-    font-size: 14px !important;
-    line-height: 1.65 !important;
-    margin-bottom: 16px !important;
-  }
-
-  .about-quote p {
-    font-size: 14.5px !important;
-    line-height: 1.6 !important;
-  }
-
-  .about-stats {
-    padding: 16px 0 !important;
-    margin: 20px 0 !important;
-  }
-
-  .about-stat-num {
-    font-size: 28px !important;
   }
 
   /* Contact page */
@@ -703,6 +606,132 @@ body {
 
   .pf-btn-row {
     flex-direction: column !important;
+  }
+}
+
+/* Tablet: 2-column project grid, with room to clear the fixed input bar */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .proj-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+    padding-bottom: 120px !important;
+  }
+}
+
+/* About page: same stacked layout on phones and tablets alike (photo +
+   headline side by side up top, single-column content below) */
+@media (max-width: 1024px) {
+  .pk1-scroll-about {
+    padding-bottom: 110px !important;
+  }
+
+  .about-hero {
+    grid-template-columns: 42% 58% !important;
+    min-height: unset !important;
+    align-items: stretch !important;
+    padding: 16px 16px 0 16px !important;
+    gap: 12px !important;
+  }
+
+  .about-photo {
+    height: auto !important;
+    border-radius: 12px !important;
+  }
+
+  .about-hero-right {
+    padding: 4px 4px 20px !important;
+    justify-content: center !important;
+  }
+
+  .about-dotgrid-top,
+  .about-scroll-indicator {
+    display: none !important;
+  }
+
+  .about-name-tag {
+    font-size: 9px !important;
+    letter-spacing: 0.1em !important;
+    margin-bottom: 10px !important;
+  }
+
+  .about-headline {
+    font-size: clamp(26px, 9vw, 38px) !important;
+    line-height: 1 !important;
+    margin: 0 0 12px !important;
+  }
+
+  .about-rule {
+    margin-bottom: 12px !important;
+  }
+
+  .about-tagline {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    max-width: 100% !important;
+  }
+
+  .about-heart-pre {
+    margin-right: -5px !important;
+  }
+
+  .about-heart-post {
+    margin-left: -6px !important;
+  }
+
+  .about-timeline-item {
+    flex: 0 0 auto !important;
+    padding: 0 14px !important;
+  }
+
+  .about-timeline-link {
+    flex: 0 0 40px !important;
+  }
+
+  .about-timeline-link-end {
+    flex: 0 0 40px !important;
+  }
+
+  .about-timeline {
+    padding: 20px 16px !important;
+    margin-top: 20px !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .about-content-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0 16px !important;
+  }
+
+  .about-content-left {
+    padding: 24px 0 32px !important;
+    border-right: none !important;
+  }
+
+  .about-content-right {
+    display: none !important;
+  }
+
+  .about-content-left p {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .about-quote p {
+    font-size: 14.5px !important;
+    line-height: 1.6 !important;
+  }
+
+  .about-stats {
+    padding: 16px 0 !important;
+    margin: 20px 0 !important;
+  }
+
+  .about-stat-num {
+    font-size: 28px !important;
   }
 }
 

@@ -127,7 +127,11 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code} %{size_download}\\\\n\" \"https://cdn.jsdelivr.net/npm/three@0.158/examples/fonts/helvetiker_bold.typeface.json\")",
       "Bash(curl -s \"https://cdn.jsdelivr.net/npm/three@0.158/examples/jsm/geometries/TextGeometry.js\")",
       "Bash(node test-weathertext2.cjs)",
-      "Bash(pkill -f \"http.server 4324\")"
+      "Bash(pkill -f \"http.server 4324\")",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).devDependencies\\)\")",
+      "Bash(./node_modules/.bin/vite build *)",
+      "Bash(git checkout *)",
+      "Bash(node_modules/.bin/vite build *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\sejwa\\AppData\\Local\\Temp",

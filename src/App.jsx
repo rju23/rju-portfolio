@@ -698,9 +698,9 @@ function InputBar({ onNavigate }) {
 }
 
 function HeroText() {
-  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 700);
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 768);
+    const onResize = () => setIsMobile(window.innerWidth < 700);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -3785,7 +3785,7 @@ function UnoCard({ color, label, children, animClass }) {
       style={{
         position: "relative",
         width: "min(520px, 92vw)",
-        height: "min(720px, 88vh)",
+        height: "min(720px, calc(100vh - 160px))",
         borderRadius: 24,
         background: bg,
         backgroundImage: isWild ? UNO_COLORS.wild : undefined,
@@ -4228,7 +4228,7 @@ function UnoProject({ onNextProject }) {
               background: "#2a2a2a",
               borderRadius: 24,
               width: "min(520px, 92vw)",
-              height: "min(720px, 88vh)",
+              height: "min(720px, calc(100vh - 160px))",
               opacity: 0.6,
             }} />
             <div style={{
@@ -4238,7 +4238,7 @@ function UnoProject({ onNextProject }) {
               background: "#2a2a2a",
               borderRadius: 24,
               width: "min(520px, 92vw)",
-              height: "min(720px, 88vh)",
+              height: "min(720px, calc(100vh - 160px))",
               opacity: 0.35,
             }} />
 
