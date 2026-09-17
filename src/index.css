@@ -6,6 +6,16 @@ html, body, #root {
   overflow: hidden;
 }
 
+@media (max-width: 1024px) {
+  html, body, #root {
+    overflow-y: auto;
+  }
+
+  .pk1-app-shell {
+    overflow-y: auto !important;
+  }
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -351,7 +361,7 @@ body {
   transition: opacity 0.25s ease;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .pk1-hamburger-btn {
     display: flex !important;
     z-index: 20001 !important;
@@ -388,7 +398,9 @@ body {
   .pk1-topbar-wrap {
     display: none !important;
   }
+}
 
+@media (max-width: 768px) {
   .hero-outer {
     padding: 0 20px !important;
   }

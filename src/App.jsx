@@ -146,9 +146,9 @@ export default function App() {
 
   console.log("current section:", section);
   return (
-    <div style={{
+    <div className="pk1-app-shell" style={{
       width: "100%", height: "100%",
-      position: "relative", overflow: "hidden",
+      position: "relative", overflowX: "hidden", overflowY: "hidden",
       background: "#0D0C0B",
       display: "flex",
       padding: "12px 0 12px 12px",
