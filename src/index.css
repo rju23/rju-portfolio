@@ -618,10 +618,11 @@ body {
   }
 }
 
-/* Tablet: 2-column project grid, with room to clear the fixed input bar */
+/* Tablet: single-column project grid (same as phones), with room to
+   clear the fixed input bar */
 @media (min-width: 768px) and (max-width: 1024px) {
   .proj-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: 1fr !important;
     gap: 16px !important;
     padding-bottom: 120px !important;
   }
