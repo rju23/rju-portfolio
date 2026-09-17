@@ -82,6 +82,11 @@ export default function App() {
     const parts = path.split("/");
     return parts[0] === "projects" && parts[1] ? parts[1] : null;
   });
+  const [activeProjectSubPage, setActiveProjectSubPage] = useState(() => {
+    const path = window.location.pathname.replace(/^\//, "");
+    const parts = path.split("/");
+    return parts[0] === "projects" && parts[1] && parts[2] ? parts[2] : null;
+  });
   const [splash, setSplash]   = useState(() => {
     try {
       return !sessionStorage.getItem("pk1SplashShown");
@@ -101,13 +106,14 @@ export default function App() {
     }
   };
 
-  const navigateToProject = (id) => {
+  const navigateToProject = (id, subPage) => {
     setSection("projects");
     setActiveProjectId(id);
+    setActiveProjectSubPage(subPage || null);
     setMobileNavOpen(false);
-    const path = `/projects/${id}`;
+    const path = subPage ? `/projects/${id}/${subPage}` : `/projects/${id}`;
     if (window.location.pathname !== path) {
-      window.history.pushState({ pk1Section: "projects", projectId: id }, "", path);
+      window.history.pushState({ pk1Section: "projects", projectId: id, subPage: subPage || null }, "", path);
     }
   };
 
@@ -119,6 +125,7 @@ export default function App() {
       const top = parts[0] || "chat";
       setSection(VALID_SECTIONS.includes(top) ? top : "chat");
       setActiveProjectId(top === "projects" && parts[1] ? parts[1] : null);
+      setActiveProjectSubPage(top === "projects" && parts[1] && parts[2] ? parts[2] : null);
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -326,7 +333,7 @@ export default function App() {
         }}>
           <div key={section} className="pk1-page-fade" style={{ display: "flex", flexDirection: "column", flex: 1, width: "100%" }}>
             {section === "chat"        && <HeroText />}
-            {section === "projects"    && <ProjectsView onNavigate={navigateTo} activeProjectId={activeProjectId} onSelectProject={navigateToProject} />}
+            {section === "projects"    && <ProjectsView onNavigate={navigateTo} activeProjectId={activeProjectId} activeProjectSubPage={activeProjectSubPage} onSelectProject={navigateToProject} />}
             {section === "about"       && <AboutView />}
             {section === "services"    && <ServicesView onNavigate={navigateTo} />}
             {section === "contact"     && <ContactView />}
@@ -1140,7 +1147,7 @@ const PROJECTS = [
 
 const DESKTOP_ONLY_PROJECTS = new Set(["medical-visualizer"]);
 
-function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
+function ProjectsView({ onNavigate, activeProjectId, activeProjectSubPage, onSelectProject }) {
   const activeProject = activeProjectId;
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
 
@@ -1499,7 +1506,11 @@ function ProjectsView({ onNavigate, activeProjectId, onSelectProject }) {
           {activeProject === "876-revive" ? (
             <ReviveProject onNextProject={() => setActiveProject("scq-scoreboard")} />
           ) : activeProject === "scq-scoreboard" ? (
-            <ScoreboardProject onNextProject={() => setActiveProject("uno-calculator")} />
+            <ScoreboardProject
+              onNextProject={() => setActiveProject("uno-calculator")}
+              subPage={activeProjectSubPage}
+              onNavigateSubPage={(sp) => onSelectProject("scq-scoreboard", sp)}
+            />
           ) : activeProject === "uno-calculator" ? (
             <UnoProject onNextProject={() => setActiveProject("client-management")} />
           ) : activeProject === "client-management" ? (
@@ -3350,28 +3361,41 @@ function ScqPricingFeature({ children }) {
   );
 }
 
-function ScoreboardProject({ onNextProject }) {
+function ScoreboardProject({ onNextProject, subPage, onNavigateSubPage }) {
   useScqFonts();
   const [splashing, setSplashing] = useState(true);
+  const scrollRef = useRef(null);
+  const isOverview = !subPage || subPage === "overview";
 
   useEffect(() => {
     const t = setTimeout(() => setSplashing(false), 4700);
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [subPage]);
+
   return (
     <>
       <ScqSplash visible={splashing} />
 
       <div
+        ref={scrollRef}
         className="pk1-scroll"
         style={{
           position: "fixed", inset: 0, zIndex: 100,
-          background: "linear-gradient(180deg, #7a101c 0%, #3f0b11 40%, #1a0508 100%)",
+          background: isOverview
+            ? "linear-gradient(180deg, #7a101c 0%, #3f0b11 40%, #1a0508 100%)"
+            : "#0A0908",
           overflowY: "auto",
           fontFamily: "'Inter', sans-serif", color: "#fff",
         }}
       >
+        <ScqSubNav active={subPage || "overview"} onNavigate={onNavigateSubPage} onNextProject={onNextProject} />
+
+        {isOverview && (
+        <>
         {/* SECTION 1 - HERO */}
         <section className="scq-hero-grid" style={{
           minHeight: "100vh", display: "grid", gridTemplateColumns: "1.05fr 0.95fr",
@@ -3773,8 +3797,490 @@ function ScoreboardProject({ onNextProject }) {
             Next · Uno Calculator →
           </span>
         </div>
+        </>
+        )}
+
+        {subPage === "pricing" && <ScqPricingPage />}
+        {subPage === "how-to-use" && <ScqHowToUsePage />}
+        {subPage === "about" && <ScqAboutPage />}
+        {subPage === "privacy" && <ScqPrivacyPage />}
+        {subPage === "terms" && <ScqTermsPage />}
       </div>
     </>
+  );
+}
+
+/* ---------------------------------------------------------------------
+   SCQ Scoreboard - sub-navigation + portfolio-styled sub-pages
+   (Overview above is untouched SCQ broadcast theme; everything below
+   uses the site's own dark/amber/Fraunces language, with SCQ's maroon
+   as a secondary accent.)
+--------------------------------------------------------------------- */
+
+const SCQ_MAROON = "#800020";
+const SCQ_SUPPORT_EMAIL = "support@scqscoreboard.com";
+
+const SCQ_CARD_STYLE = {
+  padding: "22px 22px 24px",
+  borderRadius: 12,
+  background: "rgba(255,255,255,0.035)",
+  border: `1px solid ${BORDER}`,
+};
+
+const SCQ_SUBNAV_TABS = [
+  { id: "overview",   label: "Overview" },
+  { id: "pricing",    label: "Pricing" },
+  { id: "how-to-use", label: "How to Use" },
+  { id: "about",      label: "About" },
+  { id: "privacy",    label: "Privacy" },
+  { id: "terms",      label: "Terms" },
+];
+
+function ScqSubNav({ active, onNavigate, onNextProject }) {
+  return (
+    <div className="scq-subnav" style={{
+      position: "sticky", top: 0, zIndex: 20,
+      display: "flex", alignItems: "center", gap: 16,
+      padding: "14px 24px",
+      background: "rgba(10,9,8,0.85)",
+      backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+      borderBottom: `1px solid ${BORDER}`,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: SCQ_MAROON, display: "inline-block" }} />
+        <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12.5, fontWeight: 600, color: TEXT, whiteSpace: "nowrap" }}>
+          SCQ Scoreboard
+        </span>
+      </div>
+
+      <div className="scq-subnav-tabs" style={{ display: "flex", alignItems: "center", gap: 4, overflowX: "auto", flex: 1 }}>
+        {SCQ_SUBNAV_TABS.map((tab) => {
+          const isActive = active === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onNavigate(tab.id === "overview" ? null : tab.id)}
+              style={{
+                background: "none", border: "none",
+                padding: "6px 12px",
+                fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: isActive ? 600 : 400,
+                color: isActive ? ACCENT : TEXT_DIM,
+                borderBottom: isActive ? `2px solid ${ACCENT}` : "2px solid transparent",
+                cursor: "pointer", whiteSpace: "nowrap",
+                transition: "color 0.15s ease",
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <button
+        onClick={onNextProject}
+        style={{
+          background: "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8,
+          color: TEXT, fontSize: 12.5, padding: "6px 14px",
+          cursor: "pointer", fontFamily: "'Inter', sans-serif",
+          flexShrink: 0, whiteSpace: "nowrap",
+        }}
+      >
+        Next: Uno Calculator →
+      </button>
+    </div>
+  );
+}
+
+function ScqPageHeading({ children, subtitle }) {
+  return (
+    <div style={{ marginBottom: 28 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ width: 7, height: 7, borderRadius: "50%", background: SCQ_MAROON, flexShrink: 0 }} />
+        <h2 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 34, fontWeight: 400, color: TEXT, margin: 0 }}>
+          {children}
+        </h2>
+      </div>
+      {subtitle && (
+        <p style={{ fontSize: 13.5, color: TEXT_DIM, margin: "6px 0 0 17px" }}>{subtitle}</p>
+      )}
+    </div>
+  );
+}
+
+function ScqH3({ children }) {
+  return (
+    <h3 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 18, fontWeight: 400, color: TEXT, margin: "22px 0 8px" }}>
+      {children}
+    </h3>
+  );
+}
+
+function ScqP({ children }) {
+  return (
+    <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, lineHeight: 1.7, color: TEXT_DIM, margin: "0 0 10px" }}>
+      {children}
+    </p>
+  );
+}
+
+function ScqList({ items }) {
+  return (
+    <ul style={{ margin: "0 0 10px", padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
+      {items.map((item, i) => (
+        <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", fontFamily: "'Inter', sans-serif", fontSize: 14, lineHeight: 1.6, color: TEXT_DIM }}>
+          <span style={{ color: ACCENT, flexShrink: 0, marginTop: 1 }}>·</span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ScqKbd({ children }) {
+  return (
+    <code style={{
+      background: "rgba(255,255,255,0.06)", border: `1px solid ${BORDER}`,
+      padding: "2px 7px", borderRadius: 6,
+      fontFamily: "'Inter', sans-serif", fontSize: 12.5, color: TEXT,
+    }}>
+      {children}
+    </code>
+  );
+}
+
+function ScqLastUpdated() {
+  const date = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+  return (
+    <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12.5, color: TEXT_MUTE, margin: "0 0 20px" }}>
+      Last updated: {date}
+    </p>
+  );
+}
+
+function ScqPageShell({ children }) {
+  return (
+    <div className="scq-page" style={{ padding: "40px 48px 80px", maxWidth: 860, margin: "0 auto", width: "100%" }}>
+      {children}
+    </div>
+  );
+}
+
+/* ── Pricing ── */
+
+function ScqPricingFeature2({ children }) {
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+      <Check size={14} style={{ color: ACCENT, flexShrink: 0, marginTop: 2 }} />
+      <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, lineHeight: 1.6, color: TEXT_DIM }}>{children}</span>
+    </div>
+  );
+}
+
+function ScqPricingPage() {
+  return (
+    <ScqPageShell>
+      <ScqPageHeading subtitle="JMD · One-time payment · Payment via bank transfer · License key delivered to your email">
+        Pricing
+      </ScqPageHeading>
+
+      <div className="scq-pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+        <div style={SCQ_CARD_STYLE}>
+          <h3 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 20, fontWeight: 400, color: TEXT, margin: "0 0 4px" }}>Individual</h3>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12.5, color: TEXT_MUTE }}>1 device · One-time payment</div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 400, color: TEXT, margin: "12px 0 2px" }}>
+            $15,000 <span style={{ fontSize: 13, color: TEXT_MUTE, fontFamily: "'Inter', sans-serif" }}>JMD</span>
+          </div>
+          <div style={{
+            display: "inline-block", marginTop: 8, marginBottom: 14, padding: "5px 12px", borderRadius: 999,
+            border: `1px solid ${SCQ_MAROON}`, color: "#e0a0b0", fontFamily: "'Inter', sans-serif", fontSize: 11.5,
+          }}>
+            Own it forever
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 18 }}>
+            <ScqPricingFeature2>Full access to all current features</ScqPricingFeature2>
+            <ScqPricingFeature2>Free bug fixes and UI updates for life</ScqPricingFeature2>
+            <ScqPricingFeature2>Ideal for coaches and students training teams</ScqPricingFeature2>
+            <ScqPricingFeature2>License key sent to your email after payment</ScqPricingFeature2>
+          </div>
+          <a
+            href="https://wa.me/18763718377?text=Hi%2C%20I%27d%20like%20to%20purchase%20SCQ%20Scoreboard%20%E2%80%94%20Individual%20Plan%20(%2415%2C000%20JMD)"
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              display: "block", textAlign: "center", padding: "11px 0", borderRadius: 10,
+              background: "rgba(37,211,102,0.12)", border: "1px solid rgba(37,211,102,0.35)",
+              color: "#25d366", fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 600, textDecoration: "none",
+            }}
+          >
+            💬 Purchase via WhatsApp
+          </a>
+        </div>
+
+        <div style={SCQ_CARD_STYLE}>
+          <h3 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 20, fontWeight: 400, color: TEXT, margin: "0 0 4px" }}>Additional Devices</h3>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12.5, color: TEXT_MUTE }}>Extend your license to more devices</div>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 600, color: TEXT, margin: "12px 0 2px" }}>
+            Already own the Individual plan?
+          </div>
+          <div style={{
+            display: "inline-block", marginTop: 8, marginBottom: 14, padding: "5px 12px", borderRadius: 999,
+            border: `1px solid ${SCQ_MAROON}`, color: "#e0a0b0", fontFamily: "'Inter', sans-serif", fontSize: 11.5,
+          }}>
+            Pay only for what you need
+          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 14 }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: "left", padding: "6px 4px", fontSize: 12, color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 600, borderBottom: `1px solid ${BORDER}` }}>Devices</th>
+                <th style={{ textAlign: "left", padding: "6px 4px", fontSize: 12, color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 600, borderBottom: `1px solid ${BORDER}` }}>Extra Cost</th>
+                <th style={{ textAlign: "left", padding: "6px 4px", fontSize: 12, color: ACCENT, fontFamily: "'Inter', sans-serif", fontWeight: 600, borderBottom: `1px solid ${BORDER}` }}>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[["2nd device", "+$5,000 JMD", "$20,000 JMD"], ["3rd device", "+$5,000 JMD", "$25,000 JMD"], ["4th device +", "+$2,000 JMD each", "—"]].map((row) => (
+                <tr key={row[0]}>
+                  {row.map((cell, i) => (
+                    <td key={i} style={{ padding: "7px 4px", fontSize: 13, color: TEXT_DIM, fontFamily: "'Inter', sans-serif", borderBottom: `1px solid ${BORDER}` }}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 18 }}>
+            <ScqPricingFeature2>Same license key works across all your devices</ScqPricingFeature2>
+            <ScqPricingFeature2>No extra software needed - just activate</ScqPricingFeature2>
+          </div>
+          <a
+            href="https://wa.me/18763718377?text=Hi%2C%20I%27d%20like%20to%20add%20an%20extra%20device%20to%20my%20SCQ%20Scoreboard%20license"
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              display: "block", textAlign: "center", padding: "11px 0", borderRadius: 10,
+              background: "rgba(37,211,102,0.12)", border: "1px solid rgba(37,211,102,0.35)",
+              color: "#25d366", fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 600, textDecoration: "none",
+            }}
+          >
+            💬 Add a Device via WhatsApp
+          </a>
+        </div>
+
+        <div style={SCQ_CARD_STYLE}>
+          <h3 style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 20, fontWeight: 400, color: TEXT, margin: "0 0 4px" }}>Rally Pass</h3>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12.5, color: TEXT_MUTE }}>Unlimited devices · 3-day access</div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 400, color: TEXT, margin: "12px 0 2px" }}>
+            $5,000 <span style={{ fontSize: 13, color: TEXT_MUTE, fontFamily: "'Inter', sans-serif" }}>JMD</span>
+          </div>
+          <div style={{
+            display: "inline-block", marginTop: 8, marginBottom: 14, padding: "5px 12px", borderRadius: 999,
+            border: `1px solid ${SCQ_MAROON}`, color: "#e0a0b0", fontFamily: "'Inter', sans-serif", fontSize: 11.5,
+          }}>
+            For large practice matches
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 18 }}>
+            <ScqPricingFeature2>Unlimited devices for 3 days</ScqPricingFeature2>
+            <ScqPricingFeature2>Must be activated within 7 days of purchase</ScqPricingFeature2>
+            <ScqPricingFeature2>Ideal when hosting large rally-style events</ScqPricingFeature2>
+            <ScqPricingFeature2>License key sent to your email after payment</ScqPricingFeature2>
+          </div>
+          <a
+            href="https://wa.me/18763718377?text=Hi%2C%20I%27d%20like%20to%20purchase%20an%20SCQ%20Scoreboard%20Rally%20Pass%20(%245%2C000%20JMD)"
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              display: "block", textAlign: "center", padding: "11px 0", borderRadius: 10,
+              background: "rgba(37,211,102,0.12)", border: "1px solid rgba(37,211,102,0.35)",
+              color: "#25d366", fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 600, textDecoration: "none",
+            }}
+          >
+            💬 Purchase via WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <div style={{ ...SCQ_CARD_STYLE, marginTop: 20, background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 600, color: TEXT, marginBottom: 6 }}>
+          Payment & Refund Policy
+        </div>
+        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, lineHeight: 1.65, color: TEXT_DIM, margin: 0 }}>
+          All payments are made via bank transfer directly to the developer. Once payment is confirmed, your license key will be sent to you. <strong style={{ color: TEXT }}>All sales are final - no refunds are issued after purchase.</strong> If you experience any issues activating your license, contact support before purchasing a new one.
+        </p>
+      </div>
+    </ScqPageShell>
+  );
+}
+
+/* ── How to Use ── */
+
+function ScqHowToUsePage() {
+  return (
+    <ScqPageShell>
+      <ScqPageHeading subtitle="A dual-window setup: a Control Panel for the coach/quizmaster and a Main Scoreboard for the audience.">
+        How to Use
+      </ScqPageHeading>
+
+      <ScqH3>A) How to Set Up</ScqH3>
+      <ScqP>The School's Challenge Quiz Scoreboard works best on a PC or laptop connected to a second screen (preferably wired).</ScqP>
+      <ScqList items={[
+        "Connect the second screen to the PC/laptop (typically via HDMI).",
+        "Set the projection mode to Extend. (Projection modes include PC screen only, Duplicate, Extend, and Second screen only.)",
+        "Open the platform.",
+        "Drag the Main Scoreboard window to the second screen - it's an extension of the main display.",
+        "Keep the Control Panel on the main PC/laptop screen for the coach.",
+        "Teams will see only the Main Scoreboard, while the coach manages scores, timers, visuals, and audio from the Control Panel.",
+        "See Presenting Mode below for a quicker way to set up the scoreboard - premium users only.",
+      ]} />
+
+      <ScqH3>B) How to Use</ScqH3>
+
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 600, color: TEXT, margin: "18px 0 6px" }}>1) Settings Menu</div>
+      <ScqP><strong style={{ color: TEXT }}>Team Names</strong> - Click a team name or the dropdown arrow to select a school from the built-in list, or manually type a custom name and press Update Names.</ScqP>
+      <ScqP><strong style={{ color: TEXT }}>Select Section</strong> - Choose the active section using the Settings menu or by clicking directly on the round names in the Scoreboard Tracker. Sections: Alternate, Speed Minutes 1–3, or Buzzer.</ScqP>
+      <ScqP><strong style={{ color: TEXT }}>Reset Match</strong> - Resets scores, timers, trackers, queries, visuals, and audio. A confirmation prompt prevents accidental resets.</ScqP>
+
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 600, color: TEXT, margin: "22px 0 6px" }}>2) Main Control Panel</div>
+      <ScqP><strong style={{ color: TEXT }}>Scoreboard Tracker</strong> - Displays a full breakdown of questions answered in each section.</ScqP>
+      <ScqP><strong style={{ color: TEXT }}>Query Buttons (qry− / qry+)</strong> - Apply manual score adjustments per section. Alternate &amp; Speed: ±1 point. Buzzer: ±4 points. Each query is logged visually in the row until the match is reset.</ScqP>
+      <ScqP><strong style={{ color: TEXT }}>Scoring Buttons</strong> - Correct/Wrong buttons update scores based on the active section. Keyboard shortcuts: <ScqKbd>1</ScqKbd> Team A Correct, <ScqKbd>2</ScqKbd> Team A Wrong, <ScqKbd>8</ScqKbd> Team B Correct, <ScqKbd>9</ScqKbd> Team B Wrong. Undo last score: double-tap <ScqKbd>Shift</ScqKbd> to remove the last point awarded.</ScqP>
+
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 600, color: TEXT, margin: "22px 0 6px" }}>Timers</div>
+      <ScqP><strong style={{ color: TEXT }}>Main Timer</strong> - Controlled using Start, Pause, and Reset. To prevent accidental disruption during a match, the Pause, Reset, and Set Custom Time buttons must be pressed and held briefly to activate. A bell sound plays automatically when time expires.</ScqP>
+      <ScqP><strong style={{ color: TEXT }}>Question Timer</strong> - Alternate section: 10 seconds per question. Buzzer section: 5 seconds per question. Keyboard: <ScqKbd>R</ScqKbd> start/restart, <ScqKbd>P</ScqKbd> pause, <ScqKbd>+/-</ScqKbd> adding a score auto-pauses. Double-tapping the Right Arrow (next visual) or Left Arrow (next audio) also starts the Question Timer.</ScqP>
+
+      <ScqP><strong style={{ color: TEXT }}>Visual Questions</strong> - Click Upload Visuals to add images, reorder via drag-and-drop. During the match, double-tap Right Arrow to display the next visual full-screen on the Main Scoreboard. Visuals automatically disappear 2-3 seconds after being shown.</ScqP>
+      <ScqP><strong style={{ color: TEXT }}>Audio Clips</strong> - Upload audio clips from the Control Panel, trim using the waveform slider, reorder via drag-and-drop. Double-tap Left Arrow to play the next clip, press Down Arrow to stop current audio.</ScqP>
+
+      <ScqH3>C) Presenting Mode</ScqH3>
+      <ScqP>Presenting Mode is designed for a clean dual-screen competition setup.</ScqP>
+      <ScqList items={[
+        "Automatically places the Main Scoreboard on the second screen in fullscreen.",
+        "Automatically keeps the Control Panel on the main display.",
+        "Use Presenting Mode when running live matches or practice sessions on a projector/TV.",
+      ]} />
+
+      <ScqH3>D) Live Scoreboard</ScqH3>
+      <ScqP>The Live Scoreboard is a live preview panel inside the Control Panel that mirrors key items being shown on the audience display (scores, round/section, timers, and the occasional visuals). It helps the coach confirm everything is correct at a glance while operating controls.</ScqP>
+      <ScqList items={[
+        "Use it as a quick verification view while scoring and changing sections.",
+        "It updates as the match progresses and reflects the active section/timer state.",
+      ]} />
+
+      <ScqH3>Need help?</ScqH3>
+      <ScqP>
+        For troubleshooting, licensing questions, or setup help, contact{" "}
+        <a href={`mailto:${SCQ_SUPPORT_EMAIL}`} style={{ color: ACCENT }}>{SCQ_SUPPORT_EMAIL}</a>.
+      </ScqP>
+    </ScqPageShell>
+  );
+}
+
+/* ── About ── */
+
+function ScqAboutPage() {
+  return (
+    <ScqPageShell>
+      <ScqPageHeading>About SCQ Scoreboard</ScqPageHeading>
+
+      <ScqP>
+        SCQ Scoreboard is Windows desktop software built for structured academic quiz competitions. It separates the <strong style={{ color: TEXT }}>Quizmaster Control Panel</strong> from the <strong style={{ color: TEXT }}>Audience Display</strong> to support clean timing, consistent scoring, and a professional presentation.
+      </ScqP>
+
+      <ScqH3>What it's for</ScqH3>
+      <ScqList items={[
+        "Team training and practice matches",
+        "School competitions and organized events",
+        "Accurate round pacing using timers + buzzer control",
+      ]} />
+
+      <ScqH3>How it works</ScqH3>
+      <ScqList items={[
+        <><strong style={{ color: TEXT }}>Control Panel:</strong> scoring, round control, timers, and match flow tools</>,
+        <><strong style={{ color: TEXT }}>Main Scoreboard:</strong> fullscreen audience display for projector/TV/second monitor</>,
+      ]} />
+
+      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12.5, color: TEXT_MUTE, marginTop: 24 }}>
+        This product is educational software and is not intended for gambling, wagering, or betting activities.
+      </p>
+    </ScqPageShell>
+  );
+}
+
+/* ── Privacy ── */
+
+function ScqPrivacyPage() {
+  return (
+    <ScqPageShell>
+      <ScqPageHeading>Privacy Policy</ScqPageHeading>
+      <ScqLastUpdated />
+
+      <ScqP>This Privacy Policy explains how we handle information when you use our website and software application.</ScqP>
+
+      <ScqH3>Information we collect</ScqH3>
+      <ScqList items={[
+        <><strong style={{ color: TEXT }}>Website:</strong> Basic analytics data (such as page views) may be collected by our hosting provider.</>,
+        <><strong style={{ color: TEXT }}>Purchases:</strong> If you purchase a license, payment and billing details are processed by our payment provider. We do not store full card details.</>,
+        <><strong style={{ color: TEXT }}>Support:</strong> If you contact support, we receive the information you send (name, email, message).</>,
+      ]} />
+
+      <ScqH3>How we use information</ScqH3>
+      <ScqList items={[
+        "To provide and improve the product and customer support",
+        "To process licensing and deliver digital downloads",
+        "To prevent abuse, fraud, and unauthorized access",
+      ]} />
+
+      <ScqH3>Data sharing</ScqH3>
+      <ScqP>We share information only with service providers needed to operate the product (such as hosting and payments), or when required by law.</ScqP>
+
+      <ScqH3>Data retention</ScqH3>
+      <ScqP>We retain support and purchase records as needed for business operations, compliance, and troubleshooting.</ScqP>
+
+      <ScqH3>Your choices</ScqH3>
+      <ScqP>You may request access, correction, or deletion of your support data by contacting us at the email listed below.</ScqP>
+
+      <ScqH3>Contact</ScqH3>
+      <ScqP>
+        If you have questions about this Privacy Policy, contact us at{" "}
+        <a href={`mailto:${SCQ_SUPPORT_EMAIL}`} style={{ color: ACCENT }}>{SCQ_SUPPORT_EMAIL}</a>.
+      </ScqP>
+    </ScqPageShell>
+  );
+}
+
+/* ── Terms ── */
+
+function ScqTermsPage() {
+  return (
+    <ScqPageShell>
+      <ScqPageHeading>Terms of Service</ScqPageHeading>
+      <ScqLastUpdated />
+
+      <ScqP>These Terms govern your use of the SCQ Scoreboard website and software. By using the Software, you agree to these Terms.</ScqP>
+
+      <ScqH3>License and use</ScqH3>
+      <ScqList items={[
+        "The software is provided under a digital license. Your purchase grants you the right to use the software according to the license type you buy.",
+        "You may not resell, redistribute, or share license keys except as explicitly permitted by your license.",
+      ]} />
+
+      <ScqH3>Acceptable use</ScqH3>
+      <ScqList items={[
+        "You agree not to misuse the Service, attempt unauthorized access, or interfere with normal operation.",
+        "This product is for educational competitions. It must not be used to facilitate gambling, wagering, or betting activities.",
+      ]} />
+
+      <ScqH3>Refunds</ScqH3>
+      <ScqP>No refunds are issued after purchase. Test the platform in free mode, or contact the developer for a negotiated number of days of full premium access to test the scoreboard.</ScqP>
+
+      <ScqH3>Disclaimer</ScqH3>
+      <ScqP>The Service is provided "as is" without warranties of any kind. We do not guarantee uninterrupted or error-free operation.</ScqP>
+
+      <ScqH3>Limitation of liability</ScqH3>
+      <ScqP>To the maximum extent permitted by law, we are not liable for indirect or consequential damages arising from use of the Service.</ScqP>
+
+      <ScqH3>Contact</ScqH3>
+      <ScqP>
+        For questions about these Terms, contact us at{" "}
+        <a href={`mailto:${SCQ_SUPPORT_EMAIL}`} style={{ color: ACCENT }}>{SCQ_SUPPORT_EMAIL}</a>.
+      </ScqP>
+    </ScqPageShell>
   );
 }
 
