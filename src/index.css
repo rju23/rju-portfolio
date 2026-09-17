@@ -3,17 +3,12 @@
 html, body, #root {
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-@media (max-width: 1024px) {
-  html, body, #root {
-    overflow-y: auto;
-  }
-
-  .pk1-app-shell {
-    overflow-y: auto !important;
-  }
+.pk1-app-shell {
+  overflow-y: auto !important;
 }
 
 html {
